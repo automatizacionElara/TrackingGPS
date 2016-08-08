@@ -2,12 +2,11 @@
     <string name="app_name">GPSTracking</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Usuario</string>
+    <string name="prompt_user">Usuario</string>
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Entrar</string>
     <string name="action_sign_in_short">Iniciar Sesión</string>
-    <string name="error_invalid_email">Usuario Incorrecto</string>
-    <string name="error_invalid_password">Contraseña Incorrecta</string>
+    <string name="error_invalid_user">Usuario y/o Contraseña Incorrectos</string>
     <string name="error_incorrect_password">Contraseña Incorrecta</string>
     <string name="error_field_required">Este campo es requerrido</string>
     <string name="permission_rationale">""

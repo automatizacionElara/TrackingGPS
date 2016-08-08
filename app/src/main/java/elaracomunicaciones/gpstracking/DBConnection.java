@@ -9,7 +9,7 @@ import java.sql.SQLException;
  */
 public class DBConnection {
     private static  DBConnection instance = null;
-    private static final String URL = "jdbc:jtds:sqlserver://172.31.248.4/Elara_Legal;";
+    private static final String URL = "jdbc:jtds:sqlserver://172.31.248.4/Elara_SeguimientoCuadrillas;";
     private static final String USER= "sa";
     private static final String PASS= "$D34dP00l#";
     private static Connection connection = null;
