@@ -6,7 +6,7 @@ import java.sql.*;
  */
 public class DBConnectionMySQL {
 
-    static String host      = "192.168.27.33"; //"10.0.2.2"; //Poner 10.0.0.2 cuando el serv. MySQL es LocalHost
+    static String host      = "192.168.27.33";
     static String dataBase = "cus";
     static String user   = "automator";
     static String pass  = "N3mqtj!!";
