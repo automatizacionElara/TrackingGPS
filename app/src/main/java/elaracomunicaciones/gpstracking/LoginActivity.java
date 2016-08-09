@@ -18,7 +18,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -40,6 +42,8 @@ public class LoginActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //display in long period of time
+
         // Set up the login form.
         muserView = (AutoCompleteTextView) findViewById(R.id.user);
 
@@ -100,6 +104,9 @@ public class LoginActivity extends AppCompatActivity  {
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(user, password, isSuccess);
+            if(!isSuccess) {
+                Toast.makeText(getApplicationContext(), "Usuario y Contraseña Invalidos", Toast.LENGTH_SHORT).show();
+            }
             mAuthTask.execute();
 
             boolean valor = isSuccess;
@@ -157,6 +164,17 @@ public class LoginActivity extends AppCompatActivity  {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
+                // Create MD5 Hash
+                MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+                digest.update(mPassword.getBytes());
+                byte messageDigest[] = digest.digest();
+
+                // Create Hex String
+                StringBuffer hexString = new StringBuffer();
+                for (int i=0; i<messageDigest.length; i++)
+                    hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+                hexString.toString();
+
                 Connection con = DBConnection.getInstance().getConnection();
                 if (con == null) {
                     z = "Error en la Conexión con SQL server";
@@ -170,7 +188,10 @@ public class LoginActivity extends AppCompatActivity  {
                         IsSuccess = true;
                     } else {
                         z = "Credenciales Invalidas";
+
                         IsSuccess = false;
+                        Intent ListServices = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(ListServices);
                     }
                 }
             } catch (Exception ex) {
@@ -189,10 +210,10 @@ public class LoginActivity extends AppCompatActivity  {
 
             if(IsSuccess)
             {
+                Toast.makeText(getApplicationContext(), z, Toast.LENGTH_SHORT).show();
                 Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
                 startActivity(ListServices);
             }
-
         }
 
         @Override
