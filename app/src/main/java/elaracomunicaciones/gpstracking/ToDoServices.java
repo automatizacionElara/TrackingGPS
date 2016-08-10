@@ -1,7 +1,11 @@
 package elaracomunicaciones.gpstracking;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.sql.Connection;
 
@@ -11,14 +15,15 @@ public class ToDoServices extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todoservices);
-        try {
-            DBConnectionMySQL.StartConnection();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        Button LogOut = (Button) findViewById(R.id.LogOut);
+        LogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Sesión Cerrada", Toast.LENGTH_SHORT).show();
+                Intent LogOut = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(LogOut);
+            }
+        });
     }
 }

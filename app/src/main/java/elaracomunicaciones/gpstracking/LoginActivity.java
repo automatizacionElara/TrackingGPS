@@ -104,9 +104,6 @@ public class LoginActivity extends AppCompatActivity  {
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(user, password, isSuccess);
-            if(!isSuccess) {
-                Toast.makeText(getApplicationContext(), "Usuario y Contraseña Invalidos", Toast.LENGTH_SHORT).show();
-            }
             mAuthTask.execute();
 
             boolean valor = isSuccess;
@@ -188,7 +185,6 @@ public class LoginActivity extends AppCompatActivity  {
                         IsSuccess = true;
                     } else {
                         z = "Credenciales Invalidas";
-
                         IsSuccess = false;
                         Intent ListServices = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(ListServices);
@@ -210,9 +206,10 @@ public class LoginActivity extends AppCompatActivity  {
 
             if(IsSuccess)
             {
-                Toast.makeText(getApplicationContext(), z, Toast.LENGTH_SHORT).show();
                 Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
                 startActivity(ListServices);
+            }else{
+                Toast.makeText(getApplicationContext(), "Usuario y Contraseña Invalidos", Toast.LENGTH_SHORT).show();
             }
         }
 

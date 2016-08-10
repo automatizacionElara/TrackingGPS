@@ -13,8 +13,8 @@
 
     <!-- Login progress -->
     <ImageView
-        android:layout_width="97dp"
-        android:layout_height="131dp"
+        android:layout_width="46dp"
+        android:layout_height="63dp"
         android:src="@drawable/icongps" />
 
     <ImageView
@@ -33,8 +33,7 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="172dp"
-        android:layout_weight="0.68">
+        android:layout_height="323dp">
 
         <LinearLayout
             android:id="@+id/user_login_form"
