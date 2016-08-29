@@ -25,5 +25,15 @@ public class ToDoServices extends AppCompatActivity{
                 startActivity(LogOut);
             }
         });
+
+        Button Checkin = (Button) findViewById(R.id.checkin);
+        Checkin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Servicio Iniciado", Toast.LENGTH_SHORT).show();
+                Intent Checkin = new Intent(getApplicationContext(), StartService.class);
+                startActivity(Checkin);
+            }
+        });
     }
 }

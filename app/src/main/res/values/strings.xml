@@ -11,4 +11,10 @@
     <string name="error_field_required">Este campo es requerrido</string>
     <string name="permission_rationale">""
     </string>
+    <string name="title_activity_start_service">Servicio</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
