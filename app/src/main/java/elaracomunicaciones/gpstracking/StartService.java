@@ -3,34 +3,49 @@ package elaracomunicaciones.gpstracking;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class StartService extends Activity implements LocationListener {
+import net.sourceforge.jtds.jdbc.DateTime;
 
-    private TextView latituteField;
-    private TextView longitudeField;
-    private LocationManager locationManager;
-    private String provider;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Locale;
 
-    /** Called when the activity is first created. */
+public class StartService extends AppCompatActivity {
+
+    TextView mensaje1;
+    TextView mensaje2;
+    boolean EndService = false;
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_service);
-        latituteField = (TextView) findViewById(R.id.TextView02);
-        longitudeField = (TextView) findViewById(R.id.TextView04);
+        mensaje1 = (TextView) findViewById(R.id.mensaje_id);
+        mensaje2 = (TextView) findViewById(R.id.mensaje_id2);
 
-        // Get the location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		/* Uso de la clase LocationManager para obtener la localizacion del GPS */
+        LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Localizacion Local = new Localizacion();
+        Local.setMainActivity(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -41,29 +56,100 @@ public class StartService extends Activity implements LocationListener {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
+                (LocationListener) Local);
+
+        mensaje1.setText("Localizacion agregada");
+        mensaje2.setText("");
     }
 
 
-    @Override
-    public void onLocationChanged(Location location) {
-        latituteField = (TextView) findViewById(R.id.TextView02);
-        latituteField.setText(location.getLatitude() + "," + location.getLongitude());
+    public void setLocation(Location loc) {
+        //Obtener la direccion de la calle a partir de la latitud y la longitud
+        if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<Address> list = geocoder.getFromLocation(
+                        loc.getLatitude(), loc.getLongitude(), 1);
+                if (!list.isEmpty()) {
+                    Address DirCalle = list.get(0);
+                    mensaje2.setText("Mi direccion es: \n"
+                            + DirCalle.getAddressLine(0));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
+    /* Aqui empieza la Clase Localizacion */
+    public class Localizacion implements LocationListener {
+        StartService mainActivity;
 
-    @Override
-    public void onProviderDisabled(String provider) {
-        Log.d("Latitude", "disable");
-    }
+        public StartService getMainActivity() {
+            return mainActivity;
+        }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-        Log.d("Latitude","enable");
-    }
+        public void setMainActivity(StartService mainActivity) {
+            this.mainActivity = mainActivity;
+        }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d("Latitude","status");
-    }
+        @Override
+        public void onLocationChanged(Location loc) {
+
+            // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
+            // debido a la deteccion de un cambio de ubicacion
+
+            loc.getLatitude();
+            loc.getLongitude();
+
+            if(!EndService){
+                Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
+                SendUbication su = new SendUbication(loc.getLongitude(), loc.getLatitude());
+                su.execute();
+            }
+
+
+                String Text = "Mi ubicacion actual es: " + "\n Lat = "
+                        + loc.getLatitude() + "\n Long = " + loc.getLongitude();
+                mensaje1.setText(Text);
+                this.mainActivity.setLocation(loc);
+
+            Button LogOut = (Button) findViewById(R.id.EndService);
+            LogOut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                    Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
+                    EndService = true;
+                    startActivity(LogOut);
+                }
+            });
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // Este metodo se ejecuta cuando el GPS es desactivado
+            mensaje1.setText("GPS Desactivado");
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // Este metodo se ejecuta cuando el GPS es activado
+            mensaje1.setText("GPS Activado");
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // Este metodo se ejecuta cada vez que se detecta un cambio en el
+            // status del proveedor de localizacion (GPS)
+            // Los diferentes Status son:
+            // OUT_OF_SERVICE -> Si el proveedor esta fuera de servicio
+            // TEMPORARILY_UNAVAILABLE -> Temporalmente no disponible pero se
+            // espera que este disponible en breve
+            // AVAILABLE -> Disponible
+        }
+
+    }/* Fin de la clase localizacion */
 }

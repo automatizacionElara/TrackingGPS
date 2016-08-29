@@ -1,57 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="elaracomunicaciones.gpstracking.StartService" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dip"
-        android:orientation="horizontal" >
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/TextView01"
-            android:layout_width="wrap_content"
+            android:id="@+id/mensaje_id"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dip"
-            android:text="Latitude: "
-            android:textSize="20dip" >
-        </TextView>
+            android:text="TextView" />
 
         <TextView
-            android:id="@+id/TextView02"
+            android:id="@+id/mensaje_id2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/logo" />
+
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="unknown"
-            android:textSize="20dip" >
-        </TextView>
+            android:text="Terminar Servicio"
+            android:id="@+id/EndService"
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/TextView03"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dip"
-            android:text="Longitute: "
-            android:textSize="20dip" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/TextView04"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="unknown"
-            android:textSize="20dip" >
-        </TextView>
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
