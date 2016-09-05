@@ -12,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.sourceforge.jtds.jdbc.cache.SQLCacheKey;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,8 +30,9 @@ import java.util.concurrent.ExecutionException;
 public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
-    private int idTech = 0;
+    private int idTechnician = 0;
     private TextView tbReference, tbTicket, tbETA, tbType;
+    private Spinner servicesSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,10 +44,11 @@ public class ToDoServices extends AppCompatActivity
         tbTicket = (TextView)findViewById(R.id.tbTicket);
         tbETA = (TextView)findViewById(R.id.tbETA);
         tbType = (TextView)findViewById(R.id.tbType);
+        servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
 
         Intent inte = getIntent();
 
-        idTech = inte.getIntExtra("IdTecnico",0);
+        idTechnician = inte.getIntExtra("IdTecnico",0);
 
         Button LogOut = (Button) findViewById(R.id.LogOut);
         LogOut.setOnClickListener(new View.OnClickListener() {
@@ -60,9 +64,16 @@ public class ToDoServices extends AppCompatActivity
         Button Checkin = (Button) findViewById(R.id.checkin);
         Checkin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 Toast.makeText(getApplicationContext(), "Servicio Iniciado", Toast.LENGTH_SHORT).show();
                 Intent Checkin = new Intent(getApplicationContext(), StartService.class);
+
+                Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
+
+                Checkin.putExtra("IdTecnico",idTechnician);
+                Checkin.putExtra("IdServicio",service.idService);
+
                 startActivity(Checkin);
             }
         });
@@ -98,7 +109,7 @@ public class ToDoServices extends AppCompatActivity
             e.printStackTrace();
         }
 
-        Spinner servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
+
 
         List<String> list;
 
@@ -183,7 +194,7 @@ public class ToDoServices extends AppCompatActivity
                 SOAP_ACTION = namespace + methodName;
                 request = new SoapObject(namespace, methodName);
 
-                request.addProperty("techId", idTech);
+                request.addProperty("techId", idTechnician);
 
                 envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 

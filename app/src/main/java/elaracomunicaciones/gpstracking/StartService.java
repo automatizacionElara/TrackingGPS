@@ -35,10 +35,20 @@ public class StartService extends AppCompatActivity {
     TextView mensaje1;
     TextView mensaje2;
     boolean EndService = false;
+
+    private int idTechnician = 0;
+    private int idService = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_service);
+
+        Intent intent = getIntent();
+
+        idTechnician = intent.getIntExtra("IdTecnico",0);
+        idService = intent.getIntExtra("IdServicio",0);
+
         mensaje1 = (TextView) findViewById(R.id.mensaje_id);
         mensaje2 = (TextView) findViewById(R.id.mensaje_id2);
 
