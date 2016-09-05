@@ -150,6 +150,7 @@ public class LoginActivity extends AppCompatActivity  {
         private final String mPassword;
         private boolean mIsSuccess;
         private boolean IsSuccess;
+        public int IdTechnician;
         String z = "";
 
         UserLoginTask(String user, String password, boolean isSuccess) {
@@ -207,6 +208,7 @@ public class LoginActivity extends AppCompatActivity  {
             if(IsSuccess)
             {
                 Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
+                ListServices.putExtra("IdTecnico", 1);
                 startActivity(ListServices);
             }else{
                 Toast.makeText(getApplicationContext(), "Usuario y Contraseña Invalidos", Toast.LENGTH_SHORT).show();

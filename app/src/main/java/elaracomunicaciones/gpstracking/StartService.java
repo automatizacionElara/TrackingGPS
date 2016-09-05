@@ -106,7 +106,7 @@ public class StartService extends AppCompatActivity {
 
             if(!EndService){
                 Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
-                SendUbication su = new SendUbication(loc.getLongitude(), loc.getLatitude());
+                SendUbication su = new SendUbication(1,1,loc.getLongitude(), loc.getLatitude());
                 su.execute();
             }
 
