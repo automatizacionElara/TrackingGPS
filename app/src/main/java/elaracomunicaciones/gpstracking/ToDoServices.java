@@ -174,7 +174,7 @@ public class ToDoServices extends AppCompatActivity
         String webServiceResult = "";
         String result = "";
         String namespace = "http://tempuri.org/";
-        String url = "http://172.31.248.4:80/AndroidWebService/SeguimientoCuadrillasWS.asmx";
+        String url = "http://201.131.60.39:8092/AndroidWebService/SeguimientoCuadrillasWS.asmx";
         String methodName = "getActiveServices";
 
         String SOAP_ACTION;

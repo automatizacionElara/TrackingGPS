@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class StartService extends AppCompatActivity {
 
@@ -52,6 +53,22 @@ public class StartService extends AppCompatActivity {
         mensaje1 = (TextView) findViewById(R.id.mensaje_id);
         mensaje2 = (TextView) findViewById(R.id.mensaje_id2);
 
+        RegisterService su = new RegisterService(idTechnician, idService);
+
+        try
+        {
+            su.execute().get();
+            Toast.makeText(getApplicationContext(), "Servicio Registrado", Toast.LENGTH_SHORT).show();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
 		/* Uso de la clase LocationManager para obtener la localizacion del GPS */
         LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Localizacion Local = new Localizacion();
@@ -68,11 +85,6 @@ public class StartService extends AppCompatActivity {
         }
         mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
                 (LocationListener) Local);
-
-
-        Toast.makeText(getApplicationContext(), "Servicio Registrado", Toast.LENGTH_SHORT).show();
-        RegisterService su = new RegisterService(idTechnician, idService);
-        su.execute();
 
         mensaje1.setText("Localizacion agregada");
         mensaje2.setText("");
@@ -121,7 +133,7 @@ public class StartService extends AppCompatActivity {
 
             if(!EndService){
                 Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
-                SendUbication su = new SendUbication(1,1,loc.getLongitude(), loc.getLatitude());
+                SendUbication su = new SendUbication(idService,loc.getLongitude(), loc.getLatitude());
                 su.execute();
             }
 
@@ -138,6 +150,7 @@ public class StartService extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
                     Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
                     EndService = true;
+                    LogOut.putExtra("IdTecnico",idTechnician);
                     startActivity(LogOut);
                 }
             });

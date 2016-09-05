@@ -29,12 +29,12 @@ public class RegisterService extends AsyncTask<Void, Void, Boolean> {
             if (con == null) {
                 msg = "Error en la Conexión con SQL server";
             } else {
-                String Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_Tracking VALUES(1," +  IdTechnician + "," + IdService + ");";
+                String Elara_ES_Tracking= "INSERT INTO Elara_ES_Tracking (IdTechnician, IdService, IdStatus) VALUES(" + IdTechnician + "," + IdService + ",1);";
                 Statement stmt = null;
 
                 try {
                     stmt = con.createStatement();
-                    stmt.executeQuery(Elara_ES_TrackingDetails);
+                    stmt.executeQuery(Elara_ES_Tracking);
                     stmt.close();
                 } catch (SQLException e) {
                     e.printStackTrace();

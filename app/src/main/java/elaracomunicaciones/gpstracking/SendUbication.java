@@ -19,15 +19,13 @@ import java.util.EmptyStackException;
 
         private final double latitude;
         private final double longitude;
-        private final int IdTechnician;
         private final int IdService;
         private boolean IsSuccess;
         String msg = "";
 
-        SendUbication(int IdTech, int IdServ, double Long, double Lat) {
+        SendUbication(int IdServ, double Long, double Lat) {
             latitude = Lat;
             longitude = Long;
-            IdTechnician = IdTech;
             IdService = IdServ;
         }
 
@@ -39,7 +37,7 @@ import java.util.EmptyStackException;
                 if (con == null) {
                     msg = "Error en la Conexión con SQL server";
                 } else {
-                    String Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(1, GETDATE()," +  latitude + "," + longitude + ");";
+                    String Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(" + IdService + ", GETDATE()," +  latitude + "," + longitude + ");";
                     Statement stmt = null;
 
                     try {
