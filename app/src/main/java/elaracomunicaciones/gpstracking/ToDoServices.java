@@ -1,5 +1,6 @@
 package elaracomunicaciones.gpstracking;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
 import android.os.AsyncTask;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -33,18 +35,23 @@ import java.util.concurrent.ExecutionException;
 public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
-    private int techId = 0;
+    private int idTech = 0;
+    private TextView tbReference, tbTicket, tbETA, tbType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todoservices);
 
+        tbReference = (TextView)findViewById(R.id.tbReference);
+        tbTicket = (TextView)findViewById(R.id.tbTicket);
+        tbETA = (TextView)findViewById(R.id.tbETA);
+        tbType = (TextView)findViewById(R.id.tbType);
+
         Intent inte = getIntent();
 
-        techId = inte.getIntExtra("IdTecnico",0);
+        idTech = inte.getIntExtra("IdTecnico",0);
 
         Button LogOut = (Button) findViewById(R.id.LogOut);
         LogOut.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +146,23 @@ public class ToDoServices extends AppCompatActivity
                         android.R.layout.simple_spinner_dropdown_item,
                         list));
 
+        servicesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
+            {
+                tbReference.setText(servicesList.get(position).elaraReference);
+                tbTicket.setText(String.valueOf(servicesList.get(position).ticket));
+                tbETA.setText(servicesList.get(position).estimatedTimeA);
+                tbType.setText(servicesList.get(position).type);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+
+        });
     }
 
     public class WSSoap extends AsyncTask<Void, Void, String>
@@ -166,7 +190,7 @@ public class ToDoServices extends AppCompatActivity
                 SOAP_ACTION = namespace + methodName;
                 request = new SoapObject(namespace, methodName);
 
-                request.addProperty("techId", techId);
+                request.addProperty("techId", idTech);
 
                 envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 
