@@ -69,6 +69,11 @@ public class StartService extends AppCompatActivity {
         mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
                 (LocationListener) Local);
 
+
+        Toast.makeText(getApplicationContext(), "Servicio Registrado", Toast.LENGTH_SHORT).show();
+        RegisterService su = new RegisterService(idTechnician, idService);
+        su.execute();
+
         mensaje1.setText("Localizacion agregada");
         mensaje2.setText("");
     }
