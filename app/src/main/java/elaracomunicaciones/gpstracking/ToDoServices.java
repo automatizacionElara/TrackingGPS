@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutionException;
 public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
-    private int tecnico = 0;
+    private int techId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,7 +44,7 @@ public class ToDoServices extends AppCompatActivity
 
         Intent inte = getIntent();
 
-        tecnico = inte.getIntExtra("IdTecnico",0);
+        techId = inte.getIntExtra("IdTecnico",0);
 
         Button LogOut = (Button) findViewById(R.id.LogOut);
         LogOut.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +166,7 @@ public class ToDoServices extends AppCompatActivity
                 SOAP_ACTION = namespace + methodName;
                 request = new SoapObject(namespace, methodName);
 
-                request.addProperty("techId", 27);
+                request.addProperty("techId", techId);
 
                 envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 
