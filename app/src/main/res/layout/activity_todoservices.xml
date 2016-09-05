@@ -10,14 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="elaracomunicaciones.gpstracking.ToDoServices">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Servicios Programados"
-        android:id="@+id/label_ServiciosProgramados"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="fill_parent"
@@ -30,21 +22,30 @@
         android:textSize="18dp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Check-in"
+        android:text="INICIAR SERVICIO"
         android:id="@+id/checkin"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginBottom="25dp"
+        android:layout_above="@+id/LogOut"
+        android:layout_alignParentEnd="true" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/servicesSpinner"
-        android:layout_below="@+id/label_ServiciosProgramados"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
-        android:spinnerMode="dropdown" />
+        android:layout_marginTop="41dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ToDoServices" />
 
     <TextView
         android:layout_width="wrap_content"
