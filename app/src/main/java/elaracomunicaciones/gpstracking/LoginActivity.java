@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.test.suitebuilder.annotation.SmallTest;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -177,11 +178,13 @@ public class LoginActivity extends AppCompatActivity  {
                 if (con == null) {
                     z = "Error en la Conexión con SQL server";
                 } else {
-                    String query = "SELECT * from Elara_S_Users WHERE UserName ='" + muser + "' AND Password='" + mPassword + "'" + "AND Status= 1";
+                    String query = "SELECT IdTechnician from Elara_S_Users WHERE UserName ='" + muser + "' AND Password='" + mPassword + "'" + "AND Status= 1";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
 
+
                     if (rs.next()) {
+                        IdTechnician = rs.getInt("IdTechnician");
                         z = "Login Correcto";
                         IsSuccess = true;
                     } else {
@@ -208,7 +211,7 @@ public class LoginActivity extends AppCompatActivity  {
             if(IsSuccess)
             {
                 Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
-                ListServices.putExtra("IdTecnico", 1);
+                ListServices.putExtra("IdTecnico", IdTechnician);
                 startActivity(ListServices);
             }else{
                 Toast.makeText(getApplicationContext(), "Usuario y Contraseña Invalidos", Toast.LENGTH_SHORT).show();
