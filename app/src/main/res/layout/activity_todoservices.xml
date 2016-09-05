@@ -45,7 +45,7 @@
         android:id="@+id/imageView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ToDoServices" />
+        android:src="@drawable/services" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,7 +70,8 @@
         android:text="Ticket:"
         android:id="@+id/lbTicket"
         android:layout_below="@+id/servicesSpinner"
-        android:layout_marginTop="45dp"/>
+        android:layout_marginTop="45dp"
+        android:capitalize="words" />
 
     <TextView
         android:layout_width="wrap_content"
