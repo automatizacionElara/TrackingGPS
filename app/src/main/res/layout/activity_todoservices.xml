@@ -10,110 +10,169 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="elaracomunicaciones.gpstracking.ToDoServices">
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Cerrar Sesión"
-        android:id="@+id/LogOut"
-        android:background="@android:color/holo_orange_dark"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="18dp" />
-
-    <Button
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="INICIAR SERVICIO"
-        android:id="@+id/checkin"
-        android:layout_marginBottom="25dp"
-        android:layout_above="@+id/LogOut"
-        android:layout_alignParentEnd="true" />
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/servicesSpinner"
-        android:spinnerMode="dropdown"
-        android:layout_below="@+id/imageView"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="41dp" />
+        android:id="@+id/frameLayout">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/services" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:layout_gravity="center_horizontal|top">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Referencia:"
-        android:id="@+id/lbReference"
-        android:layout_below="@+id/lbTicket"
-        android:layout_marginTop="5dp"/>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/services" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ELARA_"
-        android:id="@+id/tbReference"
-        android:layout_below="@+id/tbTicket"
-        android:layout_marginTop="5dp"
-        android:layout_centerHorizontal="true" />
+            <Spinner
+                android:layout_width="fill_parent"
+                android:layout_height="41dp"
+                android:id="@+id/servicesSpinner"
+                android:spinnerMode="dropdown"
+                android:layout_below="@+id/imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="41dp"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ticket:"
-        android:id="@+id/lbTicket"
-        android:layout_below="@+id/servicesSpinner"
-        android:layout_marginTop="45dp"
-        android:capitalize="words" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="123456"
-        android:id="@+id/tbTicket"
-        android:layout_below="@+id/servicesSpinner"
-        android:layout_marginTop="45dp"
-        android:layout_centerHorizontal="true" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="141dp"
+                android:layout_gravity="center_horizontal|top">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ETA:"
-        android:id="@+id/lbETA"
-        android:layout_below="@+id/lbReference"
-        android:layout_marginTop="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Número de Ticket: "
+                    android:id="@+id/lbTicket"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/abc_primary_text_disable_only_material_light"
+                    android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10-08-2016 8:00"
-        android:id="@+id/tbETA"
-        android:layout_below="@+id/tbReference"
-        android:layout_marginTop="5dp"
-        android:layout_centerHorizontal="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbTicket"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/lbTicket"
+                    android:layout_marginStart="42dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Servicio:"
-        android:id="@+id/lbType"
-        android:layout_below="@+id/lbETA"
-        android:layout_marginTop="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbType"
+                    android:layout_below="@+id/tbTicket"
+                    android:layout_alignStart="@+id/tbTicket" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Instalación"
-        android:id="@+id/tbType"
-        android:layout_below="@+id/tbETA"
-        android:layout_marginTop="5dp"
-        android:layout_centerHorizontal="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Servicio: "
+                    android:id="@+id/lbService"
+                    android:textColor="@color/abc_primary_text_disable_only_material_light"
+                    android:textStyle="bold"
+                    android:layout_alignBaseline="@+id/tbType"
+                    android:layout_alignBottom="@+id/tbType"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ETA : "
+                    android:id="@+id/lbETA"
+                    android:textColor="@color/abc_primary_text_disable_only_material_light"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/lbService"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbETA"
+                    android:layout_below="@+id/tbType"
+                    android:layout_alignStart="@+id/tbType" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Referencia ELARA: "
+                    android:id="@+id/lbReference"
+                    android:textColor="@color/abc_primary_text_disable_only_material_light"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:textAlignment="center"
+                    android:layout_above="@+id/tbReference"
+                    android:layout_alignParentLeft="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbReference"
+                    android:textAlignment="center"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal|bottom">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="34dp"
+                    android:text="Iniciar Servicio"
+                    android:id="@+id/checkin"
+                    android:layout_alignParentEnd="true"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_alignBottom="@+id/LogOut"
+                    android:textColor="#ffffff"
+                    android:layout_gravity="center_horizontal"
+                    android:textAlignment="center" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="360dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_horizontal"></LinearLayout>
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="36dp"
+                    android:text="Cerrar Sesión"
+                    android:id="@+id/LogOut"
+                    android:allowUndo="false"
+                    android:background="@android:color/holo_red_dark"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:textColor="#ffffff"
+                    android:layout_gravity="center_horizontal" />
+
+            </LinearLayout>
+        </FrameLayout>
+    </FrameLayout>
 
 </RelativeLayout>

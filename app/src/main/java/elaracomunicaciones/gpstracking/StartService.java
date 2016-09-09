@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -86,7 +87,7 @@ public class StartService extends AppCompatActivity {
         mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
                 (LocationListener) Local);
 
-        mensaje1.setText("Localizacion agregada");
+        mensaje1.setText("Localizando tu ubicación ...");
         mensaje2.setText("");
     }
 
@@ -100,8 +101,7 @@ public class StartService extends AppCompatActivity {
                         loc.getLatitude(), loc.getLongitude(), 1);
                 if (!list.isEmpty()) {
                     Address DirCalle = list.get(0);
-                    mensaje2.setText("Mi direccion es: \n"
-                            + DirCalle.getAddressLine(0));
+                    mensaje2.setText(DirCalle.getAddressLine(0));
                 }
 
             } catch (IOException e) {
@@ -138,8 +138,7 @@ public class StartService extends AppCompatActivity {
             }
 
 
-                String Text = "Mi ubicacion actual es: " + "\n Lat = "
-                        + loc.getLatitude() + "\n Long = " + loc.getLongitude();
+                String Text = "Lat = " + loc.getLatitude() + " Long = " + loc.getLongitude();
                 mensaje1.setText(Text);
                 this.mainActivity.setLocation(loc);
 
@@ -154,6 +153,8 @@ public class StartService extends AppCompatActivity {
                     startActivity(LogOut);
                 }
             });
+
+
         }
 
         @Override
@@ -180,4 +181,13 @@ public class StartService extends AppCompatActivity {
         }
 
     }/* Fin de la clase localizacion */
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //preventing default implementation previous to android.os.Build.VERSION_CODES.ECLAIR
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

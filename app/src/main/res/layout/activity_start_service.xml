@@ -9,30 +9,68 @@
     tools:context="elaracomunicaciones.gpstracking.StartService" >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:layout_width="61dp"
+            android:layout_height="83dp"
+            android:id="@+id/imageView2"
+            android:src="@drawable/icongps"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="46dp"
+            android:text="Mi Ubicación Actual"
+            android:id="@+id/lbUbication"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dirección: "
+            android:id="@+id/lbDirection"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/mensaje_id2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Coordenadas: "
+            android:id="@+id/lbCoordenadas"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/mensaje_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:text=""
+            android:layout_below="@+id/lbCoordenadas"
+            android:layout_alignParentStart="true" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/mensaje_id2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="" />
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/logo" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
 
         <Button
             android:layout_width="wrap_content"
