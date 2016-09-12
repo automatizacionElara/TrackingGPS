@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 /**
  * Created by daniel sosa on 27/07/2016.
+ * Esta clase hace la conexión a la base de datos del servidor en la nube
  */
 public class DBConnection {
     private static  DBConnection instance = null;

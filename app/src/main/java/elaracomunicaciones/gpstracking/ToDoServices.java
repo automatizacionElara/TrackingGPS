@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -179,7 +180,7 @@ public class ToDoServices extends AppCompatActivity
         String webServiceResult = "";
         String result = "";
         String namespace = "http://tempuri.org/";
-        String url = "http://201.131.60.39:8092/AndroidWebService/SeguimientoCuadrillasWS.asmx";
+        String url = "http://172.31.248.4/AndroidWebService/SeguimientoCuadrillasWS.asmx";
         String methodName = "getActiveServices";
 
         String SOAP_ACTION;
@@ -228,6 +229,19 @@ public class ToDoServices extends AppCompatActivity
             super.onPostExecute(res);
         }
 
+
+
     }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //preventing default implementation previous to android.os.Build.VERSION_CODES.ECLAIR
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
 }
