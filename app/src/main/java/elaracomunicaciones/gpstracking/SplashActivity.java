@@ -4,9 +4,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,6 +22,9 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         // Set portrait orientation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -33,10 +41,40 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                // Start the next activity
-                Intent mainIntent = new Intent().setClass(
-                        SplashActivity.this, LoginActivity.class);
-                startActivity(mainIntent);
+                String IdTecnico = "";
+                int IdTechnician= 0;
+                boolean FileExist = false;
+                String[] files = fileList();
+                for (String file : files) {
+                    if (file.equals("access.txt")) {
+                        try
+                        {
+                            InputStreamReader fraw = new InputStreamReader(openFileInput("access.txt"));;
+                            BufferedReader brin = new BufferedReader(fraw);
+                            IdTecnico= brin.readLine();
+                            fraw.close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                        }
+                        IdTechnician = Integer.parseInt(IdTecnico.toString());
+                        Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
+                        ListServices.putExtra("IdTecnico", IdTechnician);
+                        startActivity(ListServices);
+                        FileExist = true;
+                    }
+                }
+
+                if(!FileExist){
+                    // Start the next activity
+                    Intent mainIntent = new Intent().setClass(
+                            SplashActivity.this, LoginActivity.class);
+                    startActivity(mainIntent);
+
+
+
+                }
 
                 // Close the activity so the user won't able to go back this
                 // activity pressing Back button
@@ -47,5 +85,7 @@ public class SplashActivity extends AppCompatActivity {
         // Simulate a long loading process on application startup.
         Timer timer = new Timer();
         timer.schedule(task, SPLASH_SCREEN_DELAY);
+
+
     }
 }

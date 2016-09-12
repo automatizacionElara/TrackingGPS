@@ -22,6 +22,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -54,6 +55,10 @@ public class ToDoServices extends AppCompatActivity
         LogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                File dir = getFilesDir();
+                File file = new File(dir,"access.txt");
+                boolean deleted = file.delete();
                 Toast.makeText(getApplicationContext(), "Sesión Cerrada", Toast.LENGTH_SHORT).show();
                 Intent LogOut = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(LogOut);

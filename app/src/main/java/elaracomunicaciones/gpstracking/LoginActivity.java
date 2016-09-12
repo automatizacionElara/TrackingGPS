@@ -3,6 +3,7 @@ package elaracomunicaciones.gpstracking;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +23,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -41,6 +48,7 @@ public class LoginActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //display in long period of time
@@ -210,6 +218,20 @@ public class LoginActivity extends AppCompatActivity  {
 
             if(IsSuccess)
             {
+                try
+                {
+                    OutputStreamWriter fout=
+                            new OutputStreamWriter(
+                                    openFileOutput("access.txt", Context.MODE_PRIVATE));
+
+                    fout.write(String.valueOf(IdTechnician));
+                    fout.close();
+                }
+                catch (Exception ex)
+                {
+                    Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+                }
+
                 Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
                 ListServices.putExtra("IdTecnico", IdTechnician);
                 startActivity(ListServices);
