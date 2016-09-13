@@ -171,17 +171,6 @@ public class LoginActivity extends AppCompatActivity  {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                // Create MD5 Hash
-                MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
-                digest.update(mPassword.getBytes());
-                byte messageDigest[] = digest.digest();
-
-                // Create Hex String
-                StringBuffer hexString = new StringBuffer();
-                for (int i=0; i<messageDigest.length; i++)
-                    hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-                hexString.toString();
-
                 Connection con = DBConnection.getInstance().getConnection();
                 if (con == null) {
                     z = "Error en la Conexión con SQL server";
@@ -189,7 +178,6 @@ public class LoginActivity extends AppCompatActivity  {
                     String query = "SELECT IdTechnician from Elara_S_Users WHERE UserName ='" + muser + "' AND Password='" + mPassword + "'" + "AND Status= 1";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
-
 
                     if (rs.next()) {
                         IdTechnician = rs.getInt("IdTechnician");
