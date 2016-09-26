@@ -175,12 +175,19 @@ public class LoginActivity extends AppCompatActivity  {
                 if (con == null) {
                     z = "Error en la Conexión con SQL server";
                 } else {
-                    String query = "SELECT IdTechnician from Elara_S_Users WHERE UserName ='" + muser + "' AND Password='" + mPassword + "'" + "AND Status= 1";
-                    Statement stmt = con.createStatement();
-                    ResultSet rs = stmt.executeQuery(query);
+                    String desEncrypt = "SELECT dbo.DecryptingPassword( (SELECT [Password] FROM Elara_S_Users Where UserName = '"+ muser +"')) AS Contrasena, IdTechnician FROM dbo.Elara_S_Users WHERE UserName='" + muser +"';;";
+                    Statement stmt2 = con.createStatement();
+                    ResultSet rs2 = stmt2.executeQuery(desEncrypt);
+                    String Pass = "";
 
-                    if (rs.next()) {
-                        IdTechnician = rs.getInt("IdTechnician");
+                    if(rs2.next()) {
+                        Pass = rs2.getString(1);
+                        IdTechnician = rs2.getInt(2);
+                    }
+
+
+                    if (mPassword.contentEquals(Pass)) {
+
                         z = "Login Correcto";
                         IsSuccess = true;
                     } else {

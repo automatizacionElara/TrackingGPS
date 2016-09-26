@@ -13,12 +13,14 @@ public class RegisterService extends AsyncTask<Void, Void, Boolean> {
 
     private final int IdTechnician;
     private final int IdService;
+    private final int Estatus;
     private boolean IsSuccess;
     String msg = "";
 
-    RegisterService(int IdTech, int IdServ) {
+    RegisterService(int IdTech, int IdServ, int Status) {
         IdTechnician = IdTech;
         IdService = IdServ;
+        Estatus = Status;
     }
 
     @Override
@@ -29,12 +31,17 @@ public class RegisterService extends AsyncTask<Void, Void, Boolean> {
             if (con == null) {
                 msg = "Error en la Conexión con SQL server";
             } else {
-                String Elara_ES_Tracking= "INSERT INTO Elara_ES_Tracking (IdTechnician, IdService, IdStatus) VALUES(" + IdTechnician + "," + IdService + ",1);";
+                String Elara_ES_Tracking= "INSERT INTO Elara_ES_Tracking (IdTechnician, IdService, IdStatus) VALUES(" + IdTechnician + "," + IdService + "," + Estatus+ ");";
+                String Elara_ES_TrackingUpdate = "UPDATE dbo.Elara_ES_Tracking SET IdStatus = 2 WHERE IdService = " + IdService + ";";
                 Statement stmt = null;
 
                 try {
                     stmt = con.createStatement();
-                    stmt.executeQuery(Elara_ES_Tracking);
+                    if(Estatus != 1){
+                        stmt.executeQuery(Elara_ES_TrackingUpdate);
+                    }else{
+                        stmt.executeQuery(Elara_ES_Tracking);
+                    }
                     stmt.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
