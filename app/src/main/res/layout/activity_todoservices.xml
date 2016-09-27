@@ -144,7 +144,7 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="34dp"
-                    android:text="Iniciar Servicio"
+                    android:text="En Camino"
                     android:id="@+id/checkin"
                     android:layout_alignParentEnd="true"
                     android:background="@color/colorPrimaryDark"

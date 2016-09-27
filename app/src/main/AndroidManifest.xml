@@ -34,13 +34,16 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ToDoServices" />
-        <activity android:name=".StartService" />
+        <activity android:name=".ToDoServices"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".StartService"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

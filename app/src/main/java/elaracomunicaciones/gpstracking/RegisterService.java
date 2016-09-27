@@ -32,7 +32,7 @@ public class RegisterService extends AsyncTask<Void, Void, Boolean> {
                 msg = "Error en la Conexión con SQL server";
             } else {
                 String Elara_ES_Tracking= "INSERT INTO Elara_ES_Tracking (IdTechnician, IdService, IdStatus) VALUES(" + IdTechnician + "," + IdService + "," + Estatus+ ");";
-                String Elara_ES_TrackingUpdate = "UPDATE dbo.Elara_ES_Tracking SET IdStatus = 2 WHERE IdService = " + IdService + ";";
+                String Elara_ES_TrackingUpdate = "UPDATE dbo.Elara_ES_Tracking SET IdStatus = "+ Estatus + " WHERE IdService = " + IdService + ";";
                 Statement stmt = null;
 
                 try {

@@ -37,12 +37,17 @@ public class StartService extends AppCompatActivity {
     TextView mensaje1;
     TextView mensaje2;
     boolean EndService = false;
+    boolean Hellegado = false;
+    boolean Recinto = false;
+    boolean EnEspera = false;
 
     private int idTechnician = 0;
     private int idService = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_service);
 
@@ -70,6 +75,68 @@ public class StartService extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
+        //Estatus del Servicio - HE LLEGADO
+        final Button btn_llegado = (Button) findViewById(R.id.hellegado);
+        if(Hellegado){btn_llegado.setEnabled(false);}
+        btn_llegado.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                RegisterService llegado = new RegisterService(idTechnician, idService,2);
+
+                try{
+                    llegado.execute().get();
+                    Toast.makeText(getApplicationContext(), "He llegado al Domicilio", Toast.LENGTH_SHORT).show();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Hellegado = true;
+                btn_llegado.setEnabled(false);
+            }
+        });
+
+        //Estatus del Servicio - SERVICIO INICIADO
+        final Button btn_ServicioIniciado = (Button) findViewById(R.id.recinto);
+        if(!Hellegado){btn_ServicioIniciado.setEnabled(true);}else{btn_ServicioIniciado.setEnabled(false);}
+        btn_ServicioIniciado.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                RegisterService iniciado = new RegisterService(idTechnician, idService,5);
+
+                try{
+                    iniciado.execute().get();
+                    Toast.makeText(getApplicationContext(), "Entré al recinto", Toast.LENGTH_SHORT).show();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Recinto = true;
+                btn_ServicioIniciado.setEnabled(false);
+            }
+        });
+
+        //Estatus del Servicio - EN ESPERA
+        final Button btn_Espera = (Button) findViewById(R.id.enespera);
+        if(EnEspera){btn_Espera.setEnabled(false);}
+        btn_Espera.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                RegisterService espera = new RegisterService(idTechnician, idService,3);
+
+                try{
+                    espera.execute().get();
+                    Toast.makeText(getApplicationContext(), "En espera", Toast.LENGTH_SHORT).show();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                EnEspera = true;
+                btn_Espera.setEnabled(false);
+            }
+        });
+
+
 		/* Uso de la clase LocationManager para obtener la localizacion del GPS */
         LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Localizacion Local = new Localizacion();
@@ -84,12 +151,20 @@ public class StartService extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
+        if (!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        {
+            Toast.makeText(this, "Activar GPS, para poder iniciar el servicio", Toast.LENGTH_LONG).show();
+        }
+
         mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
                 (LocationListener) Local);
 
         mensaje1.setText("Localizando tu ubicación ...");
         mensaje2.setText("");
     }
+
+
 
 
     public void setLocation(Location loc) {
@@ -146,6 +221,15 @@ public class StartService extends AppCompatActivity {
             LogOut.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    RegisterService terminado = new RegisterService(idTechnician, idService,6);
+
+                    try{
+                        terminado.execute().get();
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                     Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
                     Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
                     EndService = true;

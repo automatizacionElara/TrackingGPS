@@ -65,28 +65,51 @@
             android:layout_alignParentStart="true" />
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true">
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Terminar Servicio"
-            android:id="@+id/EndService"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
+            android:layout_gravity="center_horizontal|bottom"
+            android:weightSum="1">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Iniciar Servicio"
-        android:id="@+id/recinto"
-        android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="56dp" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="He llegado"
+                android:id="@+id/hellegado"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Iniciar Servicio"
+                android:id="@+id/recinto"
+                android:backgroundTint="@android:color/holo_green_dark"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="En espera"
+                android:id="@+id/enespera"
+                android:backgroundTint="@android:color/holo_orange_dark" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Terminar Servicio"
+                android:id="@+id/EndService"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>
