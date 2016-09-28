@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.AsyncTask;
 
@@ -49,10 +51,18 @@ public class LoginActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //display in long period of time
+        VerifiedConnection vc = new VerifiedConnection();
 
+        if (!vc.verificaConexion(this)) {
+            Toast.makeText(getBaseContext(),
+                    "Comprueba tu conexión a Internet. Saliendo ... ", Toast.LENGTH_SHORT)
+                    .show();
+            this.finish();
+        }
         // Set up the login form.
         muserView = (AutoCompleteTextView) findViewById(R.id.user);
 
@@ -242,6 +252,7 @@ public class LoginActivity extends AppCompatActivity  {
         }
 
 
+
     }
 
     @Override
@@ -252,5 +263,6 @@ public class LoginActivity extends AppCompatActivity  {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 }
 
