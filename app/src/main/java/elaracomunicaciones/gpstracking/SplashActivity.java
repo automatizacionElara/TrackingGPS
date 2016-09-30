@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,8 +23,6 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
 
         super.onCreate(savedInstanceState);
         // Set portrait orientation
@@ -66,14 +65,12 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 }
 
+
                 if(!FileExist){
                     // Start the next activity
                     Intent mainIntent = new Intent().setClass(
                             SplashActivity.this, LoginActivity.class);
                     startActivity(mainIntent);
-
-
-
                 }
 
                 // Close the activity so the user won't able to go back this

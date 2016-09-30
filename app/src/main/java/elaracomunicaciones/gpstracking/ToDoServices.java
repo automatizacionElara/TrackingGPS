@@ -41,13 +41,7 @@ public class ToDoServices extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todoservices);
-        VerifiedConnection vc = new VerifiedConnection();
-        if (!vc.verificaConexion(this)) {
-            Toast.makeText(getBaseContext(),
-                    "Comprueba tu conexión a Internet. Saliendo ... ", Toast.LENGTH_SHORT)
-                    .show();
-            this.finish();
-        }
+
         tbReference = (TextView)findViewById(R.id.tbReference);
         tbTicket = (TextView)findViewById(R.id.tbTicket);
         tbETA = (TextView)findViewById(R.id.tbETA);

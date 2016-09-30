@@ -9,19 +9,21 @@ import android.net.NetworkInfo;
  */
 public class VerifiedConnection {
 
-    public static boolean verificaConexion(Context ctx) {
-        boolean bConectado = false;
-        ConnectivityManager connec = (ConnectivityManager) ctx
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        // No sólo wifi, también GPRS
+    public static boolean verificaConexion(Context context) {
+
+        boolean connected = false;
+
+        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Recupera todas las redes (tanto móviles como wifi)
         NetworkInfo[] redes = connec.getAllNetworkInfo();
-        // este bucle debería no ser tan ñapa
-        for (int i = 0; i < 2; i++) {
-            // ¿Tenemos conexión? ponemos a true
+
+        for (int i = 0; i < redes.length; i++) {
+            // Si alguna red tiene conexión, se devuelve true
             if (redes[i].getState() == NetworkInfo.State.CONNECTED) {
-                bConectado = true;
+                connected = true;
             }
         }
-        return bConectado;
+        return connected;
     }
 }

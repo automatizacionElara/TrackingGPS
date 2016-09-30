@@ -1,5 +1,10 @@
 package elaracomunicaciones.gpstracking;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.widget.Toast;
+
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -42,4 +47,5 @@ public class DBConnection {
         }
         return con;
     }
+
 }
