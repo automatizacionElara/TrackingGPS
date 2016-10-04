@@ -103,6 +103,14 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Continuar"
+                android:id="@+id/continuar"
+                android:backgroundTint="@android:color/darker_gray"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Terminar Servicio"
                 android:id="@+id/EndService"
                 android:backgroundTint="@android:color/holo_red_dark"

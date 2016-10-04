@@ -36,17 +36,18 @@ public class StartService extends AppCompatActivity {
 
     TextView mensaje1;
     TextView mensaje2;
-    boolean EndService = false;
-    boolean Hellegado = false;
-    boolean Recinto = false;
-    boolean EnEspera = false;
+
+    boolean Hellegado = true; //AZUL
+    boolean Recinto = false; // VERDE
+    boolean EnEspera = false; // NARANJA
+    boolean Continuar = false; // GRIS
+    boolean EndService = false; // ROJO
 
     private int idTechnician = 0;
     private int idService = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_service);
@@ -74,11 +75,17 @@ public class StartService extends AppCompatActivity {
         {
             e.printStackTrace();
         }
-
-
-        //Estatus del Servicio - HE LLEGADO
+        //BOTONES
         final Button btn_llegado = (Button) findViewById(R.id.hellegado);
-        if(Hellegado){btn_llegado.setEnabled(false);}
+        final Button btn_ServicioIniciado = (Button) findViewById(R.id.recinto);
+        final Button btn_Espera = (Button) findViewById(R.id.enespera);
+        final Button btn_Continuar = (Button) findViewById(R.id.continuar);
+        btn_ServicioIniciado.setEnabled(false);
+        btn_Espera.setEnabled(false);
+        btn_Continuar.setEnabled(false);
+        //Estatus del Servicio - HE LLEGADO (Azul)
+
+        if(!Hellegado){btn_llegado.setEnabled(false);}
         btn_llegado.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 RegisterService llegado = new RegisterService(idTechnician, idService,2);
@@ -91,14 +98,14 @@ public class StartService extends AppCompatActivity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Hellegado = true;
+                Hellegado = false;
                 btn_llegado.setEnabled(false);
+                btn_ServicioIniciado.setEnabled(true);
+
             }
         });
 
-        //Estatus del Servicio - SERVICIO INICIADO
-        final Button btn_ServicioIniciado = (Button) findViewById(R.id.recinto);
-        if(!Hellegado){btn_ServicioIniciado.setEnabled(true);}else{btn_ServicioIniciado.setEnabled(false);}
+        //Estatus del Servicio - SERVICIO INICIADO (Verde)
         btn_ServicioIniciado.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 RegisterService iniciado = new RegisterService(idTechnician, idService,5);
@@ -113,12 +120,11 @@ public class StartService extends AppCompatActivity {
                 }
                 Recinto = true;
                 btn_ServicioIniciado.setEnabled(false);
+                btn_Espera.setEnabled(true);
             }
         });
 
-        //Estatus del Servicio - EN ESPERA
-        final Button btn_Espera = (Button) findViewById(R.id.enespera);
-        if(EnEspera){btn_Espera.setEnabled(false);}
+        //Estatus del Servicio - EN ESPERA (Amarillo)
         btn_Espera.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 RegisterService espera = new RegisterService(idTechnician, idService,3);
@@ -133,6 +139,45 @@ public class StartService extends AppCompatActivity {
                 }
                 EnEspera = true;
                 btn_Espera.setEnabled(false);
+                btn_Continuar.setEnabled(true);
+            }
+        });
+
+        //Estatus del Servicio - Continuar (Gris)
+        btn_Continuar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                RegisterService continuar = new RegisterService(idTechnician, idService,7);
+
+                try{
+                    continuar.execute().get();
+                    Toast.makeText(getApplicationContext(), "Continuar", Toast.LENGTH_SHORT).show();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Continuar = true;
+                btn_Continuar.setEnabled(false);
+            }
+        });
+
+        //Estatus del Servicio - TERMINAR SERVICIO (Rojo)
+        final Button LogOut = (Button) findViewById(R.id.EndService);
+        LogOut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                RegisterService terminado = new RegisterService(idTechnician, idService,6);
+                try{
+                    terminado.execute().get();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
+                EndService = true;
+                LogOut.putExtra("IdTecnico",idTechnician);
+                startActivity(LogOut);
             }
         });
 
@@ -216,28 +261,6 @@ public class StartService extends AppCompatActivity {
                 String Text = "Lat = " + loc.getLatitude() + " Long = " + loc.getLongitude();
                 mensaje1.setText(Text);
                 this.mainActivity.setLocation(loc);
-
-            Button LogOut = (Button) findViewById(R.id.EndService);
-            LogOut.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RegisterService terminado = new RegisterService(idTechnician, idService,6);
-
-                    try{
-                        terminado.execute().get();
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
-                    Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
-                    EndService = true;
-                    LogOut.putExtra("IdTecnico",idTechnician);
-                    startActivity(LogOut);
-                }
-            });
-
 
         }
 
