@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.List;
 
 import net.sourceforge.jtds.jdbc.cache.SQLCacheKey;
 
@@ -99,23 +100,18 @@ public class ToDoServices extends AppCompatActivity
         catch (ExecutionException e)
         {
             e.printStackTrace();
-        }
-        ;
+        };
 
-        JSONObject jsonResult = null;
         JSONArray jsonServices = null;
 
         try
         {
-            jsonResult = new JSONObject(webServiceResult);
-            jsonServices = jsonResult.getJSONArray("data");
+            jsonServices = new JSONArray(webServiceResult);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-
-
 
         List<String> list;
 
@@ -133,11 +129,22 @@ public class ToDoServices extends AppCompatActivity
 
                 serv = new Service();
 
-                serv.idService = jsonService.getInt("Id");
-                serv.elaraReference = jsonService.getString("ReferenciaElara");
+                serv.idService = jsonService.getInt("idService");
+                serv.elaraReference = jsonService.getString("referenciaElara");
                 serv.estimatedTimeA = jsonService.getString("ETA");
-                serv.ticket = jsonService.getInt("Ticket");
-                serv.type = jsonService.getString("Servicio");
+                serv.ticket = jsonService.getInt("ticket");
+                serv.type = jsonService.getString("type");
+
+                JSONArray required = new JSONArray(jsonService.getString("required"));
+
+                if (required != null && required.length() > 0)
+                {
+                    serv.required = new ArrayList<>();
+
+                    for (int j=0;j<required.length();j++){
+                        serv.required.add(required.get(j).toString());
+                    }
+                }
 
                 servicesList.add(serv);
 
