@@ -34,7 +34,7 @@ public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
     private int idTechnician = 0;
-    private TextView tbReference, tbTicket, tbETA, tbType;
+    private TextView tbReference, tbTicket, tbETA, tbType, tbRequired;
     private Spinner servicesSpinner;
 
     @Override
@@ -48,6 +48,7 @@ public class ToDoServices extends AppCompatActivity
         tbETA = (TextView)findViewById(R.id.tbETA);
         tbType = (TextView)findViewById(R.id.tbType);
         servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
+        tbRequired = (TextView)findViewById(R.id.tbRequired);
 
         Intent inte = getIntent();
 
@@ -172,6 +173,17 @@ public class ToDoServices extends AppCompatActivity
                 tbTicket.setText(String.valueOf(servicesList.get(position).ticket));
                 tbETA.setText(servicesList.get(position).estimatedTimeA);
                 tbType.setText(servicesList.get(position).type);
+                Service s = servicesList.get(position);
+
+                tbRequired.setText("\nNo hay registros");
+
+                if(s.required != null)
+                {
+                    tbRequired.setText("\n");
+                    for (int i = 0; i < servicesList.get(position).required.size(); i++) {
+                        tbRequired.append("- " + servicesList.get(position).required.get(i) + "\n");
+                    }
+                }
             }
 
             @Override
