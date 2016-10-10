@@ -175,11 +175,10 @@ public class ToDoServices extends AppCompatActivity
                 tbType.setText(servicesList.get(position).type);
                 Service s = servicesList.get(position);
 
-                tbRequired.setText("\nNo hay registros");
+                tbRequired.setText("No hay registros");
 
                 if(s.required != null)
                 {
-                    tbRequired.setText("\n");
                     for (int i = 0; i < servicesList.get(position).required.size(); i++) {
                         tbRequired.append("- " + servicesList.get(position).required.get(i) + "\n");
                     }
