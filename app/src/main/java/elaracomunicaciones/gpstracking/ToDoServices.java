@@ -179,6 +179,7 @@ public class ToDoServices extends AppCompatActivity
 
                 if(s.required != null)
                 {
+                    tbRequired.setText("");
                     for (int i = 0; i < servicesList.get(position).required.size(); i++) {
                         tbRequired.append("- " + servicesList.get(position).required.get(i) + "\n");
                     }
