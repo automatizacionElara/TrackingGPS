@@ -209,9 +209,6 @@ public class StartService extends AppCompatActivity {
         mensaje2.setText("");
     }
 
-
-
-
     public void setLocation(Location loc) {
         //Obtener la direccion de la calle a partir de la latitud y la longitud
         if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
