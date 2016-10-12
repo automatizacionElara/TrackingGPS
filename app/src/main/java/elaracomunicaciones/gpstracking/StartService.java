@@ -31,6 +31,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.Calendar;
 
 public class StartService extends AppCompatActivity {
 
@@ -230,6 +231,8 @@ public class StartService extends AppCompatActivity {
     /* Aqui empieza la Clase Localizacion */
     public class Localizacion implements LocationListener {
         StartService mainActivity;
+        CheckConnection isOnline = new CheckConnection();
+        TrackingDbHelper bdLocal = new TrackingDbHelper(getApplicationContext());
 
         public StartService getMainActivity() {
             return mainActivity;
@@ -248,10 +251,29 @@ public class StartService extends AppCompatActivity {
             loc.getLatitude();
             loc.getLongitude();
 
-            if(!EndService){
-                Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
-                SendUbication su = new SendUbication(idService,loc.getLongitude(), loc.getLatitude());
-                su.execute();
+            if(!EndService)
+            {
+                boolean answer = isOnline.isOnlineNet();
+                if(answer == true)
+                {
+                    Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
+                    SendUbication su = new SendUbication(idService,loc.getLongitude(), loc.getLatitude());
+                    su.execute();
+                }
+                else
+                {
+                    Calendar calander = Calendar.getInstance();
+                    int Day = calander.get(Calendar.DAY_OF_MONTH);
+                    int Month = calander.get(Calendar.MONTH) + 1;
+                    int Year = calander.get(Calendar.YEAR);
+                    int Hour = calander.get(Calendar.HOUR);
+                    int Minute = calander.get(Calendar.MINUTE);
+                    int Second = calander.get(Calendar.SECOND);
+                    String dateNow = String.format(Year + "-" + Month + "-" + Day + " " + Hour + ":" + Minute + ":" + Second);
+                    Tracking trackingNow = new Tracking(idService,dateNow, loc.getLatitude(), loc.getLongitude());
+                    bdLocal.saveTracking(trackingNow);
+                    Toast.makeText(getApplicationContext(), String.format("Online: "+ answer), Toast.LENGTH_SHORT).show();
+                }
             }
 
 

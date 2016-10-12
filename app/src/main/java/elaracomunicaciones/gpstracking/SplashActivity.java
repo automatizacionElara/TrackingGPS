@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.Cursor;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -34,6 +36,22 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+
+        TrackingDbHelper helper = new TrackingDbHelper(this);
+        Cursor c = helper.getAllTracking();
+
+        if(c.moveToFirst())
+        {
+            do
+            {
+                String IdTracking = c.getString(0);
+                String IdService = c.getString(1);
+                String DateTracking = c.getString(2);
+                String Latitude = c.getString(3);
+                String Longitude = c.getString(4);
+                String Longitude2 = c.getString(4);
+            }while(c.moveToNext());
+        }
 
 
         TimerTask task = new TimerTask() {
