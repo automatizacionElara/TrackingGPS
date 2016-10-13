@@ -65,7 +65,7 @@ public class StartService extends AppCompatActivity {
         mensaje1 = (TextView) findViewById(R.id.mensaje_id);
         mensaje2 = (TextView) findViewById(R.id.mensaje_id2);
 
-        if(status == 0) {
+        if(status == 1) {
             RegisterService su = new RegisterService(idTechnician, idService, 1);
 
             try {

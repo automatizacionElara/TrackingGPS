@@ -95,7 +95,7 @@ public class ToDoServices extends AppCompatActivity
 
                 Checkin.putExtra("IdTecnico",idTechnician);
                 Checkin.putExtra("IdServicio",service.idService);
-                Checkin.putExtra("Status", 0);
+                Checkin.putExtra("Status", 1);
 
                 startActivity(Checkin);
             }
