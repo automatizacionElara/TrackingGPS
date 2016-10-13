@@ -23,7 +23,9 @@ import android.widget.Toast;
 
 import net.sourceforge.jtds.jdbc.DateTime;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,6 +48,7 @@ public class StartService extends AppCompatActivity {
 
     private int idTechnician = 0;
     private int idService = 0;
+    private int status = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,43 +60,64 @@ public class StartService extends AppCompatActivity {
 
         idTechnician = intent.getIntExtra("IdTecnico",0);
         idService = intent.getIntExtra("IdServicio",0);
+        status = intent.getIntExtra("Status",0);
 
         mensaje1 = (TextView) findViewById(R.id.mensaje_id);
         mensaje2 = (TextView) findViewById(R.id.mensaje_id2);
 
-        RegisterService su = new RegisterService(idTechnician, idService,1);
+        if(status == 0) {
+            RegisterService su = new RegisterService(idTechnician, idService, 1);
 
-        try
-        {
-            su.execute().get();
-            Toast.makeText(getApplicationContext(), "Servicio Registrado", Toast.LENGTH_SHORT).show();
+            try {
+                su.execute().get();
+                writeFile(idService,1);
+                Toast.makeText(getApplicationContext(), "Servicio Registrado", Toast.LENGTH_SHORT).show();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ExecutionException e)
-        {
-            e.printStackTrace();
-        }
+
         //BOTONES
         final Button btn_llegado = (Button) findViewById(R.id.hellegado);
         final Button btn_ServicioIniciado = (Button) findViewById(R.id.recinto);
         final Button btn_Espera = (Button) findViewById(R.id.enespera);
         final Button btn_Continuar = (Button) findViewById(R.id.continuar);
+        final Button LogOut = (Button) findViewById(R.id.EndService);
+
         btn_ServicioIniciado.setEnabled(false);
         btn_Espera.setEnabled(false);
         btn_Continuar.setEnabled(false);
-        //Estatus del Servicio - HE LLEGADO (Azul)
+        btn_llegado.setEnabled(false);
 
-        if(!Hellegado){btn_llegado.setEnabled(false);}
+        switch (status)
+        {
+            case 1:
+                btn_llegado.setEnabled(true);
+                break;
+            case 2:
+                btn_ServicioIniciado.setEnabled(true);
+                break;
+            case 3:
+                btn_Espera.setEnabled(true);
+                LogOut.setEnabled(true);
+                break;
+            case 4:
+                btn_Continuar.setEnabled(true);
+                break;
+            default:
+                break;
+        }
+
+        //Estatus del Servicio - HE LLEGADO (Azul)
         btn_llegado.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 RegisterService llegado = new RegisterService(idTechnician, idService,2);
-
                 try{
                     llegado.execute().get();
                     Toast.makeText(getApplicationContext(), "He llegado al Domicilio", Toast.LENGTH_SHORT).show();
+                    writeFile(idService,2);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -109,11 +133,12 @@ public class StartService extends AppCompatActivity {
         //Estatus del Servicio - SERVICIO INICIADO (Verde)
         btn_ServicioIniciado.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                RegisterService iniciado = new RegisterService(idTechnician, idService,5);
+                RegisterService iniciado = new RegisterService(idTechnician, idService,3);
 
                 try{
                     iniciado.execute().get();
                     Toast.makeText(getApplicationContext(), "Entré al recinto", Toast.LENGTH_SHORT).show();
+                    writeFile(idService,3);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -128,11 +153,12 @@ public class StartService extends AppCompatActivity {
         //Estatus del Servicio - EN ESPERA (Amarillo)
         btn_Espera.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                RegisterService espera = new RegisterService(idTechnician, idService,3);
+                RegisterService espera = new RegisterService(idTechnician, idService,4);
 
                 try{
                     espera.execute().get();
                     Toast.makeText(getApplicationContext(), "En espera", Toast.LENGTH_SHORT).show();
+                    writeFile(idService,4);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -147,11 +173,11 @@ public class StartService extends AppCompatActivity {
         //Estatus del Servicio - Continuar (Gris)
         btn_Continuar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                RegisterService continuar = new RegisterService(idTechnician, idService,7);
-
+                RegisterService continuar = new RegisterService(idTechnician, idService,3);
                 try{
                     continuar.execute().get();
                     Toast.makeText(getApplicationContext(), "Continuar", Toast.LENGTH_SHORT).show();
+                    writeFile(idService,3);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -163,10 +189,10 @@ public class StartService extends AppCompatActivity {
         });
 
         //Estatus del Servicio - TERMINAR SERVICIO (Rojo)
-        final Button LogOut = (Button) findViewById(R.id.EndService);
+
         LogOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                RegisterService terminado = new RegisterService(idTechnician, idService,6);
+                RegisterService terminado = new RegisterService(idTechnician, idService,5);
                 try{
                     terminado.execute().get();
                 }catch (InterruptedException e){
@@ -174,6 +200,11 @@ public class StartService extends AppCompatActivity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+
+                File dir = getFilesDir();
+                File file = new File(dir,"activeService.txt");
+                boolean deleted = file.delete();
+
                 Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
                 Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
                 EndService = true;
@@ -208,6 +239,20 @@ public class StartService extends AppCompatActivity {
 
         mensaje1.setText("Localizando tu ubicación ...");
         mensaje2.setText("");
+    }
+
+    private void writeFile(int idService, int i) {
+        try {
+            OutputStreamWriter fout =
+                    new OutputStreamWriter(
+                            openFileOutput("activeService.txt", Context.MODE_PRIVATE));
+
+            fout.write(String.valueOf(idService));
+            fout.write("\n" + i);
+            fout.close();
+        } catch (Exception ex) {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+        }
     }
 
     public void setLocation(Location loc) {
