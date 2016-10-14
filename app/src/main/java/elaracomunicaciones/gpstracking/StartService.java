@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.Calendar;
+import android.content.BroadcastReceiver;
+
 
 public class StartService extends AppCompatActivity {
 
@@ -50,6 +52,9 @@ public class StartService extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Intent i = new Intent();
+        i.setAction(".CREATE_RECEIVER_APP");
+        this.sendBroadcast(i);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_service);
 
@@ -270,7 +275,7 @@ public class StartService extends AppCompatActivity {
                     int Minute = calander.get(Calendar.MINUTE);
                     int Second = calander.get(Calendar.SECOND);
                     String dateNow = String.format(Year + "-" + Month + "-" + Day + " " + Hour + ":" + Minute + ":" + Second);
-                    Tracking trackingNow = new Tracking(idService,dateNow, loc.getLatitude(), loc.getLongitude());
+                    Tracking trackingNow = new Tracking(idService,dateNow, loc.getLatitude(),loc.getLongitude());
                     bdLocal.saveTracking(trackingNow);
                     Toast.makeText(getApplicationContext(), String.format("Online: "+ answer), Toast.LENGTH_SHORT).show();
                 }
