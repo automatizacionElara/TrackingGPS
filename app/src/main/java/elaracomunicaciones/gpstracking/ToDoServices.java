@@ -1,7 +1,13 @@
 package elaracomunicaciones.gpstracking;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -9,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +43,16 @@ public class ToDoServices extends AppCompatActivity
     private int idTechnician = 0;
     private TextView tbReference, tbTicket, tbETA, tbType, tbRequired;
     private Spinner servicesSpinner;
+    private Button buttonInit;
+    CheckConnection cc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todoservices);
+
+        cc = new CheckConnection();
 
         tbReference = (TextView)findViewById(R.id.tbReference);
         tbTicket = (TextView)findViewById(R.id.tbTicket);
@@ -55,6 +66,7 @@ public class ToDoServices extends AppCompatActivity
         idTechnician = inte.getIntExtra("IdTecnico",0);
 
         Button LogOut = (Button) findViewById(R.id.LogOut);
+
         LogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,14 +75,16 @@ public class ToDoServices extends AppCompatActivity
                 File file = new File(dir,"access.txt");
                 boolean deleted = file.delete();
                 Toast.makeText(getApplicationContext(), "Sesión Cerrada", Toast.LENGTH_SHORT).show();
-                Intent LogOut = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(LogOut);
+
+                Intent LoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(LoginActivity);
+                finish();
             }
         });
 
 
-        Button Checkin = (Button) findViewById(R.id.checkin);
-        Checkin.setOnClickListener(new View.OnClickListener() {
+        buttonInit = (Button) findViewById(R.id.checkin);
+        buttonInit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -81,11 +95,51 @@ public class ToDoServices extends AppCompatActivity
 
                 Checkin.putExtra("IdTecnico",idTechnician);
                 Checkin.putExtra("IdServicio",service.idService);
+                Checkin.putExtra("Status", 1);
 
                 startActivity(Checkin);
             }
         });
 
+        final Button buttonRefresh = (Button)findViewById(R.id.buttonRefresh);
+
+        buttonRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                buttonRefresh.setEnabled(false);
+
+                if (!cc.isOnlineNet())
+                {
+                    Toast.makeText(getBaseContext(),
+                            "No se pudieron cargar los servicios. Comprueba tu conexión a Internet.", Toast.LENGTH_LONG)
+                            .show();
+
+                    buttonInit.setEnabled(false);
+                }
+                else {
+                    loadServices();
+                }
+                buttonRefresh.setEnabled(true);
+            }
+        });
+
+        if (!cc.isOnlineNet())
+        {
+            Toast.makeText(getBaseContext(),
+                    "No se pudieron cargar los servicios. Comprueba tu conexión a Internet.", Toast.LENGTH_LONG)
+                    .show();
+
+            buttonInit.setEnabled(false);
+        }
+        else
+        {
+            loadServices();
+        }
+    }
+
+    private void loadServices()
+    {
         String webServiceResult = "";
 
         WSSoap client = new WSSoap(webServiceResult);
@@ -157,6 +211,15 @@ public class ToDoServices extends AppCompatActivity
                 e.printStackTrace();
             }
 
+        }
+
+        if(list.size() > 0)
+        {
+            buttonInit.setEnabled(true);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Feliciades, no tienes ningún servicio pendiente.", Toast.LENGTH_SHORT).show();
         }
 
         servicesSpinner
@@ -261,6 +324,6 @@ public class ToDoServices extends AppCompatActivity
         }
         return super.onKeyDown(keyCode, event);
     }
-
-
 }
+
+

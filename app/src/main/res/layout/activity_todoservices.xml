@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,20 +23,29 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top">
+            android:layout_gravity="top"
+            android:id="@+id/titleLayout">
 
-            <ImageView
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageView"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/services"
-                />
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/services"
+                    />
+
+            </LinearLayout>
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
-                android:layout_below = "@+id/imageView"
+                android:layout_below = "@+id/titleLayout"
                 android:id="@+id/spaceImageView"/>
 
             <Spinner
@@ -48,16 +58,26 @@
 
         </LinearLayout>
 
+        <ProgressBar
+            android:id="@+id/login_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:id="@+id/infoLayout">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_gravity="center_horizontal|top">
+
+
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -65,7 +85,6 @@
                     android:text="Número de Ticket: "
                     android:id="@+id/lbTicket"
                     android:layout_alignParentTop="true"
-                    android:layout_below="@+id/servicesSpinner"
                     android:textColor="@color/abc_primary_text_disable_only_material_light"
                     android:textStyle="bold" />
 
@@ -114,9 +133,9 @@
 
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
                     android:layout_below="@+id/lbETA"
-                    android:id="@+id/spaceETA"/>
+                    android:id="@+id/spaceETA"
+                    android:layout_height="30dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -140,9 +159,9 @@
 
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
                     android:layout_below="@+id/lbReference"
-                    android:id="@+id/spaceReference"/>
+                    android:id="@+id/spaceReference"
+                    android:layout_height="30dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -156,14 +175,25 @@
                     android:layout_marginBottom="20dp"/>
                     <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_below="@+id/lbRequired">
+                        android:layout_below="@+id/lbRequired"
+                        android:id="@+id/scrollRequired"
+                        android:layout_height="100dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/tbRequired"
                         />
                     </ScrollView>
+
+                <Button
+                    android:layout_width="30dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/buttonRefresh"
+                    android:background="@android:drawable/ic_popup_sync"
+                    android:layout_below="@+id/scrollRequired"
+                    android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/colorPrimary" />
+
             </RelativeLayout>
 
 

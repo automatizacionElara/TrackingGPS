@@ -9,6 +9,9 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
+import java.util.concurrent.TimeoutException;
+
 /**
  * Created by daniel sosa on 27/07/2016.
  * Esta clase hace la conexión a la base de datos del servidor en la nube

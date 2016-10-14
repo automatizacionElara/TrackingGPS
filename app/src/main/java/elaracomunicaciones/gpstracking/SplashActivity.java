@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
@@ -59,9 +60,12 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
 
                 String IdTecnico = "";
+                String IdService = "";
+                String Status = "";
                 int IdTechnician= 0;
                 boolean FileExist = false;
                 String[] files = fileList();
+
                 for (String file : files) {
                     if (file.equals("access.txt")) {
                         try
@@ -75,11 +79,22 @@ public class SplashActivity extends AppCompatActivity {
                         {
                             Log.e("Ficheros", "Error al leer fichero desde recurso raw");
                         }
-                        IdTechnician = Integer.parseInt(IdTecnico.toString());
-                        Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
-                        ListServices.putExtra("IdTecnico", IdTechnician);
-                        startActivity(ListServices);
+                        IdTechnician = Integer.parseInt(IdTecnico);
                         FileExist = true;
+                    }
+
+                    if(file.equals("activeService.txt")){
+                        try{
+                            InputStreamReader fraw = new InputStreamReader(openFileInput("activeService.txt"));;
+                            BufferedReader brin = new BufferedReader(fraw);
+                            IdService= brin.readLine();
+                            Status = brin.readLine();
+                            fraw.close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                        }
                     }
                 }
 
@@ -89,6 +104,23 @@ public class SplashActivity extends AppCompatActivity {
                     Intent mainIntent = new Intent().setClass(
                             SplashActivity.this, LoginActivity.class);
                     startActivity(mainIntent);
+                }
+                else
+                {
+                    if(IdService != "")
+                    {
+                        Intent StartService = new Intent(getApplicationContext(), StartService.class);
+                        StartService.putExtra("IdTecnico", IdTechnician);
+                        StartService.putExtra("IdServicio", Integer.parseInt(IdService));
+                        StartService.putExtra("Status", Integer.parseInt(Status));
+                        startActivity(StartService);
+                    }
+                    else
+                    {
+                        Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
+                        ListServices.putExtra("IdTecnico", IdTechnician);
+                        startActivity(ListServices);
+                    }
                 }
 
                 // Close the activity so the user won't able to go back this

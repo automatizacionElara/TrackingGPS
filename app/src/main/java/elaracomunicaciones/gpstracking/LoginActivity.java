@@ -34,6 +34,7 @@ import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -51,15 +52,6 @@ public class LoginActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        VerifiedConnection vc = new VerifiedConnection();
-        boolean connect = vc.verificaConexion(getApplicationContext());
-        if (!vc.verificaConexion(this)) {
-            Toast.makeText(getBaseContext(),
-                    "Comprueba tu conexión a Internet y vuelve a inicar la Aplicación ", Toast.LENGTH_SHORT)
-                    .show();
-            this.finish();
-        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -113,6 +105,22 @@ public class LoginActivity extends AppCompatActivity  {
             muserView.setError(getString(R.string.error_field_required));
             focusView = muserView;
             cancel = true;
+            return;
+        }
+
+        CheckConnection cc = new CheckConnection();
+        boolean connect = cc.isOnlineNet();
+
+        if (!connect)
+        {
+            Toast.makeText(getBaseContext(),
+                    "No se pudo inciar sesión. Comprueba tu conexión a Internet.", Toast.LENGTH_SHORT)
+                    .show();
+            cancel = true;
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+            return;
         }
 
         if (cancel) {
@@ -181,9 +189,9 @@ public class LoginActivity extends AppCompatActivity  {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-
-                try {
-                    Connection con = DBConnection.getInstance().getConnection();
+            Connection con= null;
+            try {
+                    con = DBConnection.getInstance().getConnection();
                     if (con == null) {
                         z = "Error en la Conexión con SQL server";
                     } else {
@@ -209,7 +217,7 @@ public class LoginActivity extends AppCompatActivity  {
                             startActivity(ListServices);
                         }
                     }
-                } catch (Exception ex) {
+                } catch (Exception ex){
                     IsSuccess = false;
                     z = "Exceptions";
                 }
@@ -241,7 +249,9 @@ public class LoginActivity extends AppCompatActivity  {
 
                 Intent ListServices = new Intent(getApplicationContext(), ToDoServices.class);
                 ListServices.putExtra("IdTecnico", IdTechnician);
+                finish();
                 startActivity(ListServices);
+
             }else{
                 Toast.makeText(getApplicationContext(), "Usuario y Contraseña Invalidos", Toast.LENGTH_SHORT).show();
             }
