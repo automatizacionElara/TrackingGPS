@@ -20,6 +20,7 @@ import java.util.EmptyStackException;
         private final double latitude;
         private final double longitude;
         private final int IdService;
+        private final String Fecha;
         private boolean IsSuccess;
         String msg = "";
 
@@ -27,17 +28,32 @@ import java.util.EmptyStackException;
             latitude = Lat;
             longitude = Long;
             IdService = IdServ;
+            Fecha = "";
         }
+
+    SendUbication(int IdServ, double Long, double Lat, String fecha)
+    {
+         latitude = Lat;
+         longitude = Long;
+        IdService = IdServ;
+         Fecha = fecha;
+    }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
+                String Elara_ES_TrackingDetails = "";
                 String msg = "";
                 Connection con = DBConnection.getInstance().getConnection();
                 if (con == null) {
                     msg = "Error en la Conexión con SQL server";
                 } else {
-                    String Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(" + IdService + ", GETDATE()," +  latitude + "," + longitude + ");";
+                    if(Fecha == ""){
+                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(" + IdService + ", GETDATE()," +  latitude + "," + longitude + ");";
+                    }else{
+                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(" + IdService + ","+ Fecha + "," +  latitude + "," + longitude + ");";
+                    }
+
                     Statement stmt = null;
 
                     try {

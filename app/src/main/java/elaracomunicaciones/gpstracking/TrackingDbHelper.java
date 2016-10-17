@@ -54,6 +54,12 @@ public class TrackingDbHelper extends SQLiteOpenHelper
         );
     }
 
+    public boolean deleteTracking(String IdTracking)
+    {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        return sqLiteDatabase.delete(TrackingContract.TrackingEntry.TABLE_NAME, "IdTracking =" + IdTracking, null) > 0;
+    }
+
     public Cursor getAllTracking()
     {
         //return getReadableDatabase().query(TrackingContract.TrackingEntry.TABLE_NAME,null, null, null,null,null,null,null);

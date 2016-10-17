@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -300,10 +301,11 @@ public class StartService extends AppCompatActivity {
 
             loc.getLatitude();
             loc.getLongitude();
+            boolean answer = isOnline.isOnlineNet();
 
             if(!EndService)
             {
-                boolean answer = isOnline.isOnlineNet();
+
                 if(answer == true)
                 {
                     Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
@@ -322,7 +324,30 @@ public class StartService extends AppCompatActivity {
                     String dateNow = String.format(Year + "-" + Month + "-" + Day + " " + Hour + ":" + Minute + ":" + Second);
                     Tracking trackingNow = new Tracking(idService,dateNow, loc.getLatitude(),loc.getLongitude());
                     bdLocal.saveTracking(trackingNow);
-                    Toast.makeText(getApplicationContext(), String.format("Online: "+ answer), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), String.format("Registro en BD Interna"), Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                TrackingDbHelper helper = new TrackingDbHelper(getApplicationContext());
+                Cursor c = helper.getAllTracking();
+                if(answer == true)
+                {
+                    if(c.moveToFirst())
+                    {
+                        do
+                        {
+                            String IdTracking = c.getString(0);
+                            String IdService = c.getString(1);
+                            String DateTracking = c.getString(2);
+                            String Latitude = c.getString(3) ;
+                            String Longitude = c.getString(4);
+                            Toast.makeText(getApplicationContext(), "Ubicación Enviada Después", Toast.LENGTH_SHORT).show();
+                            SendUbication su = new SendUbication(Integer.parseInt(IdService),Double.parseDouble(Longitude),Double.parseDouble(Latitude), DateTracking);
+                            su.execute();
+                            bdLocal.deleteTracking(IdTracking);
+                        }while(c.moveToNext());
+                    }
                 }
             }
 
