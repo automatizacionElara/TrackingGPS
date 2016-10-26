@@ -33,12 +33,18 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="242dp"
+                    android:layout_height="35dp"
                     android:id="@+id/imageView"
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/services"
                     />
+
+                <Button
+                    android:text="Editar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editAdrress" />
 
             </LinearLayout>
 
@@ -131,6 +137,24 @@
                     android:layout_below="@+id/tbType"
                     android:layout_alignStart="@+id/tbType" />
 
+                <TextView
+                    android:text="Dirección: "
+                    android:textColor="@color/abc_primary_text_disable_only_material_light"
+                    android:layout_width="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lbDireccion"
+                    android:layout_below="@+id/tbETA"
+                    android:layout_alignStart="@+id/tbETA"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbDireccion"
+                    android:layout_below="@+id/lbDireccion"
+                    android:layout_alignStart="@+id/lbDireccion"/>
+
                 <Space
                     android:layout_width="match_parent"
                     android:layout_below="@+id/lbETA"
@@ -198,6 +222,12 @@
 
 
         </FrameLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="260dp">
+
+        </GridLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
