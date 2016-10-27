@@ -10,5 +10,8 @@ public class Service
     protected int ticket;
     protected String estimatedTimeA;
     protected String type;
+    protected String address;
+    protected String city;
+    protected String district;
     protected List<String> required;
 }

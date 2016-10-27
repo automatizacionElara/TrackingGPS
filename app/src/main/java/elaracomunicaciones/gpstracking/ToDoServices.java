@@ -41,7 +41,7 @@ public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
     private int idTechnician = 0;
-    private TextView tbReference, tbTicket, tbETA, tbType, tbRequired;
+    private TextView tbReference, tbTicket, tbETA, tbType, tbRequired, tbAddress;
     private Spinner servicesSpinner;
     private Button buttonInit;
     CheckConnection cc;
@@ -60,6 +60,7 @@ public class ToDoServices extends AppCompatActivity
         tbType = (TextView)findViewById(R.id.tbType);
         servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
         tbRequired = (TextView)findViewById(R.id.tbRequired);
+        tbAddress = (TextView)findViewById(R.id.tbAddress);
 
         Intent inte = getIntent();
 
@@ -189,6 +190,9 @@ public class ToDoServices extends AppCompatActivity
                 serv.estimatedTimeA = jsonService.getString("ETA");
                 serv.ticket = jsonService.getInt("ticket");
                 serv.type = jsonService.getString("type");
+                serv.address = jsonService.getString("address");
+                serv.city = jsonService.getString("city");
+                serv.district = jsonService.getString("district");
 
                 JSONArray required = new JSONArray(jsonService.getString("required"));
 
@@ -236,6 +240,7 @@ public class ToDoServices extends AppCompatActivity
                 tbTicket.setText(String.valueOf(servicesList.get(position).ticket));
                 tbETA.setText(servicesList.get(position).estimatedTimeA);
                 tbType.setText(servicesList.get(position).type);
+                tbAddress.setText(servicesList.get(position).address + ", " + servicesList.get(position).city + ", " + servicesList.get(position).district);
                 Service s = servicesList.get(position);
 
                 tbRequired.setText("No hay registros");
@@ -263,6 +268,7 @@ public class ToDoServices extends AppCompatActivity
         String result = "";
         String namespace = "http://tempuri.org/";
         String url = "http://201.131.60.39:8092/AndroidWebService/SeguimientoCuadrillasWS.asmx";
+        //String url = "http://172.31.248.4/AndroidWebService/SeguimientoCuadrillasWS.asmx";
         String methodName = "getActiveServices";
 
         String SOAP_ACTION;

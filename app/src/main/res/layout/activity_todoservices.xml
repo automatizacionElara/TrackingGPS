@@ -18,7 +18,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
 
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -26,19 +25,28 @@
             android:layout_gravity="top"
             android:id="@+id/titleLayout">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:id="@+id/imageView"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/services"
+                />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/buttonsLayout">
 
-                <ImageView
-                    android:layout_width="242dp"
-                    android:layout_height="35dp"
-                    android:id="@+id/imageView"
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/buttonRefresh"
+                    android:text="Refrescar"
+                    android:layout_below="@+id/scrollRequired"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/services"
-                    />
+                    android:backgroundTint="@color/colorPrimary" />
 
                 <Button
                     android:text="Editar"
@@ -51,7 +59,7 @@
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
-                android:layout_below = "@+id/titleLayout"
+                android:layout_below = "@+id/buttonsLayout"
                 android:id="@+id/spaceImageView"/>
 
             <Spinner
@@ -63,14 +71,6 @@
                 android:layout_centerHorizontal="true" />
 
         </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/login_progress"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"/>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -143,7 +143,7 @@
                     android:layout_width="wrap_content"
                     android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lbDireccion"
+                    android:id="@+id/lbAddress"
                     android:layout_below="@+id/tbETA"
                     android:layout_alignStart="@+id/tbETA"
                     android:layout_alignParentStart="true"/>
@@ -151,15 +151,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tbDireccion"
-                    android:layout_below="@+id/lbDireccion"
-                    android:layout_alignStart="@+id/lbDireccion"/>
+                    android:id="@+id/tbAddress"
+                    android:layout_below="@+id/lbAddress"
+                    android:layout_alignStart="@+id/lbAddress"/>
 
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_below="@+id/lbETA"
+                    android:layout_below="@+id/tbAddress"
                     android:id="@+id/spaceETA"
-                    android:layout_height="30dp" />
+                    android:layout_height="20dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -208,15 +208,6 @@
                         android:id="@+id/tbRequired"
                         />
                     </ScrollView>
-
-                <Button
-                    android:layout_width="30dp"
-                    android:layout_height="60dp"
-                    android:id="@+id/buttonRefresh"
-                    android:background="@android:drawable/ic_popup_sync"
-                    android:layout_below="@+id/scrollRequired"
-                    android:layout_centerHorizontal="true"
-                    android:backgroundTint="@color/colorPrimary" />
 
             </RelativeLayout>
 
