@@ -152,7 +152,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/lbRequerimientos"
             android:layout_alignParentStart="true"
-            android:layout_above="@+id/buttonRefresh">
+            android:layout_above="@+id/btnRefresh">
 
             <TextView
                 android:layout_width="match_parent"
@@ -167,11 +167,11 @@
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_lock_power_off"
             android:layout_marginTop="19dp"
-            android:id="@+id/LogOut"
+            android:id="@+id/btnLogOut"
             app:backgroundTint="@android:color/background_light"
             android:text="Salir"
             android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/buttonRefresh" />
+            android:layout_alignStart="@+id/btnRefresh" />
 
         <Button
             android:layout_width="wrap_content"
@@ -179,14 +179,14 @@
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
             android:layout_marginEnd="19dp"
-            android:id="@+id/buttonRefresh"
-            app:backgroundTint="@android:color/holo_orange_dark"
+            android:id="@+id/btnRefresh"
             android:text="Recargar"
             android:textColor="@android:color/background_light"
             android:textAllCaps="false"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_refresh" />
 
         <Button
             android:layout_width="wrap_content"
@@ -194,21 +194,20 @@
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_menu_edit"
             android:id="@+id/btnEditAddress"
-            app:backgroundTint="@android:color/holo_green_dark"
             android:text="Editar"
             android:textColor="@android:color/background_light"
             android:textAllCaps="false"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_editaddress" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
-            android:id="@+id/checkin"
-            app:backgroundTint="@color/colorPrimaryDark"
+            android:id="@+id/btnInit"
             android:text="OK"
             android:textColor="@android:color/background_light"
             android:layout_marginEnd="14dp"
@@ -216,7 +215,8 @@
             android:layout_alignEnd="@+id/lbRequerimientos"
             android:textAllCaps="false"
             android:textSize="14sp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_init" />
 
     </RelativeLayout>
 

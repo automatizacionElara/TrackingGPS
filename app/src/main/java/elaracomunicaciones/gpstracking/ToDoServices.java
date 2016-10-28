@@ -1,13 +1,11 @@
 package elaracomunicaciones.gpstracking;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.ProgressDialog;
-import android.content.Context;
+/* Librerías */
+
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -15,13 +13,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.List;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.jtds.jdbc.cache.SQLCacheKey;
+/* Librerías para webservice .net*/
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,20 +31,16 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-
 public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
     private int idTechnician = 0;
     private TextView tbReference, tbTicket, tbETA, tbType, tbRequired, tbAddress;
     private Spinner servicesSpinner;
-    private Button buttonInit;
-    CheckConnection cc;
+    private Button btnInit, btnRefresh, btnEditAddress, btnLogOut;
+    private CheckConnection webConnection;
+
+    /* Inicialización de la actividad */
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,23 +48,31 @@ public class ToDoServices extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todoservices);
 
-        cc = new CheckConnection();
+        /* Lectura de parámetros recibidos de la actividad de Login */
+
+        Intent inte = getIntent();
+        idTechnician = inte.getIntExtra("IdTecnico",0);
+
+        /* Creación de instancia de conexión a internet */
+
+        webConnection = new CheckConnection();
+
+        /* Inicialización de variables y elementos de la vista */
+
+        servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
 
         tbReference = (TextView)findViewById(R.id.tbReference);
         tbTicket = (TextView)findViewById(R.id.tbTicket);
         tbETA = (TextView)findViewById(R.id.tbETA);
         tbType = (TextView)findViewById(R.id.tbType);
-        servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
         tbRequired = (TextView)findViewById(R.id.tbRequired);
         tbAddress = (TextView)findViewById(R.id.tbAddress);
 
-        Intent inte = getIntent();
+        /* Acción del botón para cierre de sesión */
 
-        idTechnician = inte.getIntExtra("IdTecnico",0);
+        btnLogOut = (Button) findViewById(R.id.btnLogOut);
 
-        Button LogOut = (Button) findViewById(R.id.LogOut);
-
-        LogOut.setOnClickListener(new View.OnClickListener() {
+        btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -83,9 +87,10 @@ public class ToDoServices extends AppCompatActivity
             }
         });
 
+        /* Acción del botón para iniciar servicio */
 
-        buttonInit = (Button) findViewById(R.id.checkin);
-        buttonInit.setOnClickListener(new View.OnClickListener() {
+        btnInit = (Button) findViewById(R.id.btnInit);
+        btnInit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -96,51 +101,55 @@ public class ToDoServices extends AppCompatActivity
 
                 Checkin.putExtra("IdTecnico",idTechnician);
                 Checkin.putExtra("IdServicio",service.idService);
+                Checkin.putExtra("reference",service.elaraReference);
                 Checkin.putExtra("Status", 1);
 
                 startActivity(Checkin);
             }
         });
 
-        final Button buttonRefresh = (Button)findViewById(R.id.buttonRefresh);
+        /* Acción del botón para actualizar la lista de servicios disponibles */
 
-        buttonRefresh.setOnClickListener(new View.OnClickListener() {
+        btnRefresh = (Button)findViewById(R.id.btnRefresh);
+
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                buttonRefresh.setEnabled(false);
-
-                if (!cc.isOnlineNet())
-                {
-                    Toast.makeText(getBaseContext(),
-                            "No se pudieron cargar los servicios. Comprueba tu conexión a Internet.", Toast.LENGTH_LONG)
-                            .show();
-
-                    buttonInit.setEnabled(false);
-                }
-                else {
-                    loadServices();
-                }
-                buttonRefresh.setEnabled(true);
+                loadServices();
             }
         });
 
-        if (!cc.isOnlineNet())
+         /* Acción del botón para solitar la edición de la dirección de un sitio */
+
+        btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
+
+        /* Obtención de servicios disponibles para el proveedor */
+
+        loadServices();
+
+    }
+
+    private void enableActions(boolean enable)
+    {
+        btnInit.setEnabled(enable);
+        btnEditAddress.setEnabled(enable);
+        btnRefresh.setEnabled(!enable);
+    }
+
+    private void loadServices()
+    {
+        if (!webConnection.isOnlineNet())
         {
             Toast.makeText(getBaseContext(),
                     "No se pudieron cargar los servicios. Comprueba tu conexión a Internet.", Toast.LENGTH_LONG)
                     .show();
 
-            buttonInit.setEnabled(false);
-        }
-        else
-        {
-            loadServices();
-        }
-    }
+            enableActions(false);
 
-    private void loadServices()
-    {
+            return;
+        }
+
         String webServiceResult = "";
 
         WSSoap client = new WSSoap(webServiceResult);
@@ -219,7 +228,7 @@ public class ToDoServices extends AppCompatActivity
 
         if(list.size() > 0)
         {
-            buttonInit.setEnabled(true);
+            enableActions(true);
         }
         else
         {
@@ -267,8 +276,8 @@ public class ToDoServices extends AppCompatActivity
         String webServiceResult = "";
         String result = "";
         String namespace = "http://tempuri.org/";
-        String url = "http://201.131.60.39:8092/AndroidWebService/SeguimientoCuadrillasWS.asmx";
-        //String url = "http://172.31.248.4/AndroidWebService/SeguimientoCuadrillasWS.asmx";
+        //String url = "http://201.131.60.39:8092/AndroidWebService/SeguimientoCuadrillasWS.asmx";
+        String url = "http://172.31.248.4/AndroidWebService/SeguimientoCuadrillasWS.asmx";
         String methodName = "getActiveServices";
 
         String SOAP_ACTION;
