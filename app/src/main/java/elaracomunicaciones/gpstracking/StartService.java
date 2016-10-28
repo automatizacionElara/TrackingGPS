@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -24,8 +25,10 @@ import android.widget.Toast;
 
 import net.sourceforge.jtds.jdbc.DateTime;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -43,10 +46,6 @@ public class StartService extends AppCompatActivity {
     TextView mensaje1;
     TextView mensaje2;
 
-    boolean Hellegado = true; //AZUL
-    boolean Recinto = false; // VERDE
-    boolean EnEspera = false; // NARANJA
-    boolean Continuar = false; // GRIS
     boolean EndService = false; // ROJO
 
     private int idTechnician = 0;
@@ -68,8 +67,8 @@ public class StartService extends AppCompatActivity {
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
 
-        mensaje1 = (TextView) findViewById(R.id.mensaje_id);
-        mensaje2 = (TextView) findViewById(R.id.mensaje_id2);
+        mensaje1 = (TextView) findViewById(R.id.tbReference);
+        mensaje2 = (TextView) findViewById(R.id.tbDirection);
 
         if(status == 1) {
             RegisterService su = new RegisterService(idTechnician, idService, 1);
@@ -86,117 +85,78 @@ public class StartService extends AppCompatActivity {
         }
 
         //BOTONES
-        final Button btn_llegado = (Button) findViewById(R.id.hellegado);
-        final Button btn_ServicioIniciado = (Button) findViewById(R.id.recinto);
-        final Button btn_Espera = (Button) findViewById(R.id.enespera);
-        final Button btn_Continuar = (Button) findViewById(R.id.continuar);
-        final Button LogOut = (Button) findViewById(R.id.EndService);
+        final Button btn_Status = (Button) findViewById(R.id.btnStatus);
+        final Button btn_Espera = (Button) findViewById(R.id.btnEspera);
+        final Button btn_EndService = (Button) findViewById(R.id.btnEndService);
 
-        btn_ServicioIniciado.setEnabled(false);
-        btn_Espera.setEnabled(false);
-        btn_Continuar.setEnabled(false);
-        btn_llegado.setEnabled(false);
 
-        switch (status)
-        {
-            case 1:
-                btn_llegado.setEnabled(true);
-                break;
-            case 2:
-                btn_ServicioIniciado.setEnabled(true);
-                break;
-            case 3:
-                btn_Espera.setEnabled(true);
-                LogOut.setEnabled(true);
-                break;
-            case 4:
-                btn_Continuar.setEnabled(true);
-                break;
-            default:
-                break;
-        }
 
-        //Estatus del Servicio - HE LLEGADO (Azul)
-        btn_llegado.setOnClickListener(new View.OnClickListener() {
+
+        btn_Status.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                RegisterService llegado = new RegisterService(idTechnician, idService,2);
+
+                String IdTecnico = "";
+                String IdService = "";
+                String Status = "";
+                boolean FileExist = false;
+                String[] files = fileList();
+
+                for (String file : files) {
+                    if(file.equals("activeService.txt")){
+                        try{
+                            InputStreamReader fraw = new InputStreamReader(openFileInput("activeService.txt"));;
+                            BufferedReader brin = new BufferedReader(fraw);
+                            IdService= brin.readLine();
+                            Status = brin.readLine();
+                            fraw.close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                        }
+                    }
+                }
+
+                int estado = Integer.parseInt(Status);
+                switch (estado)
+                {
+                    case 1:
+                        status = 2;
+                        btn_Status.setText("En Sitio");
+                        btn_Status.setBackgroundColor(Color.rgb(0,166,255));
+                        break;
+                    case 2:
+                        status = 3;
+                        btn_Status.setText("En Proceso");
+                        btn_Status.setBackgroundColor(Color.rgb(78,204,0));
+                        break;
+                    case 3:
+                        status = 4;
+                        btn_Status.setText("En Espera");
+                        btn_Status.setBackgroundColor(Color.rgb(236,186,2));
+                        break;
+                    default:
+                        break;
+                }
+
+                int seguimiento = status;
+
+                RegisterService status = new RegisterService(idTechnician, idService, seguimiento);
                 try{
-                    llegado.execute().get();
-                    Toast.makeText(getApplicationContext(), "He llegado al Domicilio", Toast.LENGTH_SHORT).show();
-                    writeFile(idService,2);
+                    status.execute().get();
+                    writeFile(idService,seguimiento);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Hellegado = false;
-                btn_llegado.setEnabled(false);
-                btn_ServicioIniciado.setEnabled(true);
-
             }
         });
 
-        //Estatus del Servicio - SERVICIO INICIADO (Verde)
-        btn_ServicioIniciado.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                RegisterService iniciado = new RegisterService(idTechnician, idService,3);
-
-                try{
-                    iniciado.execute().get();
-                    Toast.makeText(getApplicationContext(), "Entré al recinto", Toast.LENGTH_SHORT).show();
-                    writeFile(idService,3);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                Recinto = true;
-                btn_ServicioIniciado.setEnabled(false);
-                btn_Espera.setEnabled(true);
-            }
-        });
-
-        //Estatus del Servicio - EN ESPERA (Amarillo)
-        btn_Espera.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                RegisterService espera = new RegisterService(idTechnician, idService,4);
-
-                try{
-                    espera.execute().get();
-                    Toast.makeText(getApplicationContext(), "En espera", Toast.LENGTH_SHORT).show();
-                    writeFile(idService,4);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                EnEspera = true;
-                btn_Espera.setEnabled(false);
-                btn_Continuar.setEnabled(true);
-            }
-        });
-
-        //Estatus del Servicio - Continuar (Gris)
-        btn_Continuar.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                RegisterService continuar = new RegisterService(idTechnician, idService,3);
-                try{
-                    continuar.execute().get();
-                    Toast.makeText(getApplicationContext(), "Continuar", Toast.LENGTH_SHORT).show();
-                    writeFile(idService,3);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                Continuar = true;
-                btn_Continuar.setEnabled(false);
-            }
-        });
 
         //Estatus del Servicio - TERMINAR SERVICIO (Rojo)
 
-        LogOut.setOnClickListener(new View.OnClickListener() {
+        btn_EndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 RegisterService terminado = new RegisterService(idTechnician, idService,5);
                 try{

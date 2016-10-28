@@ -1,123 +1,109 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="elaracomunicaciones.gpstracking.StartService" >
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <ImageView
-            android:layout_width="61dp"
+            android:layout_width="match_parent"
             android:layout_height="83dp"
-            android:id="@+id/imageView2"
-            android:src="@drawable/icongps"
-            android:layout_gravity="center_horizontal" />
+            app:srcCompat="@drawable/icongps"
+            android:id="@+id/imageView"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp" />
 
         <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="46dp"
-            android:text="Mi Ubicación Actual"
-            android:id="@+id/lbUbication"
-            android:textColor="#000000"
-            android:textStyle="bold"
+            android:text="Información del Servicio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_alignParentStart="true"
+            android:id="@+id/lbInformacion"
+            android:layout_alignParentEnd="true"
+            android:textStyle="normal|bold"
+            android:textColor="@android:color/background_dark"
             android:textAlignment="center" />
 
         <TextView
+            android:text="Referencia:"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lbInformacion"
+            android:layout_alignParentStart="true"
+            android:id="@+id/lbReferencia"
+            android:layout_width="wrap_content"
+            android:textStyle="normal|bold"
+            android:textColor="@android:color/background_dark"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/lbReferencia"
+            android:layout_alignParentStart="true"
+            android:id="@+id/tbReference"
+            android:layout_alignParentEnd="true"
+            android:paddingLeft="10dp" />
+
+        <TextView
             android:text="Dirección: "
-            android:id="@+id/lbDirection"
-            android:textColor="#000000"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mensaje_id2"
-            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:id="@+id/lbDirection"
+            android:layout_width="wrap_content"
+            android:textStyle="normal|bold"
+            android:textColor="@android:color/background_dark"
+            android:paddingLeft="10dp"
+            android:layout_below="@+id/tbReference"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Coordenadas: "
-            android:id="@+id/lbCoordenadas"
-            android:textColor="#000000"
-            android:textStyle="bold"
-            android:layout_below="@+id/linearLayout"
-            android:layout_alignParentStart="true" />
+            android:id="@+id/tbDirection"
+            android:paddingLeft="10dp"
+            android:layout_below="@+id/lbDirection"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true" />
 
-        <TextView
-            android:id="@+id/mensaje_id"
-            android:layout_width="match_parent"
+        <Button
+            android:text="Finalizar Servicio"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:layout_below="@+id/lbCoordenadas"
-            android:layout_alignParentStart="true" />
-    </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="11dp"
+            android:id="@+id/btnEndService"
+            android:layout_alignParentEnd="true"
+            android:textAllCaps="false"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@android:color/background_light"
+            android:textSize="18sp" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
+        <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:weightSum="1">
+            android:layout_marginBottom="13dp"
+            android:id="@+id/btnStatus"
+            android:layout_above="@+id/btnEndService"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/holo_green_dark"
+            android:text="He llegado" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="He llegado"
-                android:id="@+id/hellegado"
-                android:backgroundTint="@android:color/holo_blue_dark"
-                android:layout_gravity="center_horizontal" />
+        <Button
+            android:text="Espera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:id="@+id/btnEspera"
+            android:layout_above="@+id/btnStatus"
+            android:layout_alignParentEnd="true" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Iniciar Servicio"
-                android:id="@+id/recinto"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:layout_gravity="center_horizontal" />
+    </RelativeLayout>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="En espera"
-                android:id="@+id/enespera"
-                android:backgroundTint="@android:color/holo_orange_dark" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Continuar"
-                android:id="@+id/continuar"
-                android:backgroundTint="@android:color/darker_gray"
-                android:layout_gravity="center_horizontal" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Terminar Servicio"
-                android:id="@+id/EndService"
-                android:backgroundTint="@android:color/holo_red_dark"
-                android:layout_gravity="center_horizontal" />
-
-        </LinearLayout>
-
-    </FrameLayout>
-
-</RelativeLayout>
+</LinearLayout>
