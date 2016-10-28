@@ -71,13 +71,13 @@
             android:layout_alignParentEnd="true" />
 
         <Button
-            android:text="Finalizar Servicio"
+            android:text="Interrumpir Servicio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="11dp"
-            android:id="@+id/btnEndService"
+            android:id="@+id/btnServicioInterrumpido"
             android:layout_alignParentEnd="true"
             android:textAllCaps="false"
             android:background="@android:color/holo_red_dark"
@@ -89,20 +89,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="13dp"
             android:id="@+id/btnStatus"
-            android:layout_above="@+id/btnEndService"
+            android:layout_above="@+id/btnServicioInterrumpido"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:background="@android:color/holo_green_dark"
             android:text="He llegado" />
-
-        <Button
-            android:text="Espera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:id="@+id/btnEspera"
-            android:layout_above="@+id/btnStatus"
-            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 

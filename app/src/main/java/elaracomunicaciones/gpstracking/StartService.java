@@ -84,24 +84,68 @@ public class StartService extends AppCompatActivity {
             }
         }
 
+        String IdTecnico = "";
+        String IdService = "";
+        String Status = "";
+        boolean FileExist = false;
+        String[] files = fileList();
+
+        for (String file : files) {
+            if (file.equals("access.txt")) {
+                try
+                {
+                    InputStreamReader fraw = new InputStreamReader(openFileInput("access.txt"));;
+                    BufferedReader brin = new BufferedReader(fraw);
+                    IdTecnico= brin.readLine();
+                    fraw.close();
+                }
+                catch (Exception ex)
+                {
+                    Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                }
+                idTechnician = Integer.parseInt(IdTecnico);
+                FileExist = true;
+            }
+
+            if(file.equals("activeService.txt")){
+                try{
+                    InputStreamReader fraw = new InputStreamReader(openFileInput("activeService.txt"));;
+                    BufferedReader brin = new BufferedReader(fraw);
+                    IdService= brin.readLine();
+                    Status = brin.readLine();
+                    fraw.close();
+                }
+                catch (Exception ex)
+                {
+                    Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                }
+            }
+        }
+
+        final int estado = Integer.parseInt(Status);
+
+        if(estado == 3){
+            Intent SavePhotos = new Intent(getApplicationContext(), SavePhotosService.class);
+            SavePhotos.putExtra("IdTecnico",idTechnician);
+            SavePhotos.putExtra("IdServicio",idService);
+            SavePhotos.putExtra("Status",3);
+            startActivity(SavePhotos);
+        }
         //BOTONES
         final Button btn_Status = (Button) findViewById(R.id.btnStatus);
-        final Button btn_Espera = (Button) findViewById(R.id.btnEspera);
-        final Button btn_EndService = (Button) findViewById(R.id.btnEndService);
-
+        final Button btn_EndService = (Button) findViewById(R.id.btnServicioInterrumpido);
 
 
 
         btn_Status.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                String IdTecnico = "";
                 String IdService = "";
                 String Status = "";
                 boolean FileExist = false;
                 String[] files = fileList();
 
                 for (String file : files) {
+
                     if(file.equals("activeService.txt")){
                         try{
                             InputStreamReader fraw = new InputStreamReader(openFileInput("activeService.txt"));;
@@ -116,24 +160,23 @@ public class StartService extends AppCompatActivity {
                         }
                     }
                 }
-
-                int estado = Integer.parseInt(Status);
-                switch (estado)
+                int es = Integer.parseInt(Status);
+                switch (es)
                 {
                     case 1:
                         status = 2;
-                        btn_Status.setText("En Sitio");
+                        writeFile(idService,status);
+                        btn_Status.setText("Ya entré");
                         btn_Status.setBackgroundColor(Color.rgb(0,166,255));
                         break;
                     case 2:
                         status = 3;
-                        btn_Status.setText("En Proceso");
-                        btn_Status.setBackgroundColor(Color.rgb(78,204,0));
-                        break;
-                    case 3:
-                        status = 4;
-                        btn_Status.setText("En Espera");
-                        btn_Status.setBackgroundColor(Color.rgb(236,186,2));
+                        writeFile(idService,status);
+                        Intent Photos = new Intent(getApplicationContext(), SavePhotosService.class);
+                        Photos.putExtra("IdTecnico",idTechnician);
+                        Photos.putExtra("IdServicio",idService);
+                        Photos.putExtra("Status",3);
+                        startActivity(Photos);
                         break;
                     default:
                         break;
@@ -144,7 +187,6 @@ public class StartService extends AppCompatActivity {
                 RegisterService status = new RegisterService(idTechnician, idService, seguimiento);
                 try{
                     status.execute().get();
-                    writeFile(idService,seguimiento);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -158,7 +200,7 @@ public class StartService extends AppCompatActivity {
 
         btn_EndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                RegisterService terminado = new RegisterService(idTechnician, idService,5);
+                RegisterService terminado = new RegisterService(idTechnician, idService,6);
                 try{
                     terminado.execute().get();
                 }catch (InterruptedException e){
