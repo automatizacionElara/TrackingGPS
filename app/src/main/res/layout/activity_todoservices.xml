@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -60,7 +61,7 @@
             android:text="Servicio:"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:id="@+id/lbServicio"
+            android:id="@+id/lbType"
             android:textStyle="bold"
             android:textColor="@android:color/background_dark"
             android:layout_below="@+id/lbTicket"
@@ -74,7 +75,7 @@
             android:id="@+id/lbETA"
             android:textStyle="bold"
             android:textColor="@android:color/background_dark"
-            android:layout_below="@+id/lbServicio"
+            android:layout_below="@+id/lbType"
             android:layout_alignParentStart="true"
             android:paddingLeft="10dp" />
 
@@ -82,8 +83,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tbType"
-            android:layout_alignBaseline="@+id/lbServicio"
-            android:layout_alignBottom="@+id/lbServicio"
+            android:layout_alignBaseline="@+id/lbType"
+            android:layout_alignBottom="@+id/lbType"
             android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/lbTicket" />
 
@@ -94,13 +95,13 @@
             android:layout_alignBaseline="@+id/lbETA"
             android:layout_alignBottom="@+id/lbETA"
             android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/lbServicio" />
+            android:layout_toEndOf="@+id/lbType" />
 
         <TextView
             android:text="Dirección:"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:id="@+id/lbDireccion"
+            android:id="@+id/lbAddress"
             android:textStyle="bold"
             android:textColor="@android:color/background_dark"
             android:layout_below="@+id/lbETA"
@@ -110,7 +111,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/lbDireccion"
+            android:layout_below="@+id/lbAddress"
             android:layout_alignParentStart="true"
             android:id="@+id/tbAddress"
             android:layout_alignParentEnd="true"
@@ -122,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tbAddress"
             android:layout_alignParentStart="true"
-            android:id="@+id/lbReferencia"
+            android:id="@+id/lbReference"
             android:paddingLeft="10dp"
             android:textStyle="normal|bold"
             android:textColor="@android:color/background_dark" />
@@ -130,7 +131,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/lbReferencia"
+            android:layout_below="@+id/lbReference"
             android:layout_alignParentStart="true"
             android:id="@+id/tbReference"
             android:layout_alignParentEnd="true"
@@ -142,17 +143,17 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tbReference"
             android:layout_alignParentStart="true"
-            android:id="@+id/lbRequerimientos"
+            android:id="@+id/lbRequired"
             android:paddingLeft="10dp"
             android:textStyle="normal|bold"
             android:textColor="@android:color/background_dark" />
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/lbRequerimientos"
+            android:layout_below="@+id/lbRequired"
             android:layout_alignParentStart="true"
-            android:layout_above="@+id/btnRefresh">
+            android:id="@+id/scrollRequired"
+            android:layout_height="50dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -161,6 +162,15 @@
                 android:paddingLeft="10dp" />
         </ScrollView>
 
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/progressBar"
+            android:layout_below="@+id/scrollRequired"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible"
+            android:indeterminate="true"/>
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -168,7 +178,6 @@
             app:srcCompat="@android:drawable/ic_lock_power_off"
             android:layout_marginTop="19dp"
             android:id="@+id/btnLogOut"
-            app:backgroundTint="@android:color/background_light"
             android:text="Salir"
             android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/btnRefresh" />
@@ -212,7 +221,7 @@
             android:textColor="@android:color/background_light"
             android:layout_marginEnd="14dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignEnd="@+id/lbRequerimientos"
+            android:layout_alignEnd="@+id/lbRequired"
             android:textAllCaps="false"
             android:textSize="14sp"
             android:layout_marginBottom="10dp"

@@ -2,10 +2,10 @@ package elaracomunicaciones.gpstracking;
 
 /* Librerías */
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,10 +36,12 @@ public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
     private int idTechnician = 0;
+    private TextView lbReference, lbTicket, lbETA, lbType, lbRequired, lbAddress;
     private TextView tbReference, tbTicket, tbETA, tbType, tbRequired, tbAddress;
     private Spinner servicesSpinner;
     private Button btnInit, btnRefresh, btnEditAddress, btnLogOut;
     private CheckConnection webConnection;
+    private ProgressBar progressBar;
 
     /* Inicialización de la actividad */
 
@@ -61,12 +64,21 @@ public class ToDoServices extends AppCompatActivity
 
         servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
 
+        lbReference = (TextView)findViewById(R.id.lbReference);
+        lbTicket = (TextView)findViewById(R.id.lbTicket);
+        lbETA = (TextView)findViewById(R.id.lbETA);
+        lbType = (TextView)findViewById(R.id.lbType);
+        lbRequired = (TextView)findViewById(R.id.lbRequired);
+        lbAddress = (TextView)findViewById(R.id.lbAddress);
+
         tbReference = (TextView)findViewById(R.id.tbReference);
         tbTicket = (TextView)findViewById(R.id.tbTicket);
         tbETA = (TextView)findViewById(R.id.tbETA);
         tbType = (TextView)findViewById(R.id.tbType);
         tbRequired = (TextView)findViewById(R.id.tbRequired);
         tbAddress = (TextView)findViewById(R.id.tbAddress);
+
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
         /* Acción del botón para cierre de sesión */
 
@@ -116,7 +128,18 @@ public class ToDoServices extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                loadServices();
+                btnRefresh.setEnabled(false);
+                btnEditAddress.setEnabled(false);
+                btnInit.setEnabled(false);
+                progressBar.setVisibility(View.VISIBLE);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadServices();
+                    }
+                }, 1000);
             }
         });
 
@@ -124,9 +147,35 @@ public class ToDoServices extends AppCompatActivity
 
         btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
 
-        /* Obtención de servicios disponibles para el proveedor */
+        btnEditAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
 
-        loadServices();
+            }
+        });
+
+        btnRefresh.setEnabled(false);
+        btnEditAddress.setEnabled(false);
+        btnInit.setEnabled(false);
+
+        showLabels(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        /* Obtención de servicios disponibles para el proveedor */
+        progressBar.setVisibility(View.VISIBLE);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadServices();
+            }
+        }, 1000);
 
     }
 
@@ -134,7 +183,28 @@ public class ToDoServices extends AppCompatActivity
     {
         btnInit.setEnabled(enable);
         btnEditAddress.setEnabled(enable);
-        btnRefresh.setEnabled(!enable);
+    }
+
+    private void showLabels(boolean enable)
+    {
+        if(enable)
+        {
+            lbReference.setVisibility(View.VISIBLE);
+            lbTicket.setVisibility(View.VISIBLE);
+            lbETA.setVisibility(View.VISIBLE);
+            lbType.setVisibility(View.VISIBLE);
+            lbRequired.setVisibility(View.VISIBLE);
+            lbAddress.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            lbReference.setVisibility(View.GONE);
+            lbTicket.setVisibility(View.GONE);
+            lbETA.setVisibility(View.GONE);
+            lbType.setVisibility(View.GONE);
+            lbRequired.setVisibility(View.GONE);
+            lbAddress.setVisibility(View.GONE);
+        }
     }
 
     private void loadServices()
@@ -146,7 +216,7 @@ public class ToDoServices extends AppCompatActivity
                     .show();
 
             enableActions(false);
-
+            progressBar.setVisibility(View.GONE);
             return;
         }
 
@@ -229,6 +299,7 @@ public class ToDoServices extends AppCompatActivity
         if(list.size() > 0)
         {
             enableActions(true);
+            showLabels(true);
         }
         else
         {
@@ -269,6 +340,9 @@ public class ToDoServices extends AppCompatActivity
             }
 
         });
+
+        progressBar.setVisibility(View.GONE);
+        btnRefresh.setEnabled(true);
     }
 
     public class WSSoap extends AsyncTask<Void, Void, String>
