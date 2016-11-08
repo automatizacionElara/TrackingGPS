@@ -110,7 +110,6 @@ public class LoginActivity extends AppCompatActivity  {
 
         CheckConnection cc = new CheckConnection();
         boolean connect = cc.isOnlineNet();
-
         if (!connect)
         {
             Toast.makeText(getBaseContext(),

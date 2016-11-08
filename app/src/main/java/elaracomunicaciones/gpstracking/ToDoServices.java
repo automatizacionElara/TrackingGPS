@@ -147,11 +147,22 @@ public class ToDoServices extends AppCompatActivity
 
         btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
 
+        btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
         btnEditAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
+                Toast.makeText(getApplicationContext(), "Editar Dirección", Toast.LENGTH_SHORT).show();
+                Intent editAddress = new Intent(getApplicationContext(), SavePhotosService.class);
 
+                Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
+
+                editAddress.putExtra("IdTecnico",idTechnician);
+                editAddress.putExtra("IdServicio",service.idService);
+                editAddress.putExtra("reference",service.elaraReference);
+                editAddress.putExtra("Status", 1);
+
+                startActivity(editAddress);
             }
         });
 

@@ -1,20 +1,19 @@
 package elaracomunicaciones.gpstracking;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,22 +22,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.sourceforge.jtds.jdbc.DateTime;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.Calendar;
-import android.content.BroadcastReceiver;
 
 
 public class StartService extends AppCompatActivity {
@@ -51,6 +43,7 @@ public class StartService extends AppCompatActivity {
     private int idTechnician = 0;
     private int idService = 0;
     private int status = 0;
+    private String Reference = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +59,26 @@ public class StartService extends AppCompatActivity {
         idTechnician = intent.getIntExtra("IdTecnico",0);
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
+        Reference = intent.getStringExtra("reference");
+
+
+
+        if(Reference != null){
+            try
+            {
+                OutputStreamWriter site=
+                        new OutputStreamWriter(
+                                openFileOutput("sitio.txt", Context.MODE_PRIVATE));
+
+                site.write(String.valueOf(Reference));
+                site.close();
+            }
+            catch (Exception ex)
+            {
+                Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+            }
+        }
+
 
         mensaje1 = (TextView) findViewById(R.id.tbReference);
         mensaje2 = (TextView) findViewById(R.id.tbDirection);
@@ -87,6 +100,7 @@ public class StartService extends AppCompatActivity {
         String IdTecnico = "";
         String IdService = "";
         String Status = "";
+        String SitioNombre = "";
         boolean FileExist = false;
         String[] files = fileList();
 
@@ -107,6 +121,21 @@ public class StartService extends AppCompatActivity {
                 FileExist = true;
             }
 
+            if (file.equals("sitio.txt")) {
+                try
+                {
+                    InputStreamReader fraw = new InputStreamReader(openFileInput("sitio.txt"));;
+                    BufferedReader brin = new BufferedReader(fraw);
+                    SitioNombre= brin.readLine();
+                    fraw.close();
+                }
+                catch (Exception ex)
+                {
+                    Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                }
+                Reference = SitioNombre;
+            }
+
             if(file.equals("activeService.txt")){
                 try{
                     InputStreamReader fraw = new InputStreamReader(openFileInput("activeService.txt"));;
@@ -122,6 +151,7 @@ public class StartService extends AppCompatActivity {
             }
         }
 
+
         final int estado = Integer.parseInt(Status);
 
         if(estado == 3){
@@ -134,7 +164,27 @@ public class StartService extends AppCompatActivity {
         //BOTONES
         final Button btn_Status = (Button) findViewById(R.id.btnStatus);
         final Button btn_EndService = (Button) findViewById(R.id.btnServicioInterrumpido);
+        final Button btn_EditAdrress = (Button) findViewById(R.id.btnEditAddress);
 
+        if(status == 2){
+            btn_Status.setBackgroundColor(Color.rgb(0,166,255));
+        }
+
+        btn_EditAdrress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Toast.makeText(getApplicationContext(), "Editar Dirección", Toast.LENGTH_SHORT).show();
+                Intent Edit = new Intent(getApplicationContext(), EditAdressActivity.class);
+
+
+                Edit.putExtra("IdTecnico",idTechnician);
+                Edit.putExtra("IdServicio",idService);
+                Edit.putExtra("reference",Reference);
+                Edit.putExtra("Status", status);
+                startActivity(Edit);
+            }
+        });
 
 
         btn_Status.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +210,7 @@ public class StartService extends AppCompatActivity {
                         }
                     }
                 }
+
                 int es = Integer.parseInt(Status);
                 switch (es)
                 {
@@ -354,7 +405,8 @@ public class StartService extends AppCompatActivity {
             }
 
 
-                String Text = "Lat = " + loc.getLatitude() + " Long = " + loc.getLongitude();
+                String Coordenadas = "Lat = " + loc.getLatitude() + " Long = " + loc.getLongitude();
+                String Text = Reference;
                 mensaje1.setText(Text);
                 this.mainActivity.setLocation(loc);
 

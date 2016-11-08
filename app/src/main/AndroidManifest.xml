@@ -62,7 +62,8 @@
             <action android:name="android.intent.action.BOOT_COMPLETED" />
         </intent-filter>
 
-        <activity android:name=".EditAdressActivity" />
+        <activity android:name=".EditAdressActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".SavePhotosService"></activity>
     </application>
 
