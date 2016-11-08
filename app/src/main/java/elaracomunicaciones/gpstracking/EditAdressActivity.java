@@ -71,6 +71,7 @@ public class EditAdressActivity extends AppCompatActivity {
                 Back.putExtra("IdServicio",idService);
                 Back.putExtra("reference",Reference);
                 Back.putExtra("Status", status);
+                Back.putExtra("EditAddress",true);
 
                 startActivity(Back);
             }

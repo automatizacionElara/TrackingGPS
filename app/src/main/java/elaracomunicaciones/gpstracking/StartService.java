@@ -44,6 +44,7 @@ public class StartService extends AppCompatActivity {
     private int idService = 0;
     private int status = 0;
     private String Reference = "";
+    private boolean Edit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class StartService extends AppCompatActivity {
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
         Reference = intent.getStringExtra("reference");
+        Edit = intent.getBooleanExtra("EditAddress",false);
 
 
 
@@ -166,6 +168,9 @@ public class StartService extends AppCompatActivity {
         final Button btn_EndService = (Button) findViewById(R.id.btnServicioInterrumpido);
         final Button btn_EditAdrress = (Button) findViewById(R.id.btnEditAddress);
 
+        if(Edit){
+            btn_EditAdrress.setVisibility(View.INVISIBLE);;
+        }
         if(status == 2){
             btn_Status.setBackgroundColor(Color.rgb(0,166,255));
         }

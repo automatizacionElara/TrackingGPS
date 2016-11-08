@@ -115,6 +115,7 @@ public class ToDoServices extends AppCompatActivity
                 Checkin.putExtra("IdServicio",service.idService);
                 Checkin.putExtra("reference",service.elaraReference);
                 Checkin.putExtra("Status", 1);
+                Checkin.putExtra("EditAddress",false);
 
                 startActivity(Checkin);
             }
