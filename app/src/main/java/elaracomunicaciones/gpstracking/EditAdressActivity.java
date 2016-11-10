@@ -64,7 +64,7 @@ public class EditAdressActivity extends AppCompatActivity {
                 final String NoInt = NoInterior.getText().toString();
                 final String Col = Colonia.getText().toString();
                 final int CPos = Integer.parseInt(CP.getText().toString());
-                SendAddress sendA = new SendAddress(idService, calle, NoExt, NoInt, Col, CPos);
+                SendAddress sendA = new SendAddress(idService, calle, NoExt, NoInt, Col, CPos, idTechnician);
                 sendA.execute();
                 Toast.makeText(getApplicationContext(), "Dirección Guardada", Toast.LENGTH_SHORT).show();
                 Back.putExtra("IdTecnico",idTechnician);

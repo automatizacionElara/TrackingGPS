@@ -18,16 +18,18 @@ public class SendAddress extends AsyncTask<Void, Void, Boolean> {
     private final String NoInterior;
     private final String Colonia;
     private final int CP;
+    private final int IdTecnico;
     private boolean IsSuccess;
     String msg = "";
 
-    SendAddress(int IdServicio, String Cal, String NoExt, String NoInt, String Col, int CPostal) {
+    SendAddress(int IdServicio, String Cal, String NoExt, String NoInt, String Col, int CPostal, int IdTec) {
         IdServ = IdServicio;
         Calle = Cal;
         NoExterior = NoExt;
         NoInterior = NoInt;
         Colonia = Col;
         CP = CPostal;
+        IdTecnico = IdTec;
     }
 
 
@@ -40,7 +42,7 @@ public class SendAddress extends AsyncTask<Void, Void, Boolean> {
             if (con == null) {
                 msg = "Error en la Conexión con SQL server";
             } else {
-                Elara_ES_Address = "INSERT INTO Elara_ES_Address (IdServicio, Calle, NoExterior, NoInterior, Colonia, CP) VALUES("+ IdServ +", '"+ Calle + "', '" + NoExterior + "', '" + NoInterior + "', '" + Colonia + "'," + CP + ");";
+                Elara_ES_Address = "INSERT INTO Elara_ES_Address (IdServicio, Calle, NoExterior, NoInterior, Colonia, CP, Aprobada, Rechazada, Tecnico) VALUES("+ IdServ +", '"+ Calle + "', '" + NoExterior + "', '" + NoInterior + "', '" + Colonia + "'," + CP + ", 0, 0," + IdTecnico + ");";
 
                 Statement stmt = null;
 
