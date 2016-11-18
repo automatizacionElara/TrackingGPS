@@ -9,6 +9,7 @@ public class Service
     protected String elaraReference;
     protected int ticket;
     protected String estimatedTimeA;
+    protected int idType;
     protected String type;
     protected String address;
     protected String city;

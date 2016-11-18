@@ -114,6 +114,7 @@ public class ToDoServices extends AppCompatActivity
                 Checkin.putExtra("IdTecnico",idTechnician);
                 Checkin.putExtra("IdServicio",service.idService);
                 Checkin.putExtra("reference",service.elaraReference);
+                Checkin.putExtra("idType",service.idType);
                 Checkin.putExtra("Status", 1);
                 Checkin.putExtra("EditAddress",false);
 
@@ -284,6 +285,7 @@ public class ToDoServices extends AppCompatActivity
                 serv.address = jsonService.getString("address");
                 serv.city = jsonService.getString("city");
                 serv.district = jsonService.getString("district");
+                serv.idType = jsonService.getInt("idType");
 
                 JSONArray required = new JSONArray(jsonService.getString("required"));
 

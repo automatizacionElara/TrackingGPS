@@ -42,7 +42,7 @@ import java.sql.Statement;
                 } else
                 {
 
-                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + "'" + stringPhoto + "');";
+                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + ",'" + stringPhoto + "');";
 
                     Statement stmt = null;
 

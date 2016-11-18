@@ -43,6 +43,7 @@ public class StartService extends AppCompatActivity {
     private int idTechnician = 0;
     private int idService = 0;
     private int status = 0;
+    private int idType = 0;
     private String Reference = "";
     private boolean Edit = false;
 
@@ -62,8 +63,7 @@ public class StartService extends AppCompatActivity {
         status = intent.getIntExtra("Status",0);
         Reference = intent.getStringExtra("reference");
         Edit = intent.getBooleanExtra("EditAddress",false);
-
-
+        idType = intent.getIntExtra("idType",0);
 
         if(Reference != null){
             try
