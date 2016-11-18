@@ -161,6 +161,7 @@ public class StartService extends AppCompatActivity {
             SavePhotos.putExtra("IdTecnico",idTechnician);
             SavePhotos.putExtra("IdServicio",idService);
             SavePhotos.putExtra("Status",3);
+            SavePhotos.putExtra("IdType", idType);
             startActivity(SavePhotos);
         }
         //BOTONES

@@ -27,6 +27,7 @@ public class SavePhotosService extends AppCompatActivity {
     final static int cons = 0;
     private int idTechnician = 0;
     private int idService = 0;
+    private int idType = 0;
     private int status = 0;
     Bitmap bmp;
 
@@ -43,7 +44,7 @@ public class SavePhotosService extends AppCompatActivity {
             byte[] b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
 
-            SendPhoto sphoto = new SendPhoto(idService, encodedImage, 1);
+            SendPhoto sphoto = new SendPhoto(idService, encodedImage, idType);
             try
             {sphoto.execute();}
             catch (Exception e)
@@ -62,6 +63,7 @@ public class SavePhotosService extends AppCompatActivity {
         idTechnician = intent.getIntExtra("IdTecnico",0);
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
+        idType = intent.getIntExtra("IdType",0);
 
         final Button takePhoto = (Button)findViewById(R.id.takePhoto);
         takePhoto.setOnClickListener(new View.OnClickListener() {
