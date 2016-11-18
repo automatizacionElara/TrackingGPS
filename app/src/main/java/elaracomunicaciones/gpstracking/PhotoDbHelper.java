@@ -14,7 +14,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
 {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Elara_Service_Photos";
-    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdTracking INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, DateTracking DATETIME, Latitude DOUBLE, Longitude DOUBLE)";
+    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, DatePhoto DATETIME, Latitude DOUBLE, Longitude DOUBLE)";
 
     public PhotoDbHelper(Context context)
     {

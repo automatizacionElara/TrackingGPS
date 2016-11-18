@@ -6,9 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Created by daniel sosa on 29/08/2016.
- */
 
     public class SendPhoto extends AsyncTask<Void, Void, Boolean> {
 
@@ -21,7 +18,7 @@ import java.sql.Statement;
         SendPhoto(int IdServ, String photo, String fecha) {
             IdService = IdServ;
             stringPhoto = photo;
-            Fecha = "";
+            Fecha = fecha;
         }
 
     /*SendPhoto(int IdServ, double Long, double Lat, String fecha)
@@ -45,7 +42,7 @@ import java.sql.Statement;
                 } else
                 {
 
-                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_Photos VALUES(" + IdService + ","+ Fecha + "," + stringPhoto + ");";
+                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + "'" + stringPhoto + "');";
 
                     Statement stmt = null;
 

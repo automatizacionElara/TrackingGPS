@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 public class SavePhotosService extends AppCompatActivity {
+
     private static int TAKE_PICTURE = 1;
     private static int SELECT_PICTURE = 2;
     private String name = "";
@@ -41,7 +42,16 @@ public class SavePhotosService extends AppCompatActivity {
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             byte[] b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+            String FECHA = "2016-11-18";
+            SendPhoto sphoto = new SendPhoto(idService, encodedImage, FECHA);
+            try
+            {sphoto.execute();}
+            catch (Exception e)
+            {
+                String error = e.getMessage();
+            }
             String prueba = "";
+
         }
     }
     @Override
