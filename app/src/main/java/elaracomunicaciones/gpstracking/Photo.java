@@ -7,17 +7,17 @@ package elaracomunicaciones.gpstracking;
 public class Photo
 {
     public int IdService;
-    public String DatePhoto;
+    public int IdType;
     public String StringPhoto;
 
-    public Photo(int idservice, String datephoto, String photo)
+    public Photo(int idservice, int idtype, String photo)
     {
         this.IdService = idservice;
-        this.DatePhoto = datephoto;
+        this.IdType = idtype;
         this.StringPhoto = photo;
     }
 
     public int getIdService() { return  IdService; }
-    public String getDatePhoto() { return  DatePhoto; }
+    public int getIdType() { return  IdType; }
     public String StringPhoto() { return  StringPhoto; }
 }

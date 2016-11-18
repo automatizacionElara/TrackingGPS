@@ -11,14 +11,14 @@ import java.sql.Statement;
 
         private final String stringPhoto;
         private final int IdService;
-        private final String Fecha;
+        private final int IdType;
         private boolean IsSuccess;
         String msg = "";
 
-        SendPhoto(int IdServ, String photo, String fecha) {
+        SendPhoto(int IdServ, String photo, int idtype) {
             IdService = IdServ;
             stringPhoto = photo;
-            Fecha = fecha;
+            IdType = idtype;
         }
 
     /*SendPhoto(int IdServ, double Long, double Lat, String fecha)
@@ -42,7 +42,7 @@ import java.sql.Statement;
                 } else
                 {
 
-                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + ",'" + stringPhoto + "');";
+                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + ",'" + stringPhoto + "," + IdType + ");";
 
                     Statement stmt = null;
 

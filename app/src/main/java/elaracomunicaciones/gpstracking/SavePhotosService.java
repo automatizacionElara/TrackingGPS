@@ -42,16 +42,14 @@ public class SavePhotosService extends AppCompatActivity {
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             byte[] b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            String FECHA = "2016-11-18";
-            SendPhoto sphoto = new SendPhoto(idService, encodedImage, FECHA);
+
+            SendPhoto sphoto = new SendPhoto(idService, encodedImage, 1);
             try
             {sphoto.execute();}
             catch (Exception e)
             {
                 String error = e.getMessage();
             }
-            String prueba = "";
-
         }
     }
     @Override
@@ -65,13 +63,18 @@ public class SavePhotosService extends AppCompatActivity {
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
 
-        Intent intentCamera =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intentCamera, cons);
+        final Button takePhoto = (Button)findViewById(R.id.takePhoto);
+        takePhoto.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intentCamera =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intentCamera, cons);
 
-
+            }
+        });
         final Button btn_EndService = (Button) findViewById(R.id.btnEndService);
         btn_EndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
                 RegisterService terminado = new RegisterService(idTechnician, idService,6);
                 try{
                     terminado.execute().get();
