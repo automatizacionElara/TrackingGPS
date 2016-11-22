@@ -343,6 +343,7 @@ public class StartService extends AppCompatActivity {
         StartService mainActivity;
         CheckConnection isOnline = new CheckConnection();
         TrackingDbHelper bdLocal = new TrackingDbHelper(getApplicationContext());
+        PhotoDbHelper bdLocalPhoto = new PhotoDbHelper(getApplicationContext());
 
         public StartService getMainActivity() {
             return mainActivity;
@@ -406,6 +407,24 @@ public class StartService extends AppCompatActivity {
                             su.execute();
                             bdLocal.deleteTracking(IdTracking);
                         }while(c.moveToNext());
+                    }
+                }
+                PhotoDbHelper photoHelper = new PhotoDbHelper(getApplicationContext());
+                Cursor p =photoHelper.getAllPhotos();
+                if(answer == true)
+                {
+                    if(p.moveToFirst())
+                    {
+                        do
+                        {
+                            String IdPhoto = p.getString(0);
+                            String IdService = p.getString(1);
+                            String IdType = p.getString(2);
+                            String StringPhoto = p.getString(3);
+                            SendPhoto sp = new SendPhoto(Integer.parseInt(IdService), StringPhoto, Integer.parseInt(IdType));
+                            sp.execute();
+                            bdLocalPhoto.deletePhoto(IdPhoto);
+                        }while(p.moveToNext());
                     }
                 }
             }

@@ -14,7 +14,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
 {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Elara_Service_Photos";
-    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, DatePhoto DATETIME, Latitude DOUBLE, Longitude DOUBLE)";
+    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, IdType INTEGER, StringPhoto BLOB)";
 
     public PhotoDbHelper(Context context)
     {
@@ -32,51 +32,57 @@ public class PhotoDbHelper extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         //No hay operaciones
-        db.execSQL("DROP TABLE IF EXISTS Elara_Tracking");
+        db.execSQL("DROP TABLE IF EXISTS Elara_Service_Photos");
 
         onCreate(db);
     }
 
-    public long saveTracking(Tracking tracking)
+    public long savePhoto(Photo photo)
     {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(TrackingContract.TrackingEntry.IdService, tracking.IdService);
-        values.put(TrackingContract.TrackingEntry.DateTracking, tracking.DateTracking.toString());
-        values.put(TrackingContract.TrackingEntry.Latitude, tracking.Latitude);
-        values.put(TrackingContract.TrackingEntry.Longitude, tracking.Longitude);
+        values.put(PhotoContract.PhotoEntry.IdService, photo .IdService);
+        values.put(PhotoContract.PhotoEntry.IdType, photo.IdType);
+        values.put(PhotoContract.PhotoEntry.StringPhoto, photo.StringPhoto);
 
         return  sqLiteDatabase.insert(
-                TrackingContract.TrackingEntry.TABLE_NAME,null, values
+                PhotoContract.PhotoEntry.TABLE_NAME,null,values
         );
     }
 
-    public boolean deleteTracking(String IdTracking)
+    public boolean deletePhoto(String IdPhoto)
     {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        return sqLiteDatabase.delete(TrackingContract.TrackingEntry.TABLE_NAME, "IdTracking =" + IdTracking, null) > 0;
+        return sqLiteDatabase.delete(PhotoContract.PhotoEntry.TABLE_NAME, "IdPhoto =" + IdPhoto, null) > 0;
     }
 
-    public Cursor getAllTracking()
+    public Cursor getAllPhotos()
     {
         //return getReadableDatabase().query(TrackingContract.TrackingEntry.TABLE_NAME,null, null, null,null,null,null,null);
-        String[] campos = new String[] {"IdTracking","IdService", "DateTracking", "Latitude", "Longitude"};
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto"};
         String[] args = new String[] {"usu1"};
 
-        return getReadableDatabase().query("Elara_Tracking", campos, null, null, null, null, null);
+        return getReadableDatabase().query("Elara_Service_Photos", campos, null, null, null, null, null);
 
     }
 
-    public Cursor getTrackingById(String trackingid)
+    public Cursor getPhotoById(String photoid)
     {
         Cursor c = getReadableDatabase().query(
-                TrackingContract.TrackingEntry.TABLE_NAME,
+                PhotoContract.PhotoEntry.TABLE_NAME,
                 null,
-                TrackingContract.TrackingEntry.IdService + " LIKE ?",
-                new String[]{trackingid },
+                PhotoContract.PhotoEntry._ID + " LIKE ?",
+                new String[]{photoid},
                 null,
                 null,
                 null);
+        return c;
+    }
+
+    public Cursor getPhotoService(String idService)
+    {
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto"};
+        Cursor c = getReadableDatabase().query(PhotoContract.PhotoEntry.TABLE_NAME, campos, PhotoContract.PhotoEntry.IdService + "=?",new String[]{idService}, null, null,null );
         return c;
     }
 }

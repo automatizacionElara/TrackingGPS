@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,9 +15,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+import java.sql.Connection;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 public class SavePhotosService extends AppCompatActivity {
 
@@ -29,7 +45,11 @@ public class SavePhotosService extends AppCompatActivity {
     private int idService = 0;
     private int idType = 0;
     private int status = 0;
+    private int actualPhoto = 1;
+    private int qtyPhotos = 0;
+    List<String> ListPhotos;
     Bitmap bmp;
+    PhotoDbHelper bdLocal = new PhotoDbHelper(getApplicationContext());
 
     @Override
     protected void onActivityResult(int requestCode,int resultCode, Intent data)
@@ -44,13 +64,20 @@ public class SavePhotosService extends AppCompatActivity {
             byte[] b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
 
-            SendPhoto sphoto = new SendPhoto(idService, encodedImage, idType);
+            Photo photo = new Photo(idService, actualPhoto, encodedImage);
+            bdLocal.savePhoto(photo);
+            actualPhoto = actualPhoto + 1;
+            if(actualPhoto == qtyPhotos)
+            {
+                findViewById(R.id.btnEndService).setEnabled(false);
+            }
+            /*SendPhoto sphoto = new SendPhoto(idService, encodedImage, idType);
             try
             {sphoto.execute();}
             catch (Exception e)
             {
                 String error = e.getMessage();
-            }
+            }*/
         }
     }
     @Override
@@ -64,10 +91,38 @@ public class SavePhotosService extends AppCompatActivity {
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
         idType = intent.getIntExtra("IdType",0);
+        idType = 1;
+
+        Connection con = DBConnection.getInstance().getConnection();
+
+        qtyPhotos = ListPhotos.size();
+        qtyPhotos = 8;
+        Cursor cp = bdLocal.getPhotoService(String.valueOf(idService));
+        int localPhotos = cp.getCount();
+        if(localPhotos != 0)
+        {
+            actualPhoto = localPhotos + 1;
+        }
+        Toast.makeText(getApplicationContext(), String.format("Foto a Tomar Número " + actualPhoto), Toast.LENGTH_SHORT).show();
+
+        /*try
+        {
+            String query = "SELECT [PhotoDescription] FROM Elara_S_PhotoCatalog WHERE ServiceType = " + idType + ";";
+            Statement stmt2 = con.createStatement();
+            ResultSet rs2 = stmt2.executeQuery(query);
+            if(rs2.next()) {
+                ListPhotos.add(rs2.getString(0));
+            }
+        }
+        catch(Exception ex)
+        {
+
+        }*/
 
         final Button takePhoto = (Button)findViewById(R.id.takePhoto);
         takePhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), String.format("Tomando Foto " + actualPhoto), Toast.LENGTH_SHORT).show();
                 Intent intentCamera =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intentCamera, cons);
 
@@ -97,4 +152,5 @@ public class SavePhotosService extends AppCompatActivity {
             }
         });
     }
+
 }
