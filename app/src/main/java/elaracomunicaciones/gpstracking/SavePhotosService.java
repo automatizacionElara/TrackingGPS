@@ -22,11 +22,15 @@ import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -45,11 +49,14 @@ public class SavePhotosService extends AppCompatActivity {
     private int idService = 0;
     private int idType = 0;
     private int status = 0;
-    private int actualPhoto = 1;
-    private int qtyPhotos = 0;
-    List<String> ListPhotos;
+    private int actualPhoto = 2;
+    private int qtyPhotos;
+    List<PhotoCatalog> ListPhotos;
     Bitmap bmp;
-    PhotoDbHelper bdLocal = new PhotoDbHelper(getApplicationContext());
+    private String error;
+    private getListOfPhotos ListofPhotos = null;
+    PhotoDbHelper bdLocalPhotos;
+
 
     @Override
     protected void onActivityResult(int requestCode,int resultCode, Intent data)
@@ -63,14 +70,15 @@ public class SavePhotosService extends AppCompatActivity {
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             byte[] b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-
             Photo photo = new Photo(idService, actualPhoto, encodedImage);
-            bdLocal.savePhoto(photo);
-            actualPhoto = actualPhoto + 1;
+            PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
+            bdLocalPhotos.savePhoto(photo);
+
             if(actualPhoto == qtyPhotos)
             {
                 findViewById(R.id.btnEndService).setEnabled(false);
             }
+
             /*SendPhoto sphoto = new SendPhoto(idService, encodedImage, idType);
             try
             {sphoto.execute();}
@@ -91,38 +99,10 @@ public class SavePhotosService extends AppCompatActivity {
         idService = intent.getIntExtra("IdServicio",0);
         status = intent.getIntExtra("Status",0);
         idType = intent.getIntExtra("IdType",0);
-        idType = 1;
-
-        Connection con = DBConnection.getInstance().getConnection();
-
-        qtyPhotos = ListPhotos.size();
-        qtyPhotos = 8;
-        Cursor cp = bdLocal.getPhotoService(String.valueOf(idService));
-        int localPhotos = cp.getCount();
-        if(localPhotos != 0)
-        {
-            actualPhoto = localPhotos + 1;
-        }
-        Toast.makeText(getApplicationContext(), String.format("Foto a Tomar Número " + actualPhoto), Toast.LENGTH_SHORT).show();
-
-        /*try
-        {
-            String query = "SELECT [PhotoDescription] FROM Elara_S_PhotoCatalog WHERE ServiceType = " + idType + ";";
-            Statement stmt2 = con.createStatement();
-            ResultSet rs2 = stmt2.executeQuery(query);
-            if(rs2.next()) {
-                ListPhotos.add(rs2.getString(0));
-            }
-        }
-        catch(Exception ex)
-        {
-
-        }*/
 
         final Button takePhoto = (Button)findViewById(R.id.takePhoto);
         takePhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), String.format("Tomando Foto " + actualPhoto), Toast.LENGTH_SHORT).show();
                 Intent intentCamera =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intentCamera, cons);
 
@@ -151,6 +131,85 @@ public class SavePhotosService extends AppCompatActivity {
                 startActivity(LogOut);
             }
         });
+    }
+
+    @Override
+    protected void onStart()
+    {
+        //Connection con = DBConnection.getInstance().getConnection();
+
+        //qtyPhotos = ListPhotos.size();
+        super.onStart();
+        getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
+        try
+        {
+            ListPhotos = getListOfPhotos.execute().get();
+        }
+        catch (Exception ex)
+        {
+            error = ex.getMessage();
+        }
+        qtyPhotos = 8;
+        PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
+        Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
+        int localPhotos = cp.getCount();
+        if(localPhotos != 0)
+        {
+            actualPhoto = localPhotos + 1;
+        }
+        Toast.makeText(getApplicationContext(), String.format("Foto a Tomar Número " + actualPhoto), Toast.LENGTH_SHORT).show();
+    }
+
+
+    public class getListOfPhotos extends AsyncTask<Void, Void, List<PhotoCatalog>> {
+
+        private List<PhotoCatalog> temp;
+        public int IdType;
+        String z = "";
+
+        getListOfPhotos(int idType) {
+            IdType = idType;
+
+        }
+
+        @Override
+        protected List<PhotoCatalog> doInBackground(Void... params)
+        {
+            Connection con= null;
+            try {
+                con = DBConnection.getInstance().getConnection();
+                if (con == null) {
+                    error = "Error en la Conexión con SQL server";
+                } else {
+
+                    String query = "SELECT Elara_S_PhotoCatalog.[IdPhotoCatalog], Elara_S_PhotoCatalog.[PhotoDescription] FROM Elara_S_PhotoCatalog LEFT JOIN Elara_S_PhotosPerService ON Elara_S_PhotoCatalog.IdPhotoCatalog = Elara_S_PhotosPerService.IdPhotoCatalog WHERE Elara_S_PhotosPerService.IdServiceType =  " + idType + ";";
+                    Statement stmt2 = con.createStatement();
+                    ResultSet result = stmt2.executeQuery(query);
+                    int index = 0;
+                    temp = new ArrayList<>();
+                    while(result.next())
+                        {
+                          PhotoCatalog tempr = new PhotoCatalog();
+                            tempr.IdPhotoCatalog = result.getInt(1);
+                            tempr.PhotoDescription = result.getString(2);
+                            temp.add(index,tempr);
+                            index++;
+                        }
+
+
+                }
+            } catch (Exception ex){
+                error = ex.getMessage();
+            }
+            return temp;
+        }
+
+        @Override
+        protected void onPostExecute(final List<PhotoCatalog> temp)
+        {
+            super.onPostExecute(temp);
+        }
+
     }
 
 }

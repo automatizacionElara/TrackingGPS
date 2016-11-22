@@ -73,6 +73,7 @@ public class StartService extends AppCompatActivity {
                                 openFileOutput("sitio.txt", Context.MODE_PRIVATE));
 
                 site.write(String.valueOf(Reference));
+                site.write("\n" + String.valueOf(idType));
                 site.close();
             }
             catch (Exception ex)
@@ -103,6 +104,7 @@ public class StartService extends AppCompatActivity {
         String IdService = "";
         String Status = "";
         String SitioNombre = "";
+        String IdType = "";
         boolean FileExist = false;
         String[] files = fileList();
 
@@ -113,6 +115,7 @@ public class StartService extends AppCompatActivity {
                     InputStreamReader fraw = new InputStreamReader(openFileInput("access.txt"));;
                     BufferedReader brin = new BufferedReader(fraw);
                     IdTecnico= brin.readLine();
+
                     fraw.close();
                 }
                 catch (Exception ex)
@@ -120,6 +123,7 @@ public class StartService extends AppCompatActivity {
                     Log.e("Ficheros", "Error al leer fichero desde recurso raw");
                 }
                 idTechnician = Integer.parseInt(IdTecnico);
+
                 FileExist = true;
             }
 
@@ -129,6 +133,8 @@ public class StartService extends AppCompatActivity {
                     InputStreamReader fraw = new InputStreamReader(openFileInput("sitio.txt"));;
                     BufferedReader brin = new BufferedReader(fraw);
                     SitioNombre= brin.readLine();
+                    IdType=brin.readLine();
+
                     fraw.close();
                 }
                 catch (Exception ex)
@@ -136,6 +142,7 @@ public class StartService extends AppCompatActivity {
                     Log.e("Ficheros", "Error al leer fichero desde recurso raw");
                 }
                 Reference = SitioNombre;
+                idType = Integer.parseInt(IdType);
             }
 
             if(file.equals("activeService.txt")){
@@ -233,6 +240,7 @@ public class StartService extends AppCompatActivity {
                         Photos.putExtra("IdTecnico",idTechnician);
                         Photos.putExtra("IdServicio",idService);
                         Photos.putExtra("Status",3);
+                        Photos.putExtra("IdType", idType);
                         startActivity(Photos);
                         break;
                     default:
@@ -343,7 +351,6 @@ public class StartService extends AppCompatActivity {
         StartService mainActivity;
         CheckConnection isOnline = new CheckConnection();
         TrackingDbHelper bdLocal = new TrackingDbHelper(getApplicationContext());
-        PhotoDbHelper bdLocalPhoto = new PhotoDbHelper(getApplicationContext());
 
         public StartService getMainActivity() {
             return mainActivity;
@@ -409,31 +416,13 @@ public class StartService extends AppCompatActivity {
                         }while(c.moveToNext());
                     }
                 }
-                PhotoDbHelper photoHelper = new PhotoDbHelper(getApplicationContext());
-                Cursor p =photoHelper.getAllPhotos();
-                if(answer == true)
-                {
-                    if(p.moveToFirst())
-                    {
-                        do
-                        {
-                            String IdPhoto = p.getString(0);
-                            String IdService = p.getString(1);
-                            String IdType = p.getString(2);
-                            String StringPhoto = p.getString(3);
-                            SendPhoto sp = new SendPhoto(Integer.parseInt(IdService), StringPhoto, Integer.parseInt(IdType));
-                            sp.execute();
-                            bdLocalPhoto.deletePhoto(IdPhoto);
-                        }while(p.moveToNext());
-                    }
-                }
             }
 
 
-                String Coordenadas = "Lat = " + loc.getLatitude() + " Long = " + loc.getLongitude();
-                String Text = Reference;
-                mensaje1.setText(Text);
-                this.mainActivity.setLocation(loc);
+            String Coordenadas = "Lat = " + loc.getLatitude() + " Long = " + loc.getLongitude();
+            String Text = Reference;
+            mensaje1.setText(Text);
+            this.mainActivity.setLocation(loc);
 
         }
 
