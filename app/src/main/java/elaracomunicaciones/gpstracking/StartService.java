@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.IntentFilter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,6 +38,7 @@ public class StartService extends AppCompatActivity {
 
     TextView mensaje1;
     TextView mensaje2;
+    IntentFilter myFilter;
 
     boolean EndService = false; // ROJO
 
@@ -54,6 +56,8 @@ public class StartService extends AppCompatActivity {
         i.setAction(".CREATE_RECEIVER_APP");
         this.sendBroadcast(i);
         super.onCreate(savedInstanceState);
+        myFilter = new IntentFilter();
+        myFilter.addAction("StartService");
         setContentView(R.layout.activity_start_service);
 
         Intent intent = getIntent();
@@ -351,6 +355,7 @@ public class StartService extends AppCompatActivity {
         StartService mainActivity;
         CheckConnection isOnline = new CheckConnection();
         TrackingDbHelper bdLocal = new TrackingDbHelper(getApplicationContext());
+        PhotoDbHelper bdPhotos = new PhotoDbHelper(getApplicationContext());
 
         public StartService getMainActivity() {
             return mainActivity;
@@ -416,6 +421,24 @@ public class StartService extends AppCompatActivity {
                         }while(c.moveToNext());
                     }
                 }
+                PhotoDbHelper phelper = new PhotoDbHelper(getApplicationContext());
+                Cursor p = phelper.getAllPhotos();
+                if(answer == true)
+                {
+                    if(p.moveToFirst())
+                    {
+                        do
+                        {
+                         String IdPhoto = p.getString(0);
+                            int IdService = p.getInt(1);
+                            int idType = p.getInt(2);
+                            String Photo = p.getString(3);
+                            SendPhoto sp = new SendPhoto(idService,Photo,idType);
+                            sp.execute();
+                            bdPhotos.deletePhoto(IdPhoto);
+                        }while (p.moveToNext());
+                    }
+                }
             }
 
 
@@ -459,4 +482,18 @@ public class StartService extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+   /* @Override
+    public void onResume()
+    {
+        super.onResume();
+        registerReceiver(MyReceiver, myFilter);
+    }
+    @Override
+    public void onPause()
+    {
+        unregisterReceiver(MyReceiver);
+        super.onResume();
+
+    }*/
 }

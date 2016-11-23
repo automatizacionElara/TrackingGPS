@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="elaracomunicaciones.gpstracking"
     android:versionCode="3"
@@ -19,6 +18,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -61,11 +61,16 @@
 
         <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.MAIN"/>
+            <action android:name="android.intent.elaracomunicaciones.gpstracking.StartService"/>
+            <action android:name="android.intent.action.StartService"/>
+            <action android:name="android"/>
         </intent-filter>
 
-        <activity android:name=".EditAdressActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SavePhotosService"></activity>
+        <activity
+            android:name=".EditAdressActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SavePhotosService" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -74,7 +79,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

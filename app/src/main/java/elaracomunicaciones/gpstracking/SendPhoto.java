@@ -34,7 +34,7 @@ import java.sql.Statement;
     @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                String Elara_ES_TrackingDetails = "";
+                String query = "";
                 String msg = "";
                 Connection con = DBConnection.getInstance().getConnection();
                 if (con == null) {
@@ -42,13 +42,13 @@ import java.sql.Statement;
                 } else
                 {
 
-                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + ",'" + stringPhoto + "',1);";
+                        query = "INSERT INTO Elara_ES_ServiceImages VALUES(" + IdService + ",'" + stringPhoto + "'," + IdType + ");";
 
                     Statement stmt = null;
 
                     try {
                         stmt = con.createStatement();
-                        stmt.executeQuery(Elara_ES_TrackingDetails);
+                        stmt.executeQuery(query);
                         stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();

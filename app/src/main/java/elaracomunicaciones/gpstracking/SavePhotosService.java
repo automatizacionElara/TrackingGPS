@@ -56,6 +56,7 @@ public class SavePhotosService extends AppCompatActivity {
     private String error;
     private getListOfPhotos ListofPhotos = null;
     PhotoDbHelper bdLocalPhotos;
+    String PhotoActual;
 
 
     @Override
@@ -67,18 +68,22 @@ public class SavePhotosService extends AppCompatActivity {
             Bundle extras = data.getExtras();
             bmp = (Bitmap)extras.get("data");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
             byte[] b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            Photo photo = new Photo(idService, actualPhoto, encodedImage);
+            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto-1).IdPhotoCatalog, encodedImage);
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
             bdLocalPhotos.savePhoto(photo);
 
             if(actualPhoto == qtyPhotos)
             {
-                findViewById(R.id.btnEndService).setEnabled(false);
+                //findViewById(R.id.btnEndService).setEnabled(false);
+                findViewById(R.id.takePhoto).setEnabled(false);
             }
-
+            else
+            {
+                actualPhoto = actualPhoto + 1;
+            }
             /*SendPhoto sphoto = new SendPhoto(idService, encodedImage, idType);
             try
             {sphoto.execute();}
@@ -103,9 +108,10 @@ public class SavePhotosService extends AppCompatActivity {
         final Button takePhoto = (Button)findViewById(R.id.takePhoto);
         takePhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                PhotoActual = ListPhotos.get(actualPhoto -1).PhotoDescription;
+                Toast.makeText(getApplicationContext(), String.format("Foto a Tomar Número " + PhotoActual), Toast.LENGTH_SHORT).show();
                 Intent intentCamera =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intentCamera, cons);
-
             }
         });
         final Button btn_EndService = (Button) findViewById(R.id.btnEndService);
@@ -136,9 +142,7 @@ public class SavePhotosService extends AppCompatActivity {
     @Override
     protected void onStart()
     {
-        //Connection con = DBConnection.getInstance().getConnection();
 
-        //qtyPhotos = ListPhotos.size();
         super.onStart();
         getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
         try
@@ -149,7 +153,7 @@ public class SavePhotosService extends AppCompatActivity {
         {
             error = ex.getMessage();
         }
-        qtyPhotos = 8;
+        qtyPhotos = ListPhotos.size();
         PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
         Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
         int localPhotos = cp.getCount();
@@ -157,7 +161,8 @@ public class SavePhotosService extends AppCompatActivity {
         {
             actualPhoto = localPhotos + 1;
         }
-        Toast.makeText(getApplicationContext(), String.format("Foto a Tomar Número " + actualPhoto), Toast.LENGTH_SHORT).show();
+        PhotoActual = ListPhotos.get(actualPhoto -1).PhotoDescription;
+        Toast.makeText(getApplicationContext(), String.format("Foto a Tomar Número " + PhotoActual), Toast.LENGTH_SHORT).show();
     }
 
 
