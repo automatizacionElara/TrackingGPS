@@ -15,6 +15,6 @@ public class MyReceiver extends BroadcastReceiver {
         // an Intent broadcast.
         Toast.makeText(context, "Servicio iniciado desde BroadcastReceiver", Toast.LENGTH_SHORT).show();
         //context.startService(new Intent(context, MyService.class));
-        context.startService(new Intent(context, StartService.class));
+        context.startService(new Intent(context, SendBDLocal.class));
     }
 }

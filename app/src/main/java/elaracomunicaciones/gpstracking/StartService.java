@@ -383,6 +383,44 @@ public class StartService extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
                     SendUbication su = new SendUbication(idService,loc.getLongitude(), loc.getLatitude());
                     su.execute();
+                    TrackingDbHelper helper = new TrackingDbHelper(getApplicationContext());
+                    Cursor c = helper.getAllTracking();
+                    if(answer == true)
+                    {
+                        if(c.moveToFirst())
+                        {
+                            do
+                            {
+                                String IdTracking = c.getString(0);
+                                String IdService = c.getString(1);
+                                String DateTracking = c.getString(2);
+                                String Latitude = c.getString(3) ;
+                                String Longitude = c.getString(4);
+                                //Toast.makeText(getApplicationContext(), "Ubicación Enviada Después", Toast.LENGTH_SHORT).show();
+                                SendUbication sus = new SendUbication(Integer.parseInt(IdService),Double.parseDouble(Longitude),Double.parseDouble(Latitude), DateTracking);
+                                sus.execute();
+                                bdLocal.deleteTracking(IdTracking);
+                            }while(c.moveToNext());
+                        }
+                    }
+                    PhotoDbHelper phelper = new PhotoDbHelper(getApplicationContext());
+                    Cursor p = phelper.getAllPhotos();
+                    if(answer == true)
+                    {
+                        if(p.moveToFirst())
+                        {
+                            do
+                            {
+                                String IdPhoto = p.getString(0);
+                                int IdService = p.getInt(1);
+                                int idType = p.getInt(2);
+                                String Photo = p.getString(3);
+                                SendPhoto sp = new SendPhoto(idService,Photo,idType);
+                                sp.execute();
+                                bdPhotos.deletePhoto(IdPhoto);
+                            }while (p.moveToNext());
+                        }
+                    }
                 }
                 else
                 {
@@ -414,7 +452,7 @@ public class StartService extends AppCompatActivity {
                             String DateTracking = c.getString(2);
                             String Latitude = c.getString(3) ;
                             String Longitude = c.getString(4);
-                            Toast.makeText(getApplicationContext(), "Ubicación Enviada Después", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), "Ubicación Enviada Después", Toast.LENGTH_SHORT).show();
                             SendUbication su = new SendUbication(Integer.parseInt(IdService),Double.parseDouble(Longitude),Double.parseDouble(Latitude), DateTracking);
                             su.execute();
                             bdLocal.deleteTracking(IdTracking);
@@ -483,6 +521,12 @@ public class StartService extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    public void broadcastIntent(View view)
+    {
+        Intent intent = new Intent();
+        intent.setAction("com.trackinggps.CUSTOM_INTENT");
+        sendBroadcast(intent);
+    }
    /* @Override
     public void onResume()
     {
