@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class EditAdressActivity extends AppCompatActivity {
+public class EditAddressActivity extends AppCompatActivity {
 
     private  Button btn_cancel, btn_save;
     private int idTechnician = 0;
