@@ -98,7 +98,7 @@ public class SavePhotosService extends AppCompatActivity {
                 findViewById(R.id.btnEndService).setEnabled(true);
             } else {
                 //StateListItem currItem = actualPhoto;
-                Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos"), Toast.LENGTH_SHORT).show();
                 //adapter.remove(PhotoActual);
 
                 //listViewPhotos.deferNotifyDataSetChanged();
