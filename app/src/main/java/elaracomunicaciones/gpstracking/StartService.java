@@ -13,7 +13,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -192,7 +191,7 @@ public class StartService extends AppCompatActivity {
             public void onClick(View view)
             {
                 Toast.makeText(getApplicationContext(), "Editar Dirección", Toast.LENGTH_SHORT).show();
-                Intent Edit = new Intent(getApplicationContext(), EditAdressActivity.class);
+                Intent Edit = new Intent(getApplicationContext(), EditAddressActivity.class);
 
 
                 Edit.putExtra("IdTecnico",idTechnician);
