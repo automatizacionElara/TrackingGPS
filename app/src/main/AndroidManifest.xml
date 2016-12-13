@@ -65,7 +65,8 @@
 
         <activity android:name=".EditAdressActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".SavePhotosService"></activity>
+        <activity android:name=".SavePhotosService"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

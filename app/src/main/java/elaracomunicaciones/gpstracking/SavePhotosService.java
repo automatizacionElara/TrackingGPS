@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -98,6 +99,8 @@ public class SavePhotosService extends AppCompatActivity {
                 findViewById(R.id.btnEndService).setEnabled(true);
             } else {
                 //StateListItem currItem = actualPhoto;
+                //listViewPhotos.getChildAt(actualPhoto).setBackgroundColor(Color.BLUE);
+                //listViewPhotos.deferNotifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos"), Toast.LENGTH_SHORT).show();
                 //adapter.remove(PhotoActual);
 
@@ -160,19 +163,16 @@ public class SavePhotosService extends AppCompatActivity {
             listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    view.setSelected(true);
+                    view.setFocusable(true);
+                    view.setFocusableInTouchMode(true);
+                    //view.setActivated(true);
                     actualPhoto = position;
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
-                    Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
-                    view.setSelected(true);
-                    view.setActivated(true);
+                    //Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
+                    //PhotoActual = ListPhotos.get(position).PhotoDescription;
                 }
             });
-            /*listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    view.setSelected(true);
-                }
-            });*/
         } else {
             findViewById(R.id.takePhoto).setVisibility(View.GONE);
             findViewById(R.id.btnEndService).setEnabled(true);
