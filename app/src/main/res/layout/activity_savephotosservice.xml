@@ -52,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:selectAllOnFocus="true"
+                android:listSelector="@drawable/item_list_indicator"
                 android:id="@+id/listViewPhotos"/>
         </LinearLayout>
 

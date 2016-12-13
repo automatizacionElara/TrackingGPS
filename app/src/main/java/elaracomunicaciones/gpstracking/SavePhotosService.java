@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 public class SavePhotosService extends AppCompatActivity {
 
     private static int TAKE_PICTURE = 1;
@@ -63,34 +69,35 @@ public class SavePhotosService extends AppCompatActivity {
     private getListOfPhotos ListofPhotos = null;
     PhotoDbHelper bdLocalPhotos;
     String PhotoActual;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
-    protected void onActivityResult(int requestCode,int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK)
-        {
-            byte[]b = null;
+        if (resultCode == Activity.RESULT_OK) {
+            byte[] b = null;
             Bundle extras = data.getExtras();
-            bmp = (Bitmap)extras.get("data");
+            bmp = (Bitmap) extras.get("data");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage,1);
+            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage, 1);
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
             bdLocalPhotos.savePhoto(photo);
 
             Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
             int actualPhotos = pt.getCount();
-            if(actualPhotos == qtyPhotos)
-            {
+            if (actualPhotos == qtyPhotos) {
                 findViewById(R.id.takePhoto).setEnabled(false);
                 findViewById(R.id.btnEndService).setEnabled(true);
-            }
-            else
-            {
+            } else {
+                //StateListItem currItem = actualPhoto;
                 Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos), Toast.LENGTH_SHORT).show();
                 //adapter.remove(PhotoActual);
 
@@ -111,6 +118,7 @@ public class SavePhotosService extends AppCompatActivity {
 
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,41 +127,35 @@ public class SavePhotosService extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        idTechnician = intent.getIntExtra("IdTecnico",0);
-        idService = intent.getIntExtra("IdServicio",0);
-        status = intent.getIntExtra("Status",0);
-        idType = intent.getIntExtra("IdType",0);
+        idTechnician = intent.getIntExtra("IdTecnico", 0);
+        idService = intent.getIntExtra("IdServicio", 0);
+        status = intent.getIntExtra("Status", 0);
+        idType = intent.getIntExtra("IdType", 0);
 
 
-        if(idType != 2 && idType != 5 && idType != 11)
-        {
+        if (idType != 2 && idType != 5 && idType != 11) {
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
             //Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
             //actualPhoto = cp.getCount();
             //int duda = cp.getPosition();
-            ListView listViewPhotos = (ListView)findViewById(R.id.listViewPhotos);
+            ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
             getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
 
             nameOfPhotos = new ArrayList<String>();
-            try
-            {
+            try {
                 ListPhotos = getListOfPhotos.execute().get();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 error = ex.getMessage();
             }
 
-            if(ListPhotos.size()!= 0)
-            {
+            if (ListPhotos.size() != 0) {
                 int i = 0;
-                while(i < ListPhotos.size())
-                {
+                while (i < ListPhotos.size()) {
                     nameOfPhotos.add(ListPhotos.get(i).PhotoDescription);
                     i++;
                 }
             }
-            adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,nameOfPhotos);
+            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameOfPhotos);
             listViewPhotos.setAdapter(adapter);
             listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -161,16 +163,22 @@ public class SavePhotosService extends AppCompatActivity {
                     actualPhoto = position;
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
                     Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
+                    view.setSelected(true);
+                    view.setActivated(true);
                 }
             });
-        }
-        else
-        {
+            /*listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    view.setSelected(true);
+                }
+            });*/
+        } else {
             findViewById(R.id.takePhoto).setVisibility(View.GONE);
             findViewById(R.id.btnEndService).setEnabled(true);
         }
 
-        final Button takePhoto = (Button)findViewById(R.id.takePhoto);
+        final Button takePhoto = (Button) findViewById(R.id.takePhoto);
         takePhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
@@ -190,9 +198,8 @@ public class SavePhotosService extends AppCompatActivity {
                 PhotoDbHelper phelper = new PhotoDbHelper(getApplicationContext());
                 //Cursor p = phelper.getPhotoService(String.valueOf(idService));
                 //Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
-                Cursor p = phelper.getPhotoByDescription(PhotoActual);
-                if(p.getCount()>0)
-                {
+                Cursor p = phelper.getPhotoByDescription(String.valueOf(idService), PhotoActual);
+                if (p.getCount() > 0) {
                     /*int tomada = 0;
                     if(p.moveToFirst())
                     {
@@ -213,12 +220,10 @@ public class SavePhotosService extends AppCompatActivity {
                         }
                         else
                         {*/
-                            Toast.makeText(getApplicationContext(), String.format("Foto ya Tomada"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), String.format("Foto ya Tomada"), Toast.LENGTH_SHORT).show();
                         /*}
                     }*/
-                }
-                else
-                {
+                } else {
                     Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intentCamera, cons);
                 }
@@ -230,46 +235,75 @@ public class SavePhotosService extends AppCompatActivity {
         btn_EndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-                RegisterService terminado = new RegisterService(idTechnician, idService,6);
-                try{
+                RegisterService terminado = new RegisterService(idTechnician, idService, 6);
+                try {
                     terminado.execute().get();
-                }catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
 
                 File dir = getFilesDir();
-                File file = new File(dir,"activeService.txt");
+                File file = new File(dir, "activeService.txt");
                 boolean deleted = file.delete();
 
                 Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
                 Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
-                LogOut.putExtra("IdTecnico",idTechnician);
+                LogOut.putExtra("IdTecnico", idTechnician);
                 startActivity(LogOut);
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
-
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
 
-        super.onStart();
+        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
         getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
-        try
-        {
+        try {
             ListPhotos = getListOfPhotos.execute().get();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             error = ex.getMessage();
         }
         qtyPhotos = ListPhotos.size();
 
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("SavePhotosService Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
 
@@ -285,9 +319,8 @@ public class SavePhotosService extends AppCompatActivity {
         }
 
         @Override
-        protected List<PhotoCatalog> doInBackground(Void... params)
-        {
-            Connection con= null;
+        protected List<PhotoCatalog> doInBackground(Void... params) {
+            Connection con = null;
             try {
                 con = DBConnection.getInstance().getConnection();
                 if (con == null) {
@@ -299,26 +332,24 @@ public class SavePhotosService extends AppCompatActivity {
                     ResultSet result = stmt2.executeQuery(query);
                     int index = 0;
                     temp = new ArrayList<>();
-                    while(result.next())
-                        {
-                          PhotoCatalog tempr = new PhotoCatalog();
-                            tempr.IdPhotoCatalog = result.getInt(1);
-                            tempr.PhotoDescription = result.getString(2);
-                            temp.add(index,tempr);
-                            index++;
-                        }
+                    while (result.next()) {
+                        PhotoCatalog tempr = new PhotoCatalog();
+                        tempr.IdPhotoCatalog = result.getInt(1);
+                        tempr.PhotoDescription = result.getString(2);
+                        temp.add(index, tempr);
+                        index++;
+                    }
 
 
                 }
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 error = ex.getMessage();
             }
             return temp;
         }
 
         @Override
-        protected void onPostExecute(final List<PhotoCatalog> temp)
-        {
+        protected void onPostExecute(final List<PhotoCatalog> temp) {
             super.onPostExecute(temp);
         }
 
