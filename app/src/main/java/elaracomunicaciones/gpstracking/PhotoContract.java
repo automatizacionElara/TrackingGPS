@@ -13,6 +13,8 @@ public class PhotoContract
 
         public static final String IdService = "IdService";
         public static final String IdType = "IdType";
+        public static final String PhotoDescription = "PhotoDescription";
         public static final String StringPhoto = "StringPhoto";
+        public static final String Status = "Status";
     }
 }

@@ -13,7 +13,10 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -42,7 +45,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SavePhotosService extends AppCompatActivity {
 
     private static int TAKE_PICTURE = 1;
-    private static int SELECT_PICTURE = 2;
+    private ListView listViewPhotos;
     private String name = "";
     int code = TAKE_PICTURE;
     final static int cons = 0;
@@ -52,6 +55,8 @@ public class SavePhotosService extends AppCompatActivity {
     private int status = 0;
     private int actualPhoto;
     private int qtyPhotos;
+    private ArrayList<String> nameOfPhotos;
+    private ArrayAdapter<String> adapter;
     List<PhotoCatalog> ListPhotos;
     Bitmap bmp;
     private String error;
@@ -73,11 +78,25 @@ public class SavePhotosService extends AppCompatActivity {
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, encodedImage);
+            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage,1);
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
             bdLocalPhotos.savePhoto(photo);
 
-            if(actualPhoto == (qtyPhotos - 1))
+            Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
+            int actualPhotos = pt.getCount();
+            if(actualPhotos == qtyPhotos)
+            {
+                findViewById(R.id.takePhoto).setEnabled(false);
+                findViewById(R.id.btnEndService).setEnabled(true);
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos), Toast.LENGTH_SHORT).show();
+                //adapter.remove(PhotoActual);
+
+                //listViewPhotos.deferNotifyDataSetChanged();
+            }
+            /*if(actualPhoto == (qtyPhotos - 1))
             {
                 //findViewById(R.id.btnEndService).setEnabled(false);
                 findViewById(R.id.takePhoto).setEnabled(false);
@@ -88,7 +107,7 @@ public class SavePhotosService extends AppCompatActivity {
                 actualPhoto = actualPhoto + 1;
                 findViewById(R.id.takePhoto).setEnabled(true);
                 findViewById(R.id.btnEndService).setEnabled(false);
-            }
+            }*/
 
         }
     }
@@ -105,13 +124,51 @@ public class SavePhotosService extends AppCompatActivity {
         status = intent.getIntExtra("Status",0);
         idType = intent.getIntExtra("IdType",0);
 
-        PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
-        Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
-        actualPhoto = cp.getCount();
-                /*if(localPhotos != 0)
+
+        if(idType != 2 && idType != 5 && idType != 11)
+        {
+            PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
+            //Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
+            //actualPhoto = cp.getCount();
+            //int duda = cp.getPosition();
+            ListView listViewPhotos = (ListView)findViewById(R.id.listViewPhotos);
+            getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
+
+            nameOfPhotos = new ArrayList<String>();
+            try
+            {
+                ListPhotos = getListOfPhotos.execute().get();
+            }
+            catch (Exception ex)
+            {
+                error = ex.getMessage();
+            }
+
+            if(ListPhotos.size()!= 0)
+            {
+                int i = 0;
+                while(i < ListPhotos.size())
                 {
-                    actualPhoto = localPhotos + 1;
-                }*/
+                    nameOfPhotos.add(ListPhotos.get(i).PhotoDescription);
+                    i++;
+                }
+            }
+            adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,nameOfPhotos);
+            listViewPhotos.setAdapter(adapter);
+            listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    actualPhoto = position;
+                    PhotoActual = ListPhotos.get(position).PhotoDescription;
+                    Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else
+        {
+            findViewById(R.id.takePhoto).setVisibility(View.GONE);
+            findViewById(R.id.btnEndService).setEnabled(true);
+        }
 
         final Button takePhoto = (Button)findViewById(R.id.takePhoto);
         takePhoto.setOnClickListener(new View.OnClickListener() {
@@ -124,15 +181,49 @@ public class SavePhotosService extends AppCompatActivity {
                 {
                     actualPhoto = localPhotos + 1;
                 }*/
-                if(ListPhotos.size() == 0)
+                /*if(ListPhotos.size() == 0)
                 {
                     getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
                 }
                 PhotoActual = ListPhotos.get(actualPhoto).PhotoDescription;
-                Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
-                Intent intentCamera =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();*/
+                PhotoDbHelper phelper = new PhotoDbHelper(getApplicationContext());
+                //Cursor p = phelper.getPhotoService(String.valueOf(idService));
+                //Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
+                Cursor p = phelper.getPhotoByDescription(PhotoActual);
+                if(p.getCount()>0)
+                {
+                    /*int tomada = 0;
+                    if(p.moveToFirst())
+                    {
+                        do
+                        {
+                            String IdPhoto = p.getString(0);
+                            int IdService = p.getInt(1);
+                            int idType = p.getInt(2);
+                            String Photo = p.getString(3);
+                            if(PhotoActual == Photo)
+                            { tomada = tomada + 1; }
+                        }while (p.moveToNext());
 
-                startActivityForResult(intentCamera, cons);
+                        if(tomada == 0)
+                        {
+                            Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intentCamera, cons);
+                        }
+                        else
+                        {*/
+                            Toast.makeText(getApplicationContext(), String.format("Foto ya Tomada"), Toast.LENGTH_SHORT).show();
+                        /*}
+                    }*/
+                }
+                else
+                {
+                    Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intentCamera, cons);
+                }
+
+
             }
         });
         final Button btn_EndService = (Button) findViewById(R.id.btnEndService);
@@ -160,6 +251,8 @@ public class SavePhotosService extends AppCompatActivity {
         });
     }
 
+
+
     @Override
     protected void onStart()
     {
@@ -175,6 +268,8 @@ public class SavePhotosService extends AppCompatActivity {
             error = ex.getMessage();
         }
         qtyPhotos = ListPhotos.size();
+
+
     }
 
 

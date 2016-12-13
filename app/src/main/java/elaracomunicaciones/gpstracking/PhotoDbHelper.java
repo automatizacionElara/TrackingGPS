@@ -12,9 +12,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class PhotoDbHelper extends SQLiteOpenHelper
 {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Elara_Service_Photos";
-    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, IdType INTEGER, StringPhoto BLOB)";
+    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, IdType INTEGER, PhotoDescription VARCHAR(100), StringPhoto BLOB, Status INTEGER)";
 
     public PhotoDbHelper(Context context)
     {
@@ -33,8 +33,8 @@ public class PhotoDbHelper extends SQLiteOpenHelper
     {
         //No hay operaciones
         db.execSQL("DROP TABLE IF EXISTS Elara_Service_Photos");
-
-        onCreate(db);
+        db.execSQL(sqlCreate);
+        //onCreate(db);
     }
 
     public long savePhoto(Photo photo)
@@ -43,6 +43,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
         ContentValues values = new ContentValues();
         values.put(PhotoContract.PhotoEntry.IdService, photo .IdService);
         values.put(PhotoContract.PhotoEntry.IdType, photo.IdType);
+        values.put(PhotoContract.PhotoEntry.PhotoDescription, photo.PhotoDescription);
         values.put(PhotoContract.PhotoEntry.StringPhoto, photo.StringPhoto);
 
         return  sqLiteDatabase.insert(
@@ -56,13 +57,43 @@ public class PhotoDbHelper extends SQLiteOpenHelper
         return sqLiteDatabase.delete(PhotoContract.PhotoEntry.TABLE_NAME, "IdPhoto =" + IdPhoto, null) > 0;
     }
 
+    public boolean updatePhoto(String IdPhoto)
+    {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        //return sqLiteDatabase.update(PhotoContract.PhotoEntry.TABLE_NAME,"IdPhoto=" + IdPhoto,null) > 0;
+        sqLiteDatabase.execSQL("UPDATE Elara_Service_Photos SET Status = 0 WHERE IdPhoto = " + IdPhoto);
+        String[] args = new String[]{IdPhoto};
+        ContentValues valores = new ContentValues();
+        valores.put("Status", "0");
+        return sqLiteDatabase.update("Elara_Service_Photos", valores, "IdPhoto=?",args) > 0;
+    }
+
+    public Cursor getPhotoByDescription(String PhotoDescription)
+    {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "PhotoDescription", "StringPhoto", "Status"};
+        String[] args = new String[] {PhotoDescription};
+
+        return sqLiteDatabase.query("Elara_Service_Photos", campos, PhotoContract.PhotoEntry.PhotoDescription + "=?", args, null, null, null);
+    }
+
     public Cursor getAllPhotos()
     {
         //return getReadableDatabase().query(TrackingContract.TrackingEntry.TABLE_NAME,null, null, null,null,null,null,null);
-        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto"};
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "Status"};
         String[] args = new String[] {"usu1"};
 
         return getReadableDatabase().query("Elara_Service_Photos", campos, null, null, null, null, null);
+
+    }
+
+    public Cursor getAllActivePhotos()
+    {
+        //return getReadableDatabase().query(TrackingContract.TrackingEntry.TABLE_NAME,null, null, null,null,null,null,null);
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "Status"};
+        String[] args = new String[] {"usu1"};
+
+        return getReadableDatabase().query("Elara_Service_Photos", campos, PhotoContract.PhotoEntry.Status + "=?", new String[]{"1"}, null, null, null);
 
     }
 

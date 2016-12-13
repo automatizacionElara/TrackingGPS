@@ -7,4 +7,6 @@ package elaracomunicaciones.gpstracking;
 public class PhotoCatalog {
     public int IdPhotoCatalog;
     public String PhotoDescription;
+    public String StringPhoto;
+    public int Status;
 }

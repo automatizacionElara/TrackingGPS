@@ -39,7 +39,7 @@ public class ToDoServices extends AppCompatActivity
     private TextView lbReference, lbTicket, lbETA, lbType, lbRequired, lbAddress;
     private TextView tbReference, tbTicket, tbETA, tbType, tbRequired, tbAddress;
     private Spinner servicesSpinner;
-    private Button btnInit, btnRefresh, btnEditAddress, btnLogOut;
+    private Button btnInit, btnRefresh,  btnLogOut;
     private CheckConnection webConnection;
     private ProgressBar progressBar;
 
@@ -131,7 +131,7 @@ public class ToDoServices extends AppCompatActivity
             public void onClick(View view)
             {
                 btnRefresh.setEnabled(false);
-                btnEditAddress.setEnabled(false);
+                //btnEditAddress.setEnabled(false);
                 btnInit.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -147,7 +147,7 @@ public class ToDoServices extends AppCompatActivity
 
          /* Acción del botón para solitar la edición de la dirección de un sitio */
 
-        btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
+        /*btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
 
         btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
         btnEditAddress.setOnClickListener(new View.OnClickListener() {
@@ -167,9 +167,9 @@ public class ToDoServices extends AppCompatActivity
                 startActivity(editAddress);
             }
         });
-
+*/
         btnRefresh.setEnabled(false);
-        btnEditAddress.setEnabled(false);
+        //btnEditAddress.setEnabled(false);
         btnInit.setEnabled(false);
 
         showLabels(false);
@@ -197,7 +197,7 @@ public class ToDoServices extends AppCompatActivity
     private void enableActions(boolean enable)
     {
         btnInit.setEnabled(enable);
-        btnEditAddress.setEnabled(enable);
+        //btnEditAddress.setEnabled(enable);
     }
 
     private void showLabels(boolean enable)

@@ -404,7 +404,8 @@ public class StartService extends AppCompatActivity {
                         }
                     }
                     PhotoDbHelper phelper = new PhotoDbHelper(getApplicationContext());
-                    Cursor p = phelper.getAllPhotos();
+                    //Cursor p = phelper.getAllPhotos();
+                    Cursor p = phelper.getAllActivePhotos();
                     if(answer == true)
                     {
                         if(p.moveToFirst())
@@ -417,7 +418,8 @@ public class StartService extends AppCompatActivity {
                                 String Photo = p.getString(3);
                                 SendPhoto sp = new SendPhoto(idService,Photo,idType);
                                 sp.execute();
-                                bdPhotos.deletePhoto(IdPhoto);
+                                //bdPhotos.deletePhoto(IdPhoto);
+                                bdPhotos.updatePhoto(IdPhoto);
                             }while (p.moveToNext());
                         }
                     }

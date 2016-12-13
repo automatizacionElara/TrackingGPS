@@ -201,20 +201,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_menu_edit"
-            android:id="@+id/btnEditAddress"
-            android:text="Editar"
-            android:textColor="@android:color/background_light"
-            android:textAllCaps="false"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/button_editaddress" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
             android:id="@+id/btnInit"
             android:text="OK"
