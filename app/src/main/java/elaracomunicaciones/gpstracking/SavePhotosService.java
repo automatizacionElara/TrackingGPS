@@ -64,6 +64,7 @@ public class SavePhotosService extends AppCompatActivity {
     private int qtyPhotos;
     private ArrayList<String> nameOfPhotos;
     private ArrayAdapter<String> adapter;
+
     List<PhotoCatalog> ListPhotos;
     Bitmap bmp;
     private String error;
@@ -98,9 +99,8 @@ public class SavePhotosService extends AppCompatActivity {
                 findViewById(R.id.takePhoto).setEnabled(false);
                 findViewById(R.id.btnEndService).setEnabled(true);
             } else {
-                //StateListItem currItem = actualPhoto;
-                //listViewPhotos.getChildAt(actualPhoto).setBackgroundColor(Color.BLUE);
-                //listViewPhotos.deferNotifyDataSetChanged();
+                ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+                listViewPhotos.getChildAt(actualPhoto).setActivated(true);
                 Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos"), Toast.LENGTH_SHORT).show();
                 //adapter.remove(PhotoActual);
 
@@ -158,14 +158,16 @@ public class SavePhotosService extends AppCompatActivity {
                     i++;
                 }
             }
-            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameOfPhotos);
+            adapter = new ArrayAdapter<String>(this, R.layout.list_item, nameOfPhotos);
+
             listViewPhotos.setAdapter(adapter);
+
             listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     view.setSelected(true);
-                    view.setFocusable(true);
-                    view.setFocusableInTouchMode(true);
+                    //view.setFocusable(true);
+                    //view.setFocusableInTouchMode(true);
                     //view.setActivated(true);
                     actualPhoto = position;
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
@@ -173,6 +175,22 @@ public class SavePhotosService extends AppCompatActivity {
                     //PhotoActual = ListPhotos.get(position).PhotoDescription;
                 }
             });
+
+            if (ListPhotos.size() != 0) {
+                int i = 0;
+                while (i < ListPhotos.size())
+                {
+                    String searchPhoto = ListPhotos.get(i).PhotoDescription;
+                    PhotoDbHelper helper = new PhotoDbHelper(getApplicationContext());
+
+                    Cursor ap = helper.getPhotoByDescription(String.valueOf(idService), searchPhoto);
+                    if (ap.getCount() > 0)
+                    {
+                        listViewPhotos.getChildAt(i).setActivated(true);
+                    }
+                    i++;
+                }
+            }
         } else {
             findViewById(R.id.takePhoto).setVisibility(View.GONE);
             findViewById(R.id.btnEndService).setEnabled(true);
