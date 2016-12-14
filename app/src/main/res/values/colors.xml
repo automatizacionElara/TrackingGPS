@@ -5,4 +5,6 @@
     <color name="colorAccent">#ff4081</color>
     <drawable name="green_Color">#7FFF7F</drawable>
     <drawable name="blue_Color">#38ADF4</drawable>
+    <drawable name="took">#BDBDBD</drawable>
+    <drawable name="selected">#DD2C00</drawable>
 </resources>
