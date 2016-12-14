@@ -200,8 +200,7 @@ public class SavePhotosService extends AppCompatActivity {
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
                     //Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
                     //PhotoActual = ListPhotos.get(position).PhotoDescription;
-                    findViewById(R.id.takePhoto).setEnabled(true);
-                    findViewById(R.id.btnEndService).setEnabled(false);
+
                 }
             });
         } else {
@@ -289,7 +288,8 @@ public class SavePhotosService extends AppCompatActivity {
         }
         qtyPhotos = ListPhotos.size();
 
-
+        findViewById(R.id.takePhoto).setEnabled(true);
+        findViewById(R.id.btnEndService).setEnabled(false);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
