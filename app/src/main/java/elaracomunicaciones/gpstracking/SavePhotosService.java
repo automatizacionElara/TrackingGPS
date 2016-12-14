@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ public class SavePhotosService extends AppCompatActivity {
     private ArrayList<String> nameOfPhotos;
     private ArrayAdapter<String> adapter;
 
+    boolean flag = true;
     List<PhotoCatalog> ListPhotos;
     Bitmap bmp;
     private String error;
@@ -158,7 +160,21 @@ public class SavePhotosService extends AppCompatActivity {
                     i++;
                 }
             }
-            adapter = new ArrayAdapter<String>(this, R.layout.list_item, nameOfPhotos);
+            adapter = new ArrayAdapter<String>(this, R.layout.list_item, nameOfPhotos)
+            {
+                @Override
+                public int getViewTypeCount() {
+
+                    return getCount();
+                }
+
+                @Override
+                public int getItemViewType(int position) {
+
+                    return position;
+                }
+
+            };
 
             listViewPhotos.setAdapter(adapter);
 
@@ -175,22 +191,6 @@ public class SavePhotosService extends AppCompatActivity {
                     //PhotoActual = ListPhotos.get(position).PhotoDescription;
                 }
             });
-
-            if (ListPhotos.size() != 0) {
-                int i = 0;
-                while (i < ListPhotos.size())
-                {
-                    String searchPhoto = ListPhotos.get(i).PhotoDescription;
-                    PhotoDbHelper helper = new PhotoDbHelper(getApplicationContext());
-
-                    Cursor ap = helper.getPhotoByDescription(String.valueOf(idService), searchPhoto);
-                    if (ap.getCount() > 0)
-                    {
-                        //listViewPhotos.getChildAt(i).setActivated(true);
-                    }
-                    i++;
-                }
-            }
         } else {
             findViewById(R.id.takePhoto).setVisibility(View.GONE);
             findViewById(R.id.btnEndService).setEnabled(true);
@@ -296,6 +296,33 @@ public class SavePhotosService extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+
+        listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+                if (ListPhotos.size() != 0 && flag)
+                {
+                    int i = 0;
+                    while (i < ListPhotos.size())
+                    {
+                        String searchPhoto = ListPhotos.get(i).PhotoDescription;
+                        PhotoDbHelper helper = new PhotoDbHelper(getApplicationContext());
+
+                        Cursor ap = helper.getPhotoByDescription(String.valueOf(idService), searchPhoto);
+                        if (ap.getCount() > 0)
+                        {
+                           listViewPhotos.getChildAt(i).setActivated(true);
+                        }
+                        i++;
+                    }
+                    flag = false;
+                }
+            }
+        }, 1000);
     }
 
     /**
