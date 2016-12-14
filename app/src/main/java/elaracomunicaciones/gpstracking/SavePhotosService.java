@@ -186,7 +186,7 @@ public class SavePhotosService extends AppCompatActivity {
                     Cursor ap = helper.getPhotoByDescription(String.valueOf(idService), searchPhoto);
                     if (ap.getCount() > 0)
                     {
-                        listViewPhotos.getChildAt(i).setActivated(true);
+                        //listViewPhotos.getChildAt(i).setActivated(true);
                     }
                     i++;
                 }
