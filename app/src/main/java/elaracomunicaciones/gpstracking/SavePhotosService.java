@@ -63,6 +63,7 @@ public class SavePhotosService extends AppCompatActivity {
     private int status = 0;
     private int actualPhoto;
     private int qtyPhotos;
+    private int alreadyPhoto = 0;
     private ArrayList<String> nameOfPhotos;
     private ArrayAdapter<String> adapter;
 
@@ -91,16 +92,26 @@ public class SavePhotosService extends AppCompatActivity {
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage, 1);
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
-            bdLocalPhotos.savePhoto(photo);
-
+            if(alreadyPhoto == 0)
+            {
+                Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage, 1);
+                bdLocalPhotos.savePhoto(photo);
+            }
+            else
+            {
+                bdLocalPhotos.updateAlreadyPhoto(String.valueOf(idService), PhotoActual, encodedImage);
+            }
+            alreadyPhoto = 0;
             Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
             int actualPhotos = pt.getCount();
-            if (actualPhotos == qtyPhotos) {
+            if (actualPhotos == qtyPhotos)
+            {
                 findViewById(R.id.takePhoto).setEnabled(false);
                 findViewById(R.id.btnEndService).setEnabled(true);
-            } else {
+            } else
+            {
+                findViewById(R.id.btnEndService).setEnabled(false);
                 ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
                 listViewPhotos.getChildAt(actualPhoto).setActivated(true);
                 Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos"), Toast.LENGTH_SHORT).show();
@@ -189,6 +200,8 @@ public class SavePhotosService extends AppCompatActivity {
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
                     //Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
                     //PhotoActual = ListPhotos.get(position).PhotoDescription;
+                    findViewById(R.id.takePhoto).setEnabled(true);
+                    findViewById(R.id.btnEndService).setEnabled(false);
                 }
             });
         } else {
@@ -218,30 +231,14 @@ public class SavePhotosService extends AppCompatActivity {
                 //Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
                 Cursor p = phelper.getPhotoByDescription(String.valueOf(idService), PhotoActual);
                 if (p.getCount() > 0) {
-                    /*int tomada = 0;
-                    if(p.moveToFirst())
-                    {
-                        do
-                        {
-                            String IdPhoto = p.getString(0);
-                            int IdService = p.getInt(1);
-                            int idType = p.getInt(2);
-                            String Photo = p.getString(3);
-                            if(PhotoActual == Photo)
-                            { tomada = tomada + 1; }
-                        }while (p.moveToNext());
 
-                        if(tomada == 0)
-                        {
-                            Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intentCamera, cons);
-                        }
-                        else
-                        {*/
-                    Toast.makeText(getApplicationContext(), String.format("Foto ya Tomada"), Toast.LENGTH_SHORT).show();
-                        /*}
-                    }*/
+                    Toast.makeText(getApplicationContext(), String.format("Se eliminará la foto tomada anteriormente"), Toast.LENGTH_SHORT).show();
+                    alreadyPhoto = 1;
+                    Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intentCamera, cons);
+
                 } else {
+                    alreadyPhoto = 0;
                     Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intentCamera, cons);
                 }

@@ -68,6 +68,15 @@ public class PhotoDbHelper extends SQLiteOpenHelper
         return sqLiteDatabase.update("Elara_Service_Photos", valores, "IdPhoto=?",args) > 0;
     }
 
+    public boolean updateAlreadyPhoto(String IdService, String PhotoDescription, String Photo)
+    {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String[] args = new String[]{IdService, PhotoDescription};
+        ContentValues valores = new ContentValues();
+        valores.put("StringPhoto", Photo);
+        return  sqLiteDatabase.update("Elara_Service_Photos", valores, "IdService=? AND PhotoDescription=?", args) > 0;
+    }
+
     public Cursor getPhotoByDescription(String IdService, String PhotoDescription)
     {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
