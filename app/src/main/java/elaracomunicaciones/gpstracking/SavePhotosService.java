@@ -66,7 +66,8 @@ public class SavePhotosService extends AppCompatActivity {
     private int alreadyPhoto = 0;
     private ArrayList<String> nameOfPhotos;
     private ArrayAdapter<String> adapter;
-
+    private Button EndService;
+    int actualPhotos;
     boolean flag = true;
     List<PhotoCatalog> ListPhotos;
     Bitmap bmp;
@@ -104,14 +105,19 @@ public class SavePhotosService extends AppCompatActivity {
             }
             alreadyPhoto = 0;
             Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
-            int actualPhotos = pt.getCount();
+            actualPhotos = pt.getCount();
+            Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos de "+ qtyPhotos), Toast.LENGTH_SHORT).show();
             if (actualPhotos == qtyPhotos)
             {
+                Toast.makeText(getApplicationContext(), String.format("FINALIZAR"),Toast.LENGTH_SHORT).show();
+                ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+                listViewPhotos.getChildAt(actualPhoto).setActivated(true);
+                //EndService.setEnabled(true);
                 findViewById(R.id.takePhoto).setEnabled(false);
-                findViewById(R.id.btnEndService).setEnabled(true);
+
             } else
             {
-                findViewById(R.id.btnEndService).setEnabled(false);
+                //EndService.setEnabled(false);
                 ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
                 listViewPhotos.getChildAt(actualPhoto).setActivated(true);
                 Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos"), Toast.LENGTH_SHORT).show();
@@ -139,7 +145,7 @@ public class SavePhotosService extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_savephotosservice);
-
+        EndService = (Button)(findViewById(R.id.btnEndService));
 
         Intent intent = getIntent();
 
@@ -205,7 +211,7 @@ public class SavePhotosService extends AppCompatActivity {
             });
         } else {
             findViewById(R.id.takePhoto).setVisibility(View.GONE);
-            findViewById(R.id.btnEndService).setEnabled(true);
+            EndService.setEnabled(true);
         }
 
         final Button takePhoto = (Button) findViewById(R.id.takePhoto);
@@ -245,27 +251,38 @@ public class SavePhotosService extends AppCompatActivity {
 
             }
         });
-        final Button btn_EndService = (Button) findViewById(R.id.btnEndService);
-        btn_EndService.setOnClickListener(new View.OnClickListener() {
+
+        EndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-                RegisterService terminado = new RegisterService(idTechnician, idService, 6);
-                try {
-                    terminado.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+                //Toast.makeText(getApplicationContext(), String.format("Fotos Tomadas " + actualPhotos + " del total " + qtyPhotos), Toast.LENGTH_SHORT).show();
+
+                if(actualPhotos != qtyPhotos)
+                {
+                    Toast.makeText(getApplicationContext(), String.format("No se han tomado todas las fotografías"), Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                File dir = getFilesDir();
-                File file = new File(dir, "activeService.txt");
-                boolean deleted = file.delete();
+                else
+                {
+                    RegisterService terminado = new RegisterService(idTechnician, idService, 6);
+                    try {
+                        terminado.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-                Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
-                Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
-                LogOut.putExtra("IdTecnico", idTechnician);
-                startActivity(LogOut);
+                    File dir = getFilesDir();
+                    File file = new File(dir, "activeService.txt");
+                    boolean deleted = file.delete();
+
+                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                    Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
+                    LogOut.putExtra("IdTecnico", idTechnician);
+                    startActivity(LogOut);
+                }
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -289,7 +306,7 @@ public class SavePhotosService extends AppCompatActivity {
         qtyPhotos = ListPhotos.size();
 
         findViewById(R.id.takePhoto).setEnabled(true);
-        findViewById(R.id.btnEndService).setEnabled(false);
+        //EndService.setEnabled(false);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
