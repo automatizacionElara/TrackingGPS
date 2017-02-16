@@ -1,28 +1,14 @@
 package elaracomunicaciones.gpstracking;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
-import android.Manifest;
-import android.content.Context;
 import android.widget.Toast;
 import android.content.IntentFilter;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-import java.util.Calendar;
+
+import elaracomunicaciones.gpstracking.Utils.CheckConnection;
 
 
 /**

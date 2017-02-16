@@ -1,8 +1,7 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Activities;
 
 /* Librerías */
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -10,10 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +34,11 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import elaracomunicaciones.gpstracking.Models.Service;
+import elaracomunicaciones.gpstracking.R;
+import elaracomunicaciones.gpstracking.StartService;
+import elaracomunicaciones.gpstracking.Utils.CheckConnection;
+
 public class ToDoServices extends AppCompatActivity
 {
     private List<Service> servicesList = new ArrayList<>();
@@ -42,6 +49,7 @@ public class ToDoServices extends AppCompatActivity
     private Button btnInit, btnRefresh,  btnLogOut;
     private CheckConnection webConnection;
     private ProgressBar progressBar;
+    private ScrollView scrollInfo;
 
     /* Inicialización de la actividad */
 
@@ -49,12 +57,14 @@ public class ToDoServices extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_todoservices);
 
         /* Lectura de parámetros recibidos de la actividad de Login */
 
         Intent inte = getIntent();
-        idTechnician = inte.getIntExtra("IdTecnico",0);
+        idTechnician = inte.getIntExtra("idTechnician",0);
 
         /* Creación de instancia de conexión a internet */
 
@@ -64,6 +74,7 @@ public class ToDoServices extends AppCompatActivity
 
         servicesSpinner = (Spinner)findViewById(R.id.servicesSpinner);
 
+        scrollInfo = (ScrollView)findViewById(R.id.scrollInfo);
         lbReference = (TextView)findViewById(R.id.lbReference);
         lbTicket = (TextView)findViewById(R.id.lbTicket);
         lbETA = (TextView)findViewById(R.id.lbETA);
@@ -93,7 +104,7 @@ public class ToDoServices extends AppCompatActivity
                 boolean deleted = file.delete();
                 Toast.makeText(getApplicationContext(), "Sesión Cerrada", Toast.LENGTH_SHORT).show();
 
-                Intent LoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent LoginActivity = new Intent(getApplicationContext(), elaracomunicaciones.gpstracking.Activities.LoginActivity.class);
                 startActivity(LoginActivity);
                 finish();
             }
@@ -134,6 +145,7 @@ public class ToDoServices extends AppCompatActivity
                 //btnEditAddress.setEnabled(false);
                 btnInit.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
+                scrollInfo.setVisibility(View.GONE);
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -181,6 +193,7 @@ public class ToDoServices extends AppCompatActivity
 
         /* Obtención de servicios disponibles para el proveedor */
         progressBar.setVisibility(View.VISIBLE);
+        scrollInfo.setVisibility(View.GONE);
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -197,7 +210,6 @@ public class ToDoServices extends AppCompatActivity
     private void enableActions(boolean enable)
     {
         btnInit.setEnabled(enable);
-        //btnEditAddress.setEnabled(enable);
     }
 
     private void showLabels(boolean enable)
@@ -231,7 +243,9 @@ public class ToDoServices extends AppCompatActivity
                     .show();
 
             enableActions(false);
+            btnRefresh.setEnabled(true);
             progressBar.setVisibility(View.GONE);
+            scrollInfo.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -319,12 +333,12 @@ public class ToDoServices extends AppCompatActivity
         }
         else
         {
-            Toast.makeText(getApplicationContext(), "Feliciades, no tienes ningún servicio pendiente.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Felicidades, no tienes ningún servicio pendiente.", Toast.LENGTH_SHORT).show();
         }
 
         servicesSpinner
                 .setAdapter(new ArrayAdapter<String>(ToDoServices.this,
-                        android.R.layout.simple_spinner_dropdown_item,
+                        elaracomunicaciones.gpstracking.R.layout.spinner_layout,
                         list));
 
         servicesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -358,6 +372,7 @@ public class ToDoServices extends AppCompatActivity
         });
 
         progressBar.setVisibility(View.GONE);
+        scrollInfo.setVisibility(View.VISIBLE);
         btnRefresh.setEnabled(true);
     }
 

@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import elaracomunicaciones.gpstracking.Utils.DBConnection;
+
 /**
  * Created by daniel sosa on 05/09/2016.
  */

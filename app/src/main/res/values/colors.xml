@@ -7,4 +7,9 @@
     <drawable name="blue_Color">#38ADF4</drawable>
     <drawable name="took">#BDBDBD</drawable>
     <drawable name="selected">#DD2C00</drawable>
+    <drawable name="elaraOrange">#ff3603</drawable>
+    <drawable name="elaraBlue">#001489</drawable>
+    <drawable name="elaraLigthBlue">#003da5</drawable>
+    <drawable name="white">#FFFFFF</drawable>
+    <drawable name="transparent">#00FFFFFF</drawable>
 </resources>

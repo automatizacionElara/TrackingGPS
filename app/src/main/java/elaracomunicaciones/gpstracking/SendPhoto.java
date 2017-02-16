@@ -6,8 +6,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import elaracomunicaciones.gpstracking.Utils.DBConnection;
 
-    public class SendPhoto extends AsyncTask<Void, Void, Boolean> {
+
+public class SendPhoto extends AsyncTask<Void, Void, Boolean> {
 
         private final String stringPhoto;
         private final int IdService;

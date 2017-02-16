@@ -1,16 +1,9 @@
-package elaracomunicaciones.gpstracking;
-
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.widget.Toast;
+package elaracomunicaciones.gpstracking.Utils;
 
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by daniel sosa on 27/07/2016.
@@ -19,7 +12,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class DBConnection {
     private static  DBConnection instance = null;
-    private static final String URL = "jdbc:jtds:sqlserver://104.130.231.193/Elara_SeguimientoCuadrillas;";
+    private static final String URL = "jdbc:jtds:sqlserver://104.130.231.193/Dev_SeguimientoCuadrillas;";
     private static final String USER= "Connection";
     private static final String PASS= "C0nn3ctAnD!";
     private static Connection connection = null;

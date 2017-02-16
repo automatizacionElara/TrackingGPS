@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -15,6 +12,21 @@
             app:srcCompat="@drawable/banner"
             android:id="@+id/banner"
             android:layout_weight="1" />
+
+    <Button
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:srcCompat="@android:drawable/ic_lock_power_off"
+        android:id="@+id/btnLogOut"
+        android:textSize="@dimen/activity_vertical_margin"
+        android:alpha="@integer/google_play_services_version"
+        android:text="Salir"
+        android:textAllCaps="false"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp" />
 
         <TextView
             android:text="Selecciona un servicio:"
@@ -35,167 +47,194 @@
             android:layout_height="wrap_content"
             android:id="@+id/servicesSpinner"
             android:layout_below="@+id/lbSelect"
-            android:layout_alignParentStart="true"
-            android:paddingTop="5dp" />
+            android:background="@drawable/spinner_services"
 
-        <TextView
-            android:text="Ticket:"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/lbTicket"
-            android:textStyle="bold"
-            android:textColor="@android:color/background_dark"
-            android:layout_below="@+id/servicesSpinner"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/servicesSpinner"
-            android:id="@+id/tbTicket"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/lbTicket" />
-
-        <TextView
-            android:text="Servicio:"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/lbType"
-            android:textStyle="bold"
-            android:textColor="@android:color/background_dark"
-            android:layout_below="@+id/lbTicket"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:text="ETA:"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/lbETA"
-            android:textStyle="bold"
-            android:textColor="@android:color/background_dark"
-            android:layout_below="@+id/lbType"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tbType"
-            android:layout_alignBaseline="@+id/lbType"
-            android:layout_alignBottom="@+id/lbType"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/lbTicket" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tbETA"
-            android:layout_alignBaseline="@+id/lbETA"
-            android:layout_alignBottom="@+id/lbETA"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/lbType" />
-
-        <TextView
-            android:text="Dirección:"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/lbAddress"
-            android:textStyle="bold"
-            android:textColor="@android:color/background_dark"
-            android:layout_below="@+id/lbETA"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lbAddress"
-            android:layout_alignParentStart="true"
-            android:id="@+id/tbAddress"
-            android:layout_alignParentEnd="true"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:text="Referencia:"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tbAddress"
-            android:layout_alignParentStart="true"
-            android:id="@+id/lbReference"
-            android:paddingLeft="10dp"
-            android:textStyle="normal|bold"
-            android:textColor="@android:color/background_dark" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lbReference"
-            android:layout_alignParentStart="true"
-            android:id="@+id/tbReference"
-            android:layout_alignParentEnd="true"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:text="Requerimientos:"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tbReference"
-            android:layout_alignParentStart="true"
-            android:id="@+id/lbRequired"
-            android:paddingLeft="10dp"
-            android:textStyle="normal|bold"
-            android:textColor="@android:color/background_dark" />
+            android:gravity="left|center_vertical"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:spinnerMode="dialog"
+            />
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_below="@+id/lbRequired"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/servicesSpinner"
             android:layout_alignParentStart="true"
-            android:id="@+id/scrollRequired"
-            android:layout_height="50dp">
+            android:id="@+id/scrollInfo"
+            android:layout_marginBottom="70dp">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tbRequired"
-                android:paddingLeft="10dp" />
+                android:layout_height="wrap_content">
+
+                <!-- Ticket -->
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lbTicket"
+
+                    android:text="Ticket: "
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbTicket"
+                    android:layout_toEndOf="@+id/lbTicket"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"/>
+
+                <!-- Servicio -->
+
+                <TextView
+                    android:text="Servicio:"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lbType"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/background_dark"
+                    android:layout_below="@+id/lbTicket"
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbType"
+                    android:layout_alignBaseline="@+id/lbType"
+                    android:layout_alignBottom="@+id/lbType"
+                    android:layout_toEndOf="@+id/lbTicket"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"/>
+
+                <!-- ETA -->
+
+                <TextView
+                    android:text="ETA:"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lbETA"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/background_dark"
+                    android:layout_below="@+id/lbType"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbETA"
+                    android:layout_alignBaseline="@+id/lbETA"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@+id/lbETA"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"/>
+
+                <!-- Dirección del sitio -->
+
+                <TextView
+                    android:text="Dirección:"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lbAddress"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/background_dark"
+                    android:layout_below="@+id/lbETA"
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lbAddress"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/tbAddress"
+                    android:layout_alignParentEnd="true"
+                    android:padding="10dp"/>
+
+                <!-- Referencia -->
+
+                <TextView
+                    android:text="Referencia:"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tbAddress"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/lbReference"
+                    android:paddingLeft="10dp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@android:color/background_dark" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lbReference"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/tbReference"
+                    android:padding="10dp" />
+
+                <!-- Requerimientos -->
+
+                <TextView
+                    android:text="Requerimientos:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tbReference"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/lbRequired"
+                    android:paddingLeft="10dp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@android:color/background_dark" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tbRequired"
+                    android:layout_below="@id/lbRequired"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+
         </ScrollView>
 
         <ProgressBar
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/progressBar"
-            android:layout_below="@+id/scrollRequired"
+            android:layout_below="@+id/servicesSpinner"
             android:layout_centerHorizontal="true"
-            android:visibility="visible"
-            android:indeterminate="true"/>
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:layout_marginTop="30dp"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            app:srcCompat="@android:drawable/ic_lock_power_off"
-            android:layout_marginTop="19dp"
-            android:id="@+id/btnLogOut"
-            android:text="Salir"
-            android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/btnRefresh" />
+
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
-            android:layout_marginEnd="19dp"
             android:id="@+id/btnRefresh"
+
             android:text="Recargar"
             android:textColor="@android:color/background_light"
-            android:textAllCaps="false"
+            android:background="@drawable/button_refresh"
+            android:padding="5dp"
+
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/button_refresh" />
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -203,16 +242,18 @@
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
             android:id="@+id/btnInit"
-            android:text="OK"
+
+            android:text="En Camino"
             android:textColor="@android:color/background_light"
-            android:layout_marginEnd="14dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignEnd="@+id/lbRequired"
             android:textAllCaps="false"
-            android:textSize="14sp"
+            android:background="@drawable/button_init"
+            android:padding="5dp"
+
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/button_init" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:popupBackground="@drawable/blue_Color" />
 
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>

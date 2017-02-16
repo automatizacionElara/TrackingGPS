@@ -1,15 +1,12 @@
 package elaracomunicaciones.gpstracking;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import java.security.MessageDigest;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.EmptyStackException;
+
+import elaracomunicaciones.gpstracking.Utils.DBConnection;
 
 /**
  * Created by daniel sosa on 29/08/2016.

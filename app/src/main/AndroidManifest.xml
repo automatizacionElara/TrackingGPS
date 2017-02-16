@@ -29,18 +29,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activities.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="nosensor">
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -48,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ToDoServices"
+            android:name=".Activities.ToDoServices"
             android:screenOrientation="portrait" />
         <activity
             android:name=".StartService"
