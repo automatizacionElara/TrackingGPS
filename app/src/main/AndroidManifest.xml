@@ -50,7 +50,7 @@
             android:name=".Activities.ToDoServices"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".StartService"
+            android:name=".Activities.StartService"
             android:screenOrientation="portrait" />
 
         <receiver
@@ -62,9 +62,11 @@
             <action android:name="android.intent.action.BOOT_COMPLETED" />
         </intent-filter>
 
-        <activity android:name=".EditAdressActivity"
+        <activity
+            android:name=".Activities.EditAddressActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".SavePhotosService"
+
+        <activity android:name=".Activities.SavePhotosService"
             android:screenOrientation="portrait" />
 
         <provider

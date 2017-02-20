@@ -14,10 +14,10 @@ public class Tracking
     public final double Latitude;
     public final double Longitude;
 
-    public Tracking(int idservice, String datetracking, double latitude, double longitude)
+    public Tracking(int idservice, String dateTracking, double latitude, double longitude)
     {
         this.IdService = idservice;
-        this.DateTracking = datetracking;
+        this.DateTracking = dateTracking;
         this.Latitude = latitude;
         this.Longitude = longitude;
     }

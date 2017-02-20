@@ -2,7 +2,11 @@ package elaracomunicaciones.gpstracking.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.AsyncTask;
 
@@ -79,6 +83,45 @@ public class LoginActivity extends AppCompatActivity
         });
 
         progressBar = findViewById(R.id.progressBar);
+    }
+
+    protected  void onStart()
+    {
+        super.onStart();
+
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(), "La aplicación requiere permisos de ubicación para poder iniciar.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+
+        if(!isLocationEnabled(getApplicationContext()))
+        {
+            Toast.makeText(getApplicationContext(), "Por favor activa tu ubicación para iniciar la aplicación.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        }else{
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
     }
 
     private void attemptLogin()

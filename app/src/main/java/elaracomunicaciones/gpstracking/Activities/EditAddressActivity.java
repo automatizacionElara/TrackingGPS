@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,13 +8,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.concurrent.ExecutionException;
+
+import elaracomunicaciones.gpstracking.R;
+import elaracomunicaciones.gpstracking.Utils.SendAddress;
+
 public class EditAddressActivity extends AppCompatActivity {
 
     private  Button btn_cancel, btn_save;
     private int idTechnician = 0;
-    private int idService = 0;
-    private int status = 0;
-    private String Reference = "";
+    private String elaraReference = "";
 
     EditText Calle, NoExterior, NoInterior, Colonia, CP ;
 
@@ -25,10 +28,8 @@ public class EditAddressActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        idTechnician = intent.getIntExtra("IdTecnico",0);
-        idService = intent.getIntExtra("IdServicio",0);
-        status = intent.getIntExtra("Status",0);
-        Reference = intent.getStringExtra("reference");
+        idTechnician = intent.getIntExtra("idTechnician",0);
+        elaraReference = intent.getStringExtra("elaraReference");
 
         Calle = (EditText) findViewById(R.id.tb_Calle);
         NoExterior = (EditText) findViewById(R.id.tb_NoExt);
@@ -42,14 +43,7 @@ public class EditAddressActivity extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
-                Intent Back = new Intent(getApplicationContext(), StartService.class);
-
-                Back.putExtra("IdTecnico",idTechnician);
-                Back.putExtra("IdServicio",idService);
-                Back.putExtra("reference",Reference);
-                Back.putExtra("Status", status);
-
-                startActivity(Back);
+                finish();
             }
         });
 
@@ -58,22 +52,35 @@ public class EditAddressActivity extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
-                Intent Back = new Intent(getApplicationContext(), StartService.class);
                 final String calle = Calle.getText().toString();
                 final String NoExt = NoExterior.getText().toString();
                 final String NoInt = NoInterior.getText().toString();
                 final String Col = Colonia.getText().toString();
                 final int CPos = Integer.parseInt(CP.getText().toString());
-                SendAddress sendA = new SendAddress(idService, calle, NoExt, NoInt, Col, CPos, idTechnician);
-                sendA.execute();
-                Toast.makeText(getApplicationContext(), "Dirección Guardada", Toast.LENGTH_SHORT).show();
-                Back.putExtra("IdTecnico",idTechnician);
-                Back.putExtra("IdServicio",idService);
-                Back.putExtra("reference",Reference);
-                Back.putExtra("Status", status);
-                Back.putExtra("EditAddress",true);
+                SendAddress sendA = new SendAddress(elaraReference, calle, NoExt, NoInt, Col, CPos, idTechnician);
 
-                startActivity(Back);
+                boolean result = false;
+
+                try
+                {
+                    result = sendA.execute().get();
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                if(result)
+                {
+                    Toast.makeText(getApplicationContext(), "La dirección de guardó para aprobación.", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "El sitio seleccionado ya tiene una dirección en espera de aprobación.", Toast.LENGTH_SHORT).show();
+                }
+
+                finish();
             }
         });
     }

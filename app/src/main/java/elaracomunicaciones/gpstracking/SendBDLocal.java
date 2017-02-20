@@ -9,6 +9,8 @@ import android.widget.Toast;
 import android.content.IntentFilter;
 
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
+import elaracomunicaciones.gpstracking.Utils.SendPhoto;
+import elaracomunicaciones.gpstracking.Utils.SendUbication;
 
 
 /**

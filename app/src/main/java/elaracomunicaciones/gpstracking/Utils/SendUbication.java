@@ -1,10 +1,13 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Utils;
 
 import android.os.AsyncTask;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import elaracomunicaciones.gpstracking.Utils.DBConnection;
 
@@ -21,43 +24,43 @@ import elaracomunicaciones.gpstracking.Utils.DBConnection;
         private boolean IsSuccess;
         String msg = "";
 
-        SendUbication(int IdServ, double Long, double Lat) {
+        public SendUbication(int IdServ, double Long, double Lat) {
             latitude = Lat;
             longitude = Long;
             IdService = IdServ;
-            Fecha = "";
+
+            DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Fecha = df.format(Calendar.getInstance().getTime());
         }
 
-    SendUbication(int IdServ, double Long, double Lat, String fecha)
+    public SendUbication(int IdServ, double Long, double Lat, String fecha)
     {
          latitude = Lat;
          longitude = Long;
-        IdService = IdServ;
+         IdService = IdServ;
          Fecha = fecha;
     }
-
 
 
     @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                String Elara_ES_TrackingDetails = "";
+                String query = "";
                 String msg = "";
                 Connection con = DBConnection.getInstance().getConnection();
-                if (con == null) {
+                if (con == null)
+                {
                     msg = "Error en la Conexión con SQL server";
-                } else {
-                    if(Fecha == ""){
-                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(" + IdService + ", GETDATE()," +  latitude + "," + longitude + ");";
-                    }else{
-                        Elara_ES_TrackingDetails = "INSERT INTO Elara_ES_TrackingDetails VALUES(" + IdService + ","+ Fecha + "," +  latitude + "," + longitude + ");";
-                    }
-
+                }
+                else
+                {
+                    query = String.format("INSERT INTO FieldServiceTracking (IdService, DateTracking, Latitude, Longitude) VALUES (%1d,'%2s',%3f,%4f)",
+                            IdService, Fecha, latitude, longitude);
                     Statement stmt = null;
 
                     try {
                         stmt = con.createStatement();
-                        stmt.executeQuery(Elara_ES_TrackingDetails);
+                        stmt.execute(query);
                         stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();

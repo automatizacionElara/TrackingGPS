@@ -1,12 +1,19 @@
 package elaracomunicaciones.gpstracking.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -54,7 +61,10 @@ public class SplashActivity extends AppCompatActivity {
 
                 String idTechnician = EMPTY_STRING;
                 String idService = EMPTY_STRING;
-                String status = EMPTY_STRING;
+                String idStatus = EMPTY_STRING;
+                int idType = 0;
+                String elaraReference = EMPTY_STRING;
+
                 boolean fileExist = false;
 
                 /* Obtención de la lista de archivos existentes con la información del usuario logeado
@@ -86,7 +96,23 @@ public class SplashActivity extends AppCompatActivity {
                             InputStreamReader fraw = new InputStreamReader(openFileInput("activeService.txt"));;
                             BufferedReader brin = new BufferedReader(fraw);
                             idService= brin.readLine();
-                            status = brin.readLine();
+                            idStatus = brin.readLine();
+                            fraw.close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+                        }
+                    }
+
+                    if (file.equals("sitio.txt")) {
+                        try
+                        {
+                            InputStreamReader fraw = new InputStreamReader(openFileInput("sitio.txt"));;
+                            BufferedReader brin = new BufferedReader(fraw);
+                            elaraReference = brin.readLine();
+                            idType = Integer.parseInt(brin.readLine());
+
                             fraw.close();
                         }
                         catch (Exception ex)
@@ -115,10 +141,12 @@ public class SplashActivity extends AppCompatActivity {
                         /* Si se encontraba un servicio en ejecución se ejecuta la activity del seguimiento
                          * del servicio y se le pasan los parámetros necesario */
 
-                        Intent StartService = new Intent(getApplicationContext(), elaracomunicaciones.gpstracking.StartService.class);
+                        Intent StartService = new Intent(getApplicationContext(), elaracomunicaciones.gpstracking.Activities.StartService.class);
                         StartService.putExtra("idTechnician", Integer.parseInt(idTechnician));
                         StartService.putExtra("idService", Integer.parseInt(idService));
-                        StartService.putExtra("status", Integer.parseInt(status));
+                        StartService.putExtra("idStatus", Integer.parseInt(idStatus));
+                        StartService.putExtra("elaraReference", elaraReference);
+                        StartService.putExtra("idType", idType);
                         startActivity(StartService);
                     }
                     else
@@ -144,4 +172,5 @@ public class SplashActivity extends AppCompatActivity {
         Timer timer = new Timer();
         timer.schedule(task, SPLASH_SCREEN_DELAY);
     }
+
 }

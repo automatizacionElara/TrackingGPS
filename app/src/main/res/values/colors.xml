@@ -12,4 +12,5 @@
     <drawable name="elaraLigthBlue">#003da5</drawable>
     <drawable name="white">#FFFFFF</drawable>
     <drawable name="transparent">#00FFFFFF</drawable>
+    <drawable name="btnImIn">#00A6FF</drawable>
 </resources>

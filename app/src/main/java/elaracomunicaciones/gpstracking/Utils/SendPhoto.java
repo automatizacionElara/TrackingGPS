@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Utils;
 
 import android.os.AsyncTask;
 
@@ -17,7 +17,7 @@ public class SendPhoto extends AsyncTask<Void, Void, Boolean> {
         private boolean IsSuccess;
         String msg = "";
 
-        SendPhoto(int IdServ, String photo, int idtype) {
+        public SendPhoto(int IdServ, String photo, int idtype) {
             IdService = IdServ;
             stringPhoto = photo;
             IdType = idtype;

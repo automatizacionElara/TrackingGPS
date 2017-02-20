@@ -2,15 +2,17 @@ package elaracomunicaciones.gpstracking.Activities;
 
 /* Librerías */
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +21,8 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.io.File;
 import java.util.ArrayList;
@@ -36,11 +40,13 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import elaracomunicaciones.gpstracking.Models.Service;
 import elaracomunicaciones.gpstracking.R;
-import elaracomunicaciones.gpstracking.StartService;
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
+import elaracomunicaciones.gpstracking.Utils.SaveService;
 
 public class ToDoServices extends AppCompatActivity
 {
+    /* Declaración de variables globales */
+
     private List<Service> servicesList = new ArrayList<>();
     private int idTechnician = 0;
     private TextView lbReference, lbTicket, lbETA, lbType, lbRequired, lbAddress;
@@ -58,6 +64,7 @@ public class ToDoServices extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
 
+        /* Se liga la activity con su vista */
 
         setContentView(R.layout.activity_todoservices);
 
@@ -112,24 +119,51 @@ public class ToDoServices extends AppCompatActivity
 
         /* Acción del botón para iniciar servicio */
 
+        final Context con = this;
+
         btnInit = (Button) findViewById(R.id.btnInit);
         btnInit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                Toast.makeText(getApplicationContext(), "Servicio Iniciado", Toast.LENGTH_SHORT).show();
-                Intent Checkin = new Intent(getApplicationContext(), StartService.class);
-
                 Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
 
-                Checkin.putExtra("IdTecnico",idTechnician);
-                Checkin.putExtra("IdServicio",service.idService);
-                Checkin.putExtra("reference",service.elaraReference);
-                Checkin.putExtra("idType",service.idType);
-                Checkin.putExtra("Status", 1);
-                Checkin.putExtra("EditAddress",false);
+                String msg = "¿Estás listo para iniciar el servicio " + service.elaraReference + " [" + service.ticket + "]?";
 
-                startActivity(Checkin);
+                new AlertDialog.Builder(con)
+                        .setMessage(msg)
+                        .setCancelable(false)
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
+
+                                if(saveService())
+                                {
+                                    Toast.makeText(getApplicationContext(), "Buen viaje!", Toast.LENGTH_SHORT).show();
+
+                                    Intent onMyWay = new Intent(getApplicationContext(), StartService.class);
+
+                                    onMyWay.putExtra("idVsatService",service.idVsatService);
+                                    onMyWay.putExtra("idTechnician",idTechnician);
+                                    onMyWay.putExtra("idService",service.idService);
+                                    onMyWay.putExtra("elaraReference",service.elaraReference);
+                                    onMyWay.putExtra("idType",service.idType);
+                                    onMyWay.putExtra("status", 1);
+                                    onMyWay.putExtra("editAddress",false);
+
+                                    startActivity(onMyWay);
+                                }
+                                else
+                                {
+                                    Toast.makeText(getBaseContext(),
+                                            "No se pudo iniciar el servicio. Comprueba tu conexión a Internet.", Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
 
@@ -142,7 +176,6 @@ public class ToDoServices extends AppCompatActivity
             public void onClick(View view)
             {
                 btnRefresh.setEnabled(false);
-                //btnEditAddress.setEnabled(false);
                 btnInit.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
                 scrollInfo.setVisibility(View.GONE);
@@ -157,31 +190,7 @@ public class ToDoServices extends AppCompatActivity
             }
         });
 
-         /* Acción del botón para solitar la edición de la dirección de un sitio */
-
-        /*btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
-
-        btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
-        btnEditAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                Toast.makeText(getApplicationContext(), "Editar Dirección", Toast.LENGTH_SHORT).show();
-                Intent editAddress = new Intent(getApplicationContext(), SavePhotosService.class);
-
-                Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
-
-                editAddress.putExtra("IdTecnico",idTechnician);
-                editAddress.putExtra("IdServicio",service.idService);
-                editAddress.putExtra("reference",service.elaraReference);
-                editAddress.putExtra("Status", 1);
-
-                startActivity(editAddress);
-            }
-        });
-*/
         btnRefresh.setEnabled(false);
-        //btnEditAddress.setEnabled(false);
         btnInit.setEnabled(false);
 
         showLabels(false);
@@ -202,8 +211,6 @@ public class ToDoServices extends AppCompatActivity
                 loadServices();
             }
         }, 1000);
-
-
 
     }
 
@@ -245,7 +252,6 @@ public class ToDoServices extends AppCompatActivity
             enableActions(false);
             btnRefresh.setEnabled(true);
             progressBar.setVisibility(View.GONE);
-            scrollInfo.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -293,6 +299,7 @@ public class ToDoServices extends AppCompatActivity
 
                 serv = new Service();
 
+                serv.idVsatService = jsonService.getInt("idSitio");
                 serv.idService = jsonService.getInt("idService");
                 serv.elaraReference = jsonService.getString("referenciaElara");
                 serv.estimatedTimeA = jsonService.getString("ETA");
@@ -383,7 +390,7 @@ public class ToDoServices extends AppCompatActivity
         String namespace = "http://tempuri.org/";
         String url = "http://201.131.60.39:8092/AndroidWebService/SeguimientoCuadrillasWS.asmx";
         //String url = "http://172.31.248.4/AndroidWebService/SeguimientoCuadrillasWS.asmx";
-        String methodName = "getActiveServices";
+        String methodName = "getMyServices";
 
         String SOAP_ACTION;
         SoapObject request = null, objMessages = null;
@@ -435,6 +442,70 @@ public class ToDoServices extends AppCompatActivity
 
     }
 
+
+    private boolean saveService()
+    {
+        /* Escritura en la base de datos */
+
+        Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
+
+        boolean isOnline = webConnection.isOnlineNet();
+
+        if(!isOnline)
+        {
+            return false;
+        }
+
+        SaveService su = new SaveService(idTechnician, service.idVsatService, service.elaraReference, service.idService, service.ticket);
+
+        try
+        {
+            su.execute().get();
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+            return false;
+        } catch (ExecutionException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        /* Escritura en el archivo del equipo */
+
+        try {
+            OutputStreamWriter fout =
+                    new OutputStreamWriter(
+                            openFileOutput("activeService.txt", Context.MODE_PRIVATE));
+
+            fout.write(String.valueOf(service.idService));
+            fout.write("\n1");
+            fout.close();
+        } catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+            return false;
+        }
+
+        /* Se guarda la referencia Elara y el tipo de servicio */
+
+        try
+        {
+            OutputStreamWriter site=
+                    new OutputStreamWriter(
+                            openFileOutput("sitio.txt", Context.MODE_PRIVATE));
+
+            site.write(String.valueOf(service.elaraReference));
+            site.write("\n" + String.valueOf(service.idType));
+            site.close();
+        }
+        catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+        }
+
+        return true;
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

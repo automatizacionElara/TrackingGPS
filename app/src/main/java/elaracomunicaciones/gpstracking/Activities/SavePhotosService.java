@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -33,7 +33,10 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import elaracomunicaciones.gpstracking.Activities.ToDoServices;
+import elaracomunicaciones.gpstracking.Photo;
+import elaracomunicaciones.gpstracking.PhotoCatalog;
+import elaracomunicaciones.gpstracking.PhotoDbHelper;
+import elaracomunicaciones.gpstracking.R;
 import elaracomunicaciones.gpstracking.Utils.DBConnection;
 
 public class SavePhotosService extends AppCompatActivity {
@@ -251,14 +254,14 @@ public class SavePhotosService extends AppCompatActivity {
 
                 else
                 {
-                    RegisterService terminado = new RegisterService(idTechnician, idService, 6);
+                    /*RegisterService terminado = new RegisterService(idTechnician, idService, 6);
                     try {
                         terminado.execute().get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
-                    }
+                    }*/
 
                     File dir = getFilesDir();
                     File file = new File(dir, "activeService.txt");

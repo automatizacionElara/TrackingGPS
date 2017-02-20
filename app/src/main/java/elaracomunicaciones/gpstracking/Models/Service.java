@@ -6,6 +6,7 @@ import java.util.List;
 public class Service
 {
     public int idService;
+    public int idVsatService;
     public String elaraReference;
     public int ticket;
     public String estimatedTimeA;

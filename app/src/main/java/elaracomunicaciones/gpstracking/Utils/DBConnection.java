@@ -10,11 +10,12 @@ import java.sql.SQLException;
  * Esta clase hace la conexión a la base de datos del servidor en la nube
  * conexion
  */
-public class DBConnection {
+public class DBConnection 
+{
     private static  DBConnection instance = null;
-    private static final String URL = "jdbc:jtds:sqlserver://104.130.231.193/Dev_SeguimientoCuadrillas;";
-    private static final String USER= "Connection";
-    private static final String PASS= "C0nn3ctAnD!";
+    private static final String url = "jdbc:jtds:sqlserver://104.130.231.193/Dev_SeguimientoCuadrillas;";
+    private static final String user= "Connection";
+    private static final String pass= "C0nn3ctAnD!";
     private static Connection connection = null;
 
     private DBConnection(){}
@@ -38,11 +39,10 @@ public class DBConnection {
         Driver dv = new net.sourceforge.jtds.jdbc.Driver();
         try {
             dv.getClass();
-            con = DriverManager.getConnection(URL,USER,PASS);
+            con = DriverManager.getConnection(url,user,pass);
         }catch (SQLException e){
             e.printStackTrace();
         }
         return con;
     }
-
 }
