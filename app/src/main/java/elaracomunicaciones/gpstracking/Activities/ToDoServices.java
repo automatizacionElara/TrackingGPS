@@ -40,6 +40,7 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import elaracomunicaciones.gpstracking.Models.Service;
 import elaracomunicaciones.gpstracking.R;
+import elaracomunicaciones.gpstracking.Services.SendingService;
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
 import elaracomunicaciones.gpstracking.Utils.SaveService;
 
@@ -212,6 +213,8 @@ public class ToDoServices extends AppCompatActivity
             }
         }, 1000);
 
+        Intent intent = new Intent(getApplicationContext(), SendingService.class);
+        stopService(intent);
     }
 
     private void enableActions(boolean enable)

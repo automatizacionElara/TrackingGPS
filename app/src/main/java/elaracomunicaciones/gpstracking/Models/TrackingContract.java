@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Models;
 
 /**
  * Created by luis aranda on 11/10/2016.

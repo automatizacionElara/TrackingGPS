@@ -1,16 +1,13 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Utils;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 import android.content.IntentFilter;
 
-import elaracomunicaciones.gpstracking.Utils.CheckConnection;
-import elaracomunicaciones.gpstracking.Utils.SendPhoto;
-import elaracomunicaciones.gpstracking.Utils.SendUbication;
+import elaracomunicaciones.gpstracking.Models.PhotoDbHelper;
+import elaracomunicaciones.gpstracking.Models.TrackingDbHelper;
 
 
 /**
@@ -44,7 +41,6 @@ public class SendBDLocal extends Activity {
                     String DateTracking = c.getString(2);
                     String Latitude = c.getString(3);
                     String Longitude = c.getString(4);
-                    Toast.makeText(getApplicationContext(), "Ubicación Enviada Después", Toast.LENGTH_SHORT).show();
                     SendUbication su = new SendUbication(Integer.parseInt(IdService), Double.parseDouble(Longitude), Double.parseDouble(Latitude), DateTracking);
                     su.execute();
                     bdLocal.deleteTracking(IdTracking);
@@ -63,19 +59,14 @@ public class SendBDLocal extends Activity {
                     int IdService = p.getInt(1);
                     int idType = p.getInt(2);
                     String Photo = p.getString(3);
-                    SendPhoto sp = new SendPhoto(IdService, Photo, idType);
+                    String date = p.getString(4);
+
+                    SendPhoto sp = new SendPhoto(IdService, Photo, idType, date);
                     Toast.makeText(getApplicationContext(), "Foto Enviada", Toast.LENGTH_SHORT).show();
                     sp.execute();
                     bdPhotos.deletePhoto(IdPhoto);
                 } while (p.moveToNext());
             }
         }
-    }
-
-    public void broadcastIntent(View view)
-    {
-        Intent intent = new Intent();
-        intent.setAction("com.trackinggps.CUSTOM_INTENT");
-        sendBroadcast(intent);
     }
 }

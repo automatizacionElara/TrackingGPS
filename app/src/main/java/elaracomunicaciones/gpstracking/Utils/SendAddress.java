@@ -16,22 +16,22 @@ import elaracomunicaciones.gpstracking.Utils.DBConnection;
 public class SendAddress extends AsyncTask<Void, Void, Boolean> {
 
     private final String elaraReference;
-    private final String Calle;
-    private final String NoExterior;
-    private final String NoInterior;
-    private final String Colonia;
-    private final int CP;
+    private final String street;
+    private final String extNum;
+    private final String intNum;
+    private final String Neig;
+    private final int postalCode;
     private final int IdTecnico;
-    private boolean IsSuccess;
+
     String msg = "";
 
-    public SendAddress(String elaraReference, String Cal, String NoExt, String NoInt, String Col, int CPostal, int IdTec) {
+    public SendAddress(String elaraReference, String street, String extNum, String intNum, String Neig, String postalCode, int IdTec) {
         this.elaraReference = elaraReference;
-        Calle = Cal;
-        NoExterior = NoExt;
-        NoInterior = NoInt;
-        Colonia = Col;
-        CP = CPostal;
+        this.street = street.contentEquals("") ? "null" : "'" + street + "'";
+        this.extNum = extNum.contentEquals("") ? "null" : "'" + extNum + "'";
+        this.intNum = intNum.contentEquals("") ? "null" : "'" + intNum + "'";
+        this.Neig = Neig.contentEquals("") ? "null" : "'" + Neig + "'";
+        this.postalCode = postalCode.contentEquals("") ? -1 : Integer.parseInt(postalCode);
         IdTecnico = IdTec;
     }
 
@@ -40,7 +40,7 @@ public class SendAddress extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         try {
             String msg = "";
-            Connection con = DBConnection.getInstance().getConnection();
+            Connection con = new DBConnection().getInstance().getConnection();
             if (con == null)
             {
                 msg = "Error en la Conexión con SQL server";
@@ -81,9 +81,20 @@ public class SendAddress extends AsyncTask<Void, Void, Boolean> {
                         return false;
                     }
 
-                    query = String.format("INSERT INTO VsatAddress (IdVsatService, Street, StreetNumber,"
-                            + "ApartmentNumber, Neighborhood, PostalCode, Approved, Rejected, IdTechnician)"
-                            + "VALUES(%1d, '%2s', '%3s', '%4s', '%5s', %6d, 0, 0, %7d)", idVsatService, Calle, NoExterior, NoInterior, Colonia, CP, IdTecnico);
+                    if(postalCode == -1)
+                    {
+                        query = String.format("INSERT INTO VsatAddress (IdVsatService, Street, StreetNumber,"
+                                + "ApartmentNumber, Neighborhood, Approved, Rejected, IdTechnician)"
+                                + "VALUES(%1d, %2s, %3s, %4s, %5s, 0, 0, %7d)", idVsatService, street, extNum, intNum, Neig, IdTecnico);
+
+                    }
+                    else
+                    {
+                        query = String.format("INSERT INTO VsatAddress (IdVsatService, Street, StreetNumber,"
+                                + "ApartmentNumber, Neighborhood, PostalCode, Approved, Rejected, IdTechnician)"
+                                + "VALUES(%1d, %2s, %3s, %4s, %5s, %6d, 0, 0, %7d)", idVsatService, street, extNum, intNum, Neig, postalCode, IdTecnico);
+
+                    }
 
                     stmt = con.createStatement();
                     stmt.execute(query);
@@ -94,9 +105,11 @@ public class SendAddress extends AsyncTask<Void, Void, Boolean> {
                     e.printStackTrace();
                     return false;
                 }
+                finally {
+                    con.close();
+                }
             }
         } catch (Exception ex) {
-            IsSuccess = false;
             msg = "Exceptions";
         }
 

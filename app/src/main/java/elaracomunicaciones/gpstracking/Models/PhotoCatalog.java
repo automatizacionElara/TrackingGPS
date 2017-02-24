@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Models;
 
 /**
  * Created by luis aranda on 22/11/2016.
@@ -9,4 +9,5 @@ public class PhotoCatalog {
     public String PhotoDescription;
     public String StringPhoto;
     public int Status;
+    public String PhotoDate;
 }

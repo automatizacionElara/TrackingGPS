@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Models;
 
 /**
  * Created by luis aranda on 11/10/2016.
@@ -12,9 +12,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class PhotoDbHelper extends SQLiteOpenHelper
 {
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "Elara_Service_Photos";
-    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT, IdService INTEGER, IdType INTEGER, PhotoDescription VARCHAR(100), StringPhoto BLOB, Status INTEGER)";
+    String sqlCreate = "CREATE TABLE Elara_Service_Photos (IdPhoto INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " IdService INTEGER, IdType INTEGER, PhotoDescription VARCHAR(100), StringPhoto BLOB, Status INTEGER, PhotoDate VARCHAR(100))";
 
     public PhotoDbHelper(Context context)
     {
@@ -45,6 +46,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
         values.put(PhotoContract.PhotoEntry.IdType, photo.IdType);
         values.put(PhotoContract.PhotoEntry.PhotoDescription, photo.PhotoDescription);
         values.put(PhotoContract.PhotoEntry.StringPhoto, photo.StringPhoto);
+        values.put(PhotoContract.PhotoEntry.PhotoDate, photo.PhotoDate);
 
         return  sqLiteDatabase.insert(
                 PhotoContract.PhotoEntry.TABLE_NAME,null,values
@@ -80,7 +82,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
     public Cursor getPhotoByDescription(String IdService, String PhotoDescription)
     {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "PhotoDescription", "StringPhoto", "Status"};
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "PhotoDescription", "StringPhoto", "Status", "PhotoDate"};
         String[] args = new String[] {IdService, PhotoDescription};
 
         return sqLiteDatabase.query("Elara_Service_Photos", campos, PhotoContract.PhotoEntry.IdService + "=? AND " + PhotoContract.PhotoEntry.PhotoDescription + "=?", args, null, null, null);
@@ -89,7 +91,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
     public Cursor getAllPhotos()
     {
         //return getReadableDatabase().query(TrackingContract.TrackingEntry.TABLE_NAME,null, null, null,null,null,null,null);
-        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "Status"};
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "Status", "PhotoDate"};
         String[] args = new String[] {"usu1"};
 
         return getReadableDatabase().query("Elara_Service_Photos", campos, null, null, null, null, null);
@@ -99,7 +101,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
     public Cursor getAllActivePhotos()
     {
         //return getReadableDatabase().query(TrackingContract.TrackingEntry.TABLE_NAME,null, null, null,null,null,null,null);
-        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "Status"};
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "Status", "PhotoDate"};
         String[] args = new String[] {"usu1"};
 
         return getReadableDatabase().query("Elara_Service_Photos", campos, PhotoContract.PhotoEntry.Status + "=?", new String[]{"1"}, null, null, null);
@@ -121,7 +123,7 @@ public class PhotoDbHelper extends SQLiteOpenHelper
 
     public Cursor getPhotoService(String idService)
     {
-        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto"};
+        String[] campos = new String[] {"IdPhoto","IdService", "IdType", "StringPhoto", "PhotoDate"};
         Cursor c = getReadableDatabase().query(PhotoContract.PhotoEntry.TABLE_NAME, campos, PhotoContract.PhotoEntry.IdService + "=?",new String[]{idService}, null, null,null );
         return c;
     }

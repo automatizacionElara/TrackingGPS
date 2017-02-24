@@ -43,7 +43,7 @@ public class SaveService extends AsyncTask<Void, Void, Boolean>
             String msg = EMPTY_STRING;
             boolean exists = false;
 
-            Connection con = DBConnection.getInstance().getConnection();
+            Connection con = new DBConnection().getInstance().getConnection();
 
             if (con == null)
             {
@@ -90,6 +90,9 @@ public class SaveService extends AsyncTask<Void, Void, Boolean>
 
                 } catch (SQLException e) {
                     e.printStackTrace();
+                }
+                finally {
+                    con.close();
                 }
             }
         } catch (Exception ex) {

@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Models;
 
 /**
  * Created by luis aranda on 11/10/2016.
@@ -16,5 +16,6 @@ public class PhotoContract
         public static final String PhotoDescription = "PhotoDescription";
         public static final String StringPhoto = "StringPhoto";
         public static final String Status = "Status";
+        public static final String PhotoDate = "PhotoDate";
     }
 }

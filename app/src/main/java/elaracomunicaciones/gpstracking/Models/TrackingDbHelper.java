@@ -1,4 +1,4 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Models;
 
 /**
  * Created by luis aranda on 11/10/2016.
@@ -9,9 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import net.sourceforge.jtds.jdbc.DateTime;
-import java.util.Date;
 
 public class TrackingDbHelper extends SQLiteOpenHelper
 {

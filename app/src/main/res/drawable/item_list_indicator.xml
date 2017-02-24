@@ -2,14 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_selected="true"
-        android:drawable="@drawable/selected" />
-    <item
-        android:state_pressed="true"
-        android:drawable="@android:color/darker_gray" />
-    <item
-        android:state_activated="true"
-        android:drawable="@drawable/took" /><!-- Pressed -->
-    <item
-        android:state_active="true"
-        android:drawable="@drawable/took" /><!-- Pressed -->
+        android:drawable="@drawable/elaraLigthBlue" />
 </selector>

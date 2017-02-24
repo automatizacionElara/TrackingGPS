@@ -206,7 +206,7 @@ public class LoginActivity extends AppCompatActivity
 
             try
             {
-                 con = DBConnection.getInstance().getConnection();
+                 con = new DBConnection().getInstance().getConnection();
 
                  String query = "SELECT dbo.DecryptingPassword( (SELECT [Password] FROM Users Where UserName = '"
                          + muser +"')) AS Password, IdTechnician FROM dbo.Users WHERE UserName='" + muser +"';;";

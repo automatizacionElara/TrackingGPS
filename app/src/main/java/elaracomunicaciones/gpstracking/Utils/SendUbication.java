@@ -47,7 +47,8 @@ import elaracomunicaciones.gpstracking.Utils.DBConnection;
             try {
                 String query = "";
                 String msg = "";
-                Connection con = DBConnection.getInstance().getConnection();
+                Connection con = new DBConnection().getInstance().getConnection();
+
                 if (con == null)
                 {
                     msg = "Error en la Conexión con SQL server";
@@ -64,6 +65,9 @@ import elaracomunicaciones.gpstracking.Utils.DBConnection;
                         stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
+                    }
+                    finally {
+                        con.close();
                     }
                 }
             } catch (Exception ex) {

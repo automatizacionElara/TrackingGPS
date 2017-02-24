@@ -3,7 +3,6 @@ package elaracomunicaciones.gpstracking.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -26,20 +25,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 import android.database.Cursor;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import elaracomunicaciones.gpstracking.Photo;
-import elaracomunicaciones.gpstracking.PhotoCatalog;
-import elaracomunicaciones.gpstracking.PhotoDbHelper;
+import elaracomunicaciones.gpstracking.Models.Photo;
+import elaracomunicaciones.gpstracking.Models.PhotoCatalog;
+import elaracomunicaciones.gpstracking.Models.PhotoDbHelper;
 import elaracomunicaciones.gpstracking.R;
+import elaracomunicaciones.gpstracking.Utils.CheckConnection;
 import elaracomunicaciones.gpstracking.Utils.DBConnection;
+import elaracomunicaciones.gpstracking.Utils.GetExistentPhotos;
+import elaracomunicaciones.gpstracking.Utils.SaveStatus;
 
 public class SavePhotosService extends AppCompatActivity {
+
+    private static final String EMPTY_STRING = "";
 
     private static int TAKE_PICTURE = 1;
     private ListView listViewPhotos;
@@ -55,7 +55,7 @@ public class SavePhotosService extends AppCompatActivity {
     private int alreadyPhoto = 0;
     private ArrayList<String> nameOfPhotos;
     private ArrayAdapter<String> adapter;
-    private Button EndService;
+    private Button btnEndService;
     int actualPhotos;
     boolean flag = true;
     List<PhotoCatalog> ListPhotos;
@@ -64,12 +64,6 @@ public class SavePhotosService extends AppCompatActivity {
     private getListOfPhotos ListofPhotos = null;
     PhotoDbHelper bdLocalPhotos;
     String PhotoActual;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -95,61 +89,52 @@ public class SavePhotosService extends AppCompatActivity {
             alreadyPhoto = 0;
             Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
             actualPhotos = pt.getCount();
-            Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos de "+ qtyPhotos), Toast.LENGTH_SHORT).show();
-            if (actualPhotos == qtyPhotos)
-            {
-                Toast.makeText(getApplicationContext(), String.format("FINALIZAR"),Toast.LENGTH_SHORT).show();
-                ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
-                listViewPhotos.getChildAt(actualPhoto).setActivated(true);
-                //EndService.setEnabled(true);
-                findViewById(R.id.takePhoto).setEnabled(false);
 
-            } else
-            {
-                //EndService.setEnabled(false);
-                ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
-                listViewPhotos.getChildAt(actualPhoto).setActivated(true);
-                Toast.makeText(getApplicationContext(), String.format("Se han tomado " + actualPhotos + " Fotos"), Toast.LENGTH_SHORT).show();
-                //adapter.remove(PhotoActual);
+            listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+            listViewPhotos.setItemChecked(actualPhoto,true);
 
-                //listViewPhotos.deferNotifyDataSetChanged();
-            }
-            /*if(actualPhoto == (qtyPhotos - 1))
-            {
-                //findViewById(R.id.btnEndService).setEnabled(false);
-                findViewById(R.id.takePhoto).setEnabled(false);
-                findViewById(R.id.btnEndService).setEnabled(true);
-            }
-            else
-            {
-                actualPhoto = actualPhoto + 1;
-                findViewById(R.id.takePhoto).setEnabled(true);
-                findViewById(R.id.btnEndService).setEnabled(false);
-            }*/
-
+//            btnEndService.setEnabled(true);
+//
+//            for(int i= 0; i < listViewPhotos.getChildCount(); i++)
+//            {
+//                if(!listViewPhotos.isItemChecked(i))
+//                {
+//                    btnEndService.setEnabled(false);
+//                    break;
+//                }
+//            }
         }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+         /* Se liga la activity con su vista */
+
         setContentView(R.layout.activity_savephotosservice);
-        EndService = (Button)(findViewById(R.id.btnEndService));
+
+         /* Inicialización de controles de la vista */
+
+        btnEndService = (Button)(findViewById(R.id.btnEndService));
+
+        btnEndService.setEnabled(false);
+
+        /* Se obtienen los parámetros del intent */
 
         Intent intent = getIntent();
 
-        idTechnician = intent.getIntExtra("IdTecnico", 0);
-        idService = intent.getIntExtra("IdServicio", 0);
-        status = intent.getIntExtra("Status", 0);
-        idType = intent.getIntExtra("IdType", 0);
+        idTechnician = intent.getIntExtra("idTechnician", 0);
+        idService = intent.getIntExtra("idService", 0);
+        status = intent.getIntExtra("idStatus", 0);
+        idType = intent.getIntExtra("idType", 0);
 
-
-        if (idType != 2 && idType != 5 && idType != 11) {
+        if (idType != 2 && idType != 5 && idType != 11)
+        {
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
-            //Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
-            //actualPhoto = cp.getCount();
-            //int duda = cp.getPosition();
             ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+            listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
 
             nameOfPhotos = new ArrayList<String>();
@@ -166,148 +151,140 @@ public class SavePhotosService extends AppCompatActivity {
                     i++;
                 }
             }
-            adapter = new ArrayAdapter<String>(this, R.layout.list_item, nameOfPhotos)
-            {
-                @Override
-                public int getViewTypeCount() {
-
-                    return getCount();
-                }
-
-                @Override
-                public int getItemViewType(int position) {
-
-                    return position;
-                }
-
-            };
+            adapter = new ArrayAdapter<String>(this, R.layout.list_item, nameOfPhotos);
 
             listViewPhotos.setAdapter(adapter);
 
-            listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            {
                 @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    view.setSelected(true);
-                    //view.setFocusable(true);
-                    //view.setFocusableInTouchMode(true);
-                    //view.setActivated(true);
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                {
+                    ListView list = (ListView) findViewById(R.id.listViewPhotos);
+
+                    list.setItemChecked(position, false);
+
                     actualPhoto = position;
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
-                    //Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();
-                    //PhotoActual = ListPhotos.get(position).PhotoDescription;
 
-                }
-            });
-        } else {
-            findViewById(R.id.takePhoto).setVisibility(View.GONE);
-            EndService.setEnabled(true);
-        }
-
-        final Button takePhoto = (Button) findViewById(R.id.takePhoto);
-        takePhoto.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-                /*PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
-                Cursor cp = bdLocalPhotos.getPhotoService(String.valueOf(idService));
-                actualPhoto = cp.getCount();
-                /*if(localPhotos != 0)
-                {
-                    actualPhoto = localPhotos + 1;
-                }*/
-                /*if(ListPhotos.size() == 0)
-                {
-                    getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
-                }
-                PhotoActual = ListPhotos.get(actualPhoto).PhotoDescription;
-                Toast.makeText(getApplicationContext(), String.format("Foto a Tomar " + PhotoActual), Toast.LENGTH_SHORT).show();*/
-                PhotoDbHelper phelper = new PhotoDbHelper(getApplicationContext());
-                //Cursor p = phelper.getPhotoService(String.valueOf(idService));
-                //Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
-                Cursor p = phelper.getPhotoByDescription(String.valueOf(idService), PhotoActual);
-                if (p.getCount() > 0) {
-
-                    Toast.makeText(getApplicationContext(), String.format("Se eliminará la foto tomada anteriormente"), Toast.LENGTH_SHORT).show();
-                    alreadyPhoto = 1;
-                    Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intentCamera, cons);
-
-                } else {
                     alreadyPhoto = 0;
                     Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intentCamera, cons);
                 }
+            });
 
+        }
+        else
+        {
+            btnEndService.setEnabled(true);
+        }
 
-            }
-        });
-
-        EndService.setOnClickListener(new View.OnClickListener() {
+        btnEndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-                //Toast.makeText(getApplicationContext(), String.format("Fotos Tomadas " + actualPhotos + " del total " + qtyPhotos), Toast.LENGTH_SHORT).show();
 
-                if(actualPhotos != qtyPhotos)
-                {
-                    Toast.makeText(getApplicationContext(), String.format("No se han tomado todas las fotografías"), Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                CheckConnection con = new CheckConnection();
 
-                else
+                boolean isOnline = con.isOnlineNet();
+
+                if(isOnline)
                 {
-                    /*RegisterService terminado = new RegisterService(idTechnician, idService, 6);
-                    try {
-                        terminado.execute().get();
-                    } catch (InterruptedException e) {
+                    SaveStatus saveStatus = new SaveStatus(idService, 5, null, null);
+                    try{
+                        saveStatus.execute().get();
+                    }catch (InterruptedException e){
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
-                    }*/
-
-                    File dir = getFilesDir();
-                    File file = new File(dir, "activeService.txt");
-                    boolean deleted = file.delete();
-
-                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
-                    Intent LogOut = new Intent(getApplicationContext(), ToDoServices.class);
-                    LogOut.putExtra("IdTecnico", idTechnician);
-                    startActivity(LogOut);
+                    }
                 }
-            }
+                else
+                {
+                    //Escribir en la base interna
+                }
+
+                File dir = getFilesDir();
+                File file = new File(dir, "activeService.txt");
+                boolean deleted = file.delete();
+
+                Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
+                intent.putExtra("idTechnician", idTechnician);
+                startActivity(intent);
+
+                }
         });
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+
+
     }
 
 
     @Override
     protected void onStart() {
 
-        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
+        super.onStart();
+
         getListOfPhotos getListOfPhotos = new getListOfPhotos(idType);
         try {
             ListPhotos = getListOfPhotos.execute().get();
         } catch (Exception ex) {
             error = ex.getMessage();
         }
-        qtyPhotos = ListPhotos.size();
-
-        findViewById(R.id.takePhoto).setEnabled(true);
-        //EndService.setEnabled(false);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
 
         listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+
+
+        GetExistentPhotos getExistentPhotos = new GetExistentPhotos(idService);
+
+        String[] existentPhotos = null;
+
+        try {
+            existentPhotos = getExistentPhotos.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        if(existentPhotos != null)
+        {
+            for (int i = 0; i < existentPhotos.length; i++ )
+            {
+                if(existentPhotos[i] == null)
+                {
+                    break;
+                }
+
+                for (int j = 0; j < listViewPhotos.getCount(); j++)
+                {
+
+                    if(listViewPhotos.getItemAtPosition(j).toString().contentEquals(existentPhotos[i]))
+                    {
+                        listViewPhotos.setItemChecked(j,true);
+                        break;
+                    }
+                }
+            }
+        }
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run()
             {
-                if (ListPhotos.size() != 0 && flag)
+                btnEndService.setEnabled(true);
+                for(int i= 0; i < listViewPhotos.getChildCount(); i++)
+                {
+                    if(!listViewPhotos.isItemChecked(i))
+                    {
+                        btnEndService.setEnabled(false);
+                        break;
+                    }
+                }
+
+                /*if (ListPhotos.size() != 0 && flag)
                 {
                     int i = 0;
                     while (i < ListPhotos.size())
@@ -323,35 +300,14 @@ public class SavePhotosService extends AppCompatActivity {
                         i++;
                     }
                     flag = false;
-                }
+                }*/
             }
         }, 1000);
-    }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("SavePhotosService Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 
 
@@ -370,12 +326,15 @@ public class SavePhotosService extends AppCompatActivity {
         protected List<PhotoCatalog> doInBackground(Void... params) {
             Connection con = null;
             try {
-                con = DBConnection.getInstance().getConnection();
+                con = new DBConnection().getInstance().getConnection();
                 if (con == null) {
                     error = "Error en la Conexión con SQL server";
                 } else {
 
-                    String query = "SELECT Elara_S_PhotoCatalog.[IdPhotoCatalog], Elara_S_PhotoCatalog.[PhotoDescription] FROM Elara_S_PhotoCatalog LEFT JOIN Elara_S_PhotosPerService ON Elara_S_PhotoCatalog.IdPhotoCatalog = Elara_S_PhotosPerService.IdPhotoCatalog WHERE Elara_S_PhotosPerService.IdServiceType =  " + idType + ";";
+                    String query = "SELECT PC.IdPhotoCatalog, PC.PhotoDescription" +
+                            " FROM PhotoCatalog PC" +
+                            " LEFT JOIN PhotoPerFieldService PFS ON PC.IdPhotoCatalog = PFS.IdPhotoCatalog" +
+                            " WHERE PFS.IdServiceType =  " + idType + ";";
                     Statement stmt2 = con.createStatement();
                     ResultSet result = stmt2.executeQuery(query);
                     int index = 0;

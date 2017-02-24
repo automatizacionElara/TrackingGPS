@@ -56,7 +56,16 @@ public class EditAddressActivity extends AppCompatActivity {
                 final String NoExt = NoExterior.getText().toString();
                 final String NoInt = NoInterior.getText().toString();
                 final String Col = Colonia.getText().toString();
-                final int CPos = Integer.parseInt(CP.getText().toString());
+                final String CPos = CP.getText().toString();
+
+                if(calle.contentEquals("") && NoExt.contentEquals("") &&
+                        NoInt.contentEquals("") && Col.contentEquals("") &&
+                        CPos.contentEquals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese al menos un campo para solicitar el cambio de dirección.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 SendAddress sendA = new SendAddress(elaraReference, calle, NoExt, NoInt, Col, CPos, idTechnician);
 
                 boolean result = false;
@@ -77,7 +86,7 @@ public class EditAddressActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "El sitio seleccionado ya tiene una dirección en espera de aprobación.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "El sitio seleccionado ya tiene una dirección en espera de aprobación.", Toast.LENGTH_LONG).show();
                 }
 
                 finish();

@@ -1,4 +1,8 @@
-package elaracomunicaciones.gpstracking;
+package elaracomunicaciones.gpstracking.Models;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by luis aranda on 11/10/2016.
@@ -11,6 +15,7 @@ public class Photo
     public String PhotoDescription;
     public String StringPhoto;
     public int Status;
+    public String PhotoDate;
 
     public Photo(int idservice, int idtype, String photodescription, String photo, int status)
     {
@@ -19,6 +24,9 @@ public class Photo
         this.PhotoDescription = photodescription;
         this.StringPhoto = photo;
         this.Status = status;
+
+        DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        PhotoDate = df.format(Calendar.getInstance().getTime());
     }
 
     public int getIdService() { return  IdService; }
@@ -26,4 +34,5 @@ public class Photo
     public String getPhotoDescription() { return  PhotoDescription; }
     public String StringPhoto() { return  StringPhoto; }
     public int Status() { return Status; }
+    public String PhotoDate() { return PhotoDate; }
 }

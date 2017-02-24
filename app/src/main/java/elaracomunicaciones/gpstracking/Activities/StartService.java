@@ -1,6 +1,7 @@
 package elaracomunicaciones.gpstracking.Activities;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,10 +35,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.Calendar;
 
 import elaracomunicaciones.gpstracking.R;
+import elaracomunicaciones.gpstracking.Services.SendingService;
+import elaracomunicaciones.gpstracking.Utils.CheckConnection;
 import elaracomunicaciones.gpstracking.Utils.SaveStatus;
 import elaracomunicaciones.gpstracking.Utils.SendUbication;
-import elaracomunicaciones.gpstracking.Tracking;
-import elaracomunicaciones.gpstracking.TrackingDbHelper;
+import elaracomunicaciones.gpstracking.Models.Tracking;
+import elaracomunicaciones.gpstracking.Models.TrackingDbHelper;
 
 
 public class StartService extends AppCompatActivity
@@ -51,7 +54,7 @@ public class StartService extends AppCompatActivity
     private int idTechnician = 0;
     private int idVsatService = 0;
     private int idService = 0;
-    private int status = 0;
+    private int idStatus = 0;
     private int idType = 0;
     private String elaraReference = "";
     private boolean editAddress = false;
@@ -59,21 +62,28 @@ public class StartService extends AppCompatActivity
     private double latitude = -1;
     private double longitude = -1;
     private TextView tbCoordinates;
-
+    LocationManager mlocManager = null;
+    Localizacion Local =  null;
     /* Inicialización de la actividad */
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
 
-        Intent i = new Intent();
-        i.setAction(".CREATE_RECEIVER_APP");
-        this.sendBroadcast(i);
+        Local = new Localizacion();
+        mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         super.onCreate(savedInstanceState);
 
          /* Se liga la activity con su vista */
 
         setContentView(R.layout.activity_start_service);
+
+
+        boolean idRunning = isMyServiceRunning(SendingService.class);
+
+        if(!idRunning)
+            startService(new Intent(this, SendingService.class));
 
         /* Inicialización de controles de la vista */
 
@@ -87,7 +97,7 @@ public class StartService extends AppCompatActivity
 
         idTechnician = intent.getIntExtra("idTechnician",0);
         idService = intent.getIntExtra("idService",0);
-        status = intent.getIntExtra("status",0);
+        idStatus = intent.getIntExtra("idStatus",0);
         elaraReference = intent.getStringExtra("elaraReference");
         idType = intent.getIntExtra("idType",0);
 
@@ -96,14 +106,14 @@ public class StartService extends AppCompatActivity
         /* Id para actualizar las coordenadas del sitio */
         idVsatService = intent.getIntExtra("idVsatService",0);
 
-        if(status == 3){
+        if(idStatus == 3){
             Intent SavePhotos = new Intent(getApplicationContext(), SavePhotosService.class);
             SavePhotos.putExtra("idTechnician",idTechnician);
             SavePhotos.putExtra("idService",idService);
             SavePhotos.putExtra("idStatus",3);
             SavePhotos.putExtra("idType", idType);
             startActivity(SavePhotos);
-
+            finish();
         }
 
         btnStatus = (Button) findViewById(R.id.btnStatus);
@@ -113,7 +123,7 @@ public class StartService extends AppCompatActivity
         if(editAddress){
             btnEditAddress.setVisibility(View.INVISIBLE);;
         }
-        if(status == 2)
+        if(idStatus == 2)
         {
             btnStatus.setActivated(true);
         }
@@ -181,12 +191,16 @@ public class StartService extends AppCompatActivity
                     case 2:
                         idStatus = 3;
                         writeFile(idService,idStatus);
+
+                        mlocManager.removeUpdates(Local);
+
                         Intent Photos = new Intent(getApplicationContext(), SavePhotosService.class);
-                        Photos.putExtra("IdTecnico",idTechnician);
-                        Photos.putExtra("IdServicio",idService);
+                        Photos.putExtra("idTechnician",idTechnician);
+                        Photos.putExtra("idService",idService);
                         Photos.putExtra("idStatus",3);
-                        Photos.putExtra("IdType", idType);
+                        Photos.putExtra("idType", idType);
                         startActivity(Photos);
+                        finish();
                         break;
                     default:
                         break;
@@ -195,7 +209,9 @@ public class StartService extends AppCompatActivity
                 String lat = latitude == -1 ? "null" : String.valueOf(latitude);
                 String lon = longitude == -1 ? "null" : String.valueOf(longitude);
 
-                boolean isOnline = true;// isOnline.isOnlineNet();
+                CheckConnection con = new CheckConnection();
+
+                boolean isOnline = con.isOnlineNet();
 
                 if(isOnline)
                 {
@@ -216,6 +232,7 @@ public class StartService extends AppCompatActivity
             }
         });
 
+        btnStatus.setEnabled(false);
 
         //Estatus del Servicio - TERMINAR SERVICIO (Rojo)
 
@@ -246,10 +263,13 @@ public class StartService extends AppCompatActivity
                                 File file = new File(dir,"activeService.txt");
                                 boolean deleted = file.delete();
 
+                                mlocManager.removeUpdates(Local);
+
                                 Toast.makeText(getApplicationContext(), "Visita Fallida", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
                                 intent.putExtra("idTechnician",idTechnician);
                                 startActivity(intent);
+
                                 finish();
                             }
                         })
@@ -260,10 +280,11 @@ public class StartService extends AppCompatActivity
 
 
 		/* Uso de la clase LocationManager para obtener la localizacion del GPS */
-        LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Localizacion Local = new Localizacion();
+
+
         Local.setMainActivity(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -276,7 +297,7 @@ public class StartService extends AppCompatActivity
 
         if (!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
         {
-            Toast.makeText(this, "Activar GPS, para poder iniciar el servicio", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Activa la ubicación de tu equipo, para poder iniciar el servicio.", Toast.LENGTH_LONG).show();
         }
 
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0,
@@ -284,6 +305,19 @@ public class StartService extends AppCompatActivity
 
         mensaje1.setText("Localizando tu ubicación ...");
         mensaje2.setText("");
+
+
+
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void writeFile(int idService, int i) {
@@ -300,21 +334,32 @@ public class StartService extends AppCompatActivity
         }
     }
 
-    public void setLocation(Location loc) {
-        //Obtener la direccion de la calle a partir de la latitud y la longitud
-        if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
-            try {
-                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-                List<Address> list = geocoder.getFromLocation(
-                        loc.getLatitude(), loc.getLongitude(), 1);
-                if (!list.isEmpty()) {
-                    Address DirCalle = list.get(0);
-                    mensaje2.setText(DirCalle.getAddressLine(0));
-                }
+    public void setLocation(Location loc)
+    {
+        CheckConnection con = new CheckConnection();
 
-            } catch (IOException e) {
-                e.printStackTrace();
+        boolean isOnline = con.isOnlineNet();
+
+        if(isOnline)
+        {
+            if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
+                try {
+                    Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                    List<Address> list = geocoder.getFromLocation(
+                            loc.getLatitude(), loc.getLongitude(), 1);
+                    if (!list.isEmpty()) {
+                        Address DirCalle = list.get(0);
+                        mensaje2.setText(DirCalle.getAddressLine(0));
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }
+        else
+        {
+            mensaje2.setText("Sin Conexión");
         }
     }
 
@@ -342,11 +387,14 @@ public class StartService extends AppCompatActivity
 
             tbCoordinates.setText("Lat " + Math.floor(latitude * 10000) / 10000 + " / " + "Lon " + Math.floor(longitude * 10000) / 10000);
 
-            boolean isOnline = true;// isOnline.isOnlineNet();
+            btnStatus.setEnabled(true);
+
+            CheckConnection con = new CheckConnection();
+
+            boolean isOnline = con.isOnlineNet();
 
             if(isOnline)
             {
-                Toast.makeText(getApplicationContext(), "Ubicación Enviada", Toast.LENGTH_SHORT).show();
                 SendUbication su = new SendUbication(idService,loc.getLongitude(), loc.getLatitude());
                 su.execute();
             }
@@ -378,10 +426,10 @@ public class StartService extends AppCompatActivity
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
+        public void onStatusChanged(String provider, int idStatus, Bundle extras) {
             // Este metodo se ejecuta cada vez que se detecta un cambio en el
-            // status del proveedor de localizacion (GPS)
-            // Los diferentes Status son:
+            // idStatus del proveedor de localizacion (GPS)
+            // Los diferentes idStatus son:
             // OUT_OF_SERVICE -> Si el proveedor esta fuera de servicio
             // TEMPORARILY_UNAVAILABLE -> Temporalmente no disponible pero se
             // espera que este disponible en breve

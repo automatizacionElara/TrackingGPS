@@ -141,13 +141,13 @@ public class SplashActivity extends AppCompatActivity {
                         /* Si se encontraba un servicio en ejecución se ejecuta la activity del seguimiento
                          * del servicio y se le pasan los parámetros necesario */
 
-                        Intent StartService = new Intent(getApplicationContext(), elaracomunicaciones.gpstracking.Activities.StartService.class);
-                        StartService.putExtra("idTechnician", Integer.parseInt(idTechnician));
-                        StartService.putExtra("idService", Integer.parseInt(idService));
-                        StartService.putExtra("idStatus", Integer.parseInt(idStatus));
-                        StartService.putExtra("elaraReference", elaraReference);
-                        StartService.putExtra("idType", idType);
-                        startActivity(StartService);
+                            Intent StartService = new Intent(getApplicationContext(), elaracomunicaciones.gpstracking.Activities.StartService.class);
+                            StartService.putExtra("idTechnician", Integer.parseInt(idTechnician));
+                            StartService.putExtra("idService", Integer.parseInt(idService));
+                            StartService.putExtra("idStatus", Integer.parseInt(idStatus));
+                            StartService.putExtra("elaraReference", elaraReference);
+                            StartService.putExtra("idType", idType);
+                            startActivity(StartService);
                     }
                     else
                     {

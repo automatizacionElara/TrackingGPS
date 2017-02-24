@@ -1,7 +1,6 @@
 package elaracomunicaciones.gpstracking.Utils;
 
 import android.os.AsyncTask;
-import android.renderscript.ScriptIntrinsicYuvToRGB;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,25 +10,22 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class SaveStatus extends AsyncTask<Void, Void, Boolean>
+public class GetExistentPhotos extends AsyncTask<Void, Void, String[]>
 {
     private static final String EMPTY_STRING = "";
-    private final int idStatus;
     private final int idService;
-    private final String latitude;
-    private final String longitude;
+    private String[] existentPhotos;
 
     String msg = EMPTY_STRING;
 
-    public SaveStatus(int idService, int idStatus, String latitude, String longitude) {
-        this.idStatus = idStatus;
+    public GetExistentPhotos(int idService)
+    {
         this.idService = idService;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        existentPhotos = new String[30];
     }
 
     @Override
-    protected Boolean doInBackground(Void... params)
+    protected String[] doInBackground(Void... params)
     {
         try
         {
@@ -44,27 +40,33 @@ public class SaveStatus extends AsyncTask<Void, Void, Boolean>
             }
             else
             {
+                String query = "SELECT PhotoDescription" +
+                        "  FROM PhotoCatalog PC" +
+                        "  JOIN FieldServicePhoto FSP ON PC.IdPhotoCatalog = FSP.IdPhotoCatalog" +
+                        "  WHERE IdService = " + idService;
 
-                String query = String.format("UPDATE FieldService SET IdStatus = %1d WHERE IdService = %2d", idStatus, idService);
                 Statement stmt = null;
 
                 try {
+
                     stmt = con.createStatement();
+                    stmt.executeQuery(query);
 
-                    stmt.execute(query);
+                    ResultSet rs = stmt.getResultSet();
 
-                    DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:00");
-                    String date = df.format(Calendar.getInstance().getTime());
+                    int i = 0;
 
-                    query = String.format("INSERT INTO ServiceWorkflow (IdService, IdStatus, Date, Latitude, Longitude) VALUES (%1d,%2d,'%3s',%4s,%5s)",
-                            idService, idStatus, date, latitude, longitude);
-
-                    stmt.execute(query);
+                    while (rs.next()) {
+                        existentPhotos[i] = rs.getString("PhotoDescription");
+                        i++;
+                    }
 
                     stmt.close();
 
+                    return existentPhotos;
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    return null;
                 }
                 finally {
                     con.close();
@@ -78,7 +80,7 @@ public class SaveStatus extends AsyncTask<Void, Void, Boolean>
     }
 
     @Override
-    protected void onPostExecute(final Boolean success) {
+    protected void onPostExecute(final String [] success) {
         super.onPostExecute(success);
 
     }

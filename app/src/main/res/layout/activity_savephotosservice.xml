@@ -10,51 +10,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="elaracomunicaciones.gpstracking.Activities.SavePhotosService">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
         <Button
-            android:text="Finalizar Servicio"
+            android:text="Concluir Servicio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnEndService"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:background="@android:color/holo_red_dark"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_end_service"
             android:textAllCaps="false"
+            android:padding="10dp"
             android:textColor="@android:color/background_light" />
 
-        <Button
-            android:text="Tomar fotografía"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:id="@+id/takePhoto"
-            android:layout_above="@+id/btnEndService"
-            android:background="?attr/actionModeSplitBackground"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:listSelector="@drawable/item_list_indicator"
+        android:id="@+id/listViewPhotos"
+        android:layout_above="@+id/btnEndService"
+        />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="700px"
-            android:layout_height="600px"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            >
-
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:listSelector="@drawable/item_list_indicator"
-                android:id="@+id/listViewPhotos"/>
-        </LinearLayout>
-
-
-    </RelativeLayout>
 
 </RelativeLayout>
