@@ -22,7 +22,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -31,6 +34,8 @@ import android.database.Cursor;
 import elaracomunicaciones.gpstracking.Models.Photo;
 import elaracomunicaciones.gpstracking.Models.PhotoCatalog;
 import elaracomunicaciones.gpstracking.Models.PhotoDbHelper;
+import elaracomunicaciones.gpstracking.Models.ServiceWorkflow;
+import elaracomunicaciones.gpstracking.Models.ServiceWorkflowDbHelper;
 import elaracomunicaciones.gpstracking.R;
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
 import elaracomunicaciones.gpstracking.Utils.DBConnection;
@@ -201,7 +206,13 @@ public class SavePhotosService extends AppCompatActivity {
                 }
                 else
                 {
-                    //Escribir en la base interna
+                    ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = df.format(Calendar.getInstance().getTime());
+
+                    ServiceWorkflow sw = new ServiceWorkflow(idService, 5 ,date);
+                    bdLocal.saveServiceWorkflow(sw);
                 }
 
                 File dir = getFilesDir();

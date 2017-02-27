@@ -9,8 +9,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import elaracomunicaciones.gpstracking.Models.PhotoDbHelper;
+import elaracomunicaciones.gpstracking.Models.ServiceWorkflow;
+import elaracomunicaciones.gpstracking.Models.ServiceWorkflowDbHelper;
 import elaracomunicaciones.gpstracking.Models.TrackingDbHelper;
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
+import elaracomunicaciones.gpstracking.Utils.SaveStatus;
 import elaracomunicaciones.gpstracking.Utils.SendPhoto;
 import elaracomunicaciones.gpstracking.Utils.SendUbication;
 
@@ -55,6 +58,7 @@ public class SendingService extends Service
                     {
                         sendLocation();
                         sendPhotos();
+                        sendStatus();
                     }
                 }
             }
@@ -112,6 +116,34 @@ public class SendingService extends Service
 
                 bdPhotos.deletePhoto(IdPhoto);
             } while (p.moveToNext());
+
+            Log.d("X", String.valueOf(count));
+        }
+    }
+
+    private void sendStatus()
+    {
+        ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+        Cursor c = bdLocal.getAllServiceWorkflow();
+
+        int count = 0;
+
+        if (c.moveToFirst())
+        {
+            do {
+                int idService = c.getInt(0);
+                int idStatus = c.getInt(1);
+                String dateTracking = c.getString(2);
+                String latitude = c.getString(3);
+                String longitude = c.getString(4);
+                SaveStatus saveStatus = new SaveStatus(idService, idStatus, dateTracking, latitude, longitude);
+                saveStatus.execute();
+
+                count++;
+
+                bdLocal.deleteServiceWorkflow(idService, idStatus);
+            } while (c.moveToNext());
 
             Log.d("X", String.valueOf(count));
         }

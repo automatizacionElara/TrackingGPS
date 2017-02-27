@@ -34,6 +34,9 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.Calendar;
 
+import elaracomunicaciones.gpstracking.Models.Service;
+import elaracomunicaciones.gpstracking.Models.ServiceWorkflow;
+import elaracomunicaciones.gpstracking.Models.ServiceWorkflowDbHelper;
 import elaracomunicaciones.gpstracking.R;
 import elaracomunicaciones.gpstracking.Services.SendingService;
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
@@ -226,7 +229,13 @@ public class StartService extends AppCompatActivity
                 }
                 else
                 {
-                    //Escribir en la base interna
+                    ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = df.format(Calendar.getInstance().getTime());
+
+                    ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus ,date, latitude, longitude);
+                    bdLocal.saveServiceWorkflow(sw);
                 }
 
             }
@@ -250,13 +259,29 @@ public class StartService extends AppCompatActivity
                                 String lat = latitude == -1 ? "null" : String.valueOf(latitude);
                                 String lon = longitude == -1 ? "null" : String.valueOf(longitude);
 
-                                SaveStatus saveStatus = new SaveStatus(idService,6, lat, lon);
-                                try{
-                                    saveStatus.execute().get();
-                                }catch (InterruptedException e){
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
+
+                                CheckConnection con = new CheckConnection();
+
+                                boolean isOnline = con.isOnlineNet();
+
+                                if(isOnline) {
+                                    SaveStatus saveStatus = new SaveStatus(idService, 6, lat, lon);
+                                    try {
+                                        saveStatus.execute().get();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                else {
+                                    ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+                                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String date = df.format(Calendar.getInstance().getTime());
+
+                                    ServiceWorkflow sw = new ServiceWorkflow(idService, 6, date, latitude, longitude);
+                                    bdLocal.saveServiceWorkflow(sw);
                                 }
 
                                 File dir = getFilesDir();

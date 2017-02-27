@@ -16,6 +16,7 @@ public class SaveStatus extends AsyncTask<Void, Void, Boolean>
     private static final String EMPTY_STRING = "";
     private final int idStatus;
     private final int idService;
+    private String date;
     private final String latitude;
     private final String longitude;
 
@@ -26,6 +27,15 @@ public class SaveStatus extends AsyncTask<Void, Void, Boolean>
         this.idService = idService;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.date = null;
+    }
+
+    public SaveStatus(int idService, int idStatus, String date, String latitude, String longitude) {
+        this.idStatus = idStatus;
+        this.idService = idService;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.date = date;
     }
 
     @Override
@@ -53,8 +63,11 @@ public class SaveStatus extends AsyncTask<Void, Void, Boolean>
 
                     stmt.execute(query);
 
-                    DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:00");
-                    String date = df.format(Calendar.getInstance().getTime());
+                    if(date == null) {
+
+                        DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:00");
+                        date = df.format(Calendar.getInstance().getTime());
+                    }
 
                     query = String.format("INSERT INTO ServiceWorkflow (IdService, IdStatus, Date, Latitude, Longitude) VALUES (%1d,%2d,'%3s',%4s,%5s)",
                             idService, idStatus, date, latitude, longitude);

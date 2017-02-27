@@ -2,6 +2,7 @@ package elaracomunicaciones.gpstracking.Activities;
 
 /* Librerías */
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -213,8 +214,20 @@ public class ToDoServices extends AppCompatActivity
             }
         }, 1000);
 
-        Intent intent = new Intent(getApplicationContext(), SendingService.class);
-        stopService(intent);
+        boolean idRunning = isMyServiceRunning(SendingService.class);
+
+        if(!idRunning)
+            startService(new Intent(this, SendingService.class));
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void enableActions(boolean enable)
@@ -293,6 +306,8 @@ public class ToDoServices extends AppCompatActivity
         JSONObject jsonService = null;
 
         Service serv = null;
+
+        servicesList = new ArrayList<>();
 
         for (int i = 0; i < jsonServices.length(); i++)
         {
