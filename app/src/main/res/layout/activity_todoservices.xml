@@ -245,7 +245,6 @@
 
             android:text="En Camino"
             android:textColor="@android:color/background_light"
-            android:layout_alignEnd="@+id/lbRequired"
             android:textAllCaps="false"
             android:background="@drawable/button_init"
             android:padding="5dp"

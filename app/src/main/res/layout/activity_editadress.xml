@@ -59,7 +59,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:id="@+id/tb_Calle"
-                android:layout_below="@+id/lb_EditAddress"
                 android:layout_toEndOf="@+id/lbCalle"
                 android:layout_alignBaseline="@+id/lbCalle"
                 android:layout_alignBottom="@+id/lbCalle"

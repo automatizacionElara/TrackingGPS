@@ -3,12 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "23.0.3"
-
     defaultConfig {
         applicationId "elaracomunicaciones.gpstracking"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 3
+        versionCode 5
         versionName "1.1"
     }
     buildTypes {
@@ -17,7 +16,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     splits {
         abi {
             enable true
@@ -25,6 +23,8 @@ android {
             include 'x86', 'armeabi-v7a'
             universalApk true
         }
+    }
+    productFlavors {
     }
 }
 
