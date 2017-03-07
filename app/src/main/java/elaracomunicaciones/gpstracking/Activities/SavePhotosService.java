@@ -70,6 +70,7 @@ public class SavePhotosService extends AppCompatActivity {
     PhotoDbHelper bdLocalPhotos;
     String PhotoActual;
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
