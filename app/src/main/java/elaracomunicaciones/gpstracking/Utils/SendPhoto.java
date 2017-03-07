@@ -54,13 +54,13 @@ public class SendPhoto extends AsyncTask<Void, Void, Boolean> {
                     if(!exists)
                     {
                         query = String.format("INSERT INTO FieldServicePhoto (IdService, IdPhotoCatalog, PhotoDate, ImageFile)"  +
-                                " VALUES(%1d, %2d, '%3s', '%s4')", idService, idType, date, stringPhoto);
+                                " VALUES(%1d, %2d, '%3s', '" + stringPhoto + "')", idService, idType, date);
 
                     }
                     else
                     {
-                        query = String.format("UPDATE FieldServicePhoto SET ImageFile = '%1s', PhotoDate = '%2s'" +
-                                " WHERE IdPhotoCatalog = %3d AND IdService = %4d", stringPhoto, date, idType, idService);
+                        query = String.format("UPDATE FieldServicePhoto SET ImageFile = '"+ stringPhoto +"', PhotoDate = '%1s'" +
+                                " WHERE IdPhotoCatalog = %2d AND IdService = %3d", date, idType, idService);
                     }
 
                     try {
