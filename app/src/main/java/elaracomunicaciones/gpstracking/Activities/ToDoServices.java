@@ -43,6 +43,7 @@ import elaracomunicaciones.gpstracking.Models.Service;
 import elaracomunicaciones.gpstracking.R;
 import elaracomunicaciones.gpstracking.Services.SendingService;
 import elaracomunicaciones.gpstracking.Utils.CheckConnection;
+import elaracomunicaciones.gpstracking.Utils.HasServiceStarted;
 import elaracomunicaciones.gpstracking.Utils.SaveService;
 
 public class ToDoServices extends AppCompatActivity
@@ -139,6 +140,28 @@ public class ToDoServices extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id)
                             {
                                 Service service = servicesList.get(servicesSpinner.getSelectedItemPosition());
+                                boolean hasStarted = false;
+
+                                HasServiceStarted hasServiceStarted = new HasServiceStarted(service.idService);
+
+                                try {
+                                    hasStarted = hasServiceStarted.execute().get();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if(hasStarted)
+                                {
+                                    Toast.makeText(getBaseContext(),
+                                            "El servicio " + service.elaraReference + " ya fue iniciado por otro técnico.", Toast.LENGTH_LONG)
+                                            .show();
+
+                                    btnRefresh.performClick();
+
+                                    return;
+                                }
 
                                 if(saveService())
                                 {

@@ -13,6 +13,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -66,7 +67,7 @@ public class StartService extends AppCompatActivity
     private double longitude = -1;
     private TextView tbCoordinates;
     LocationManager mlocManager = null;
-    Localizacion Local =  null;
+    Localizacion Local;
     /* Inicialización de la actividad */
 
     @Override
@@ -109,11 +110,11 @@ public class StartService extends AppCompatActivity
         /* Id para actualizar las coordenadas del sitio */
         idVsatService = intent.getIntExtra("idVsatService",0);
 
-        if(idStatus == 3){
+        if(idStatus == 2 || idStatus == 3 || idStatus == 4){
             Intent SavePhotos = new Intent(getApplicationContext(), SavePhotosService.class);
             SavePhotos.putExtra("idTechnician",idTechnician);
             SavePhotos.putExtra("idService",idService);
-            SavePhotos.putExtra("idStatus",3);
+            SavePhotos.putExtra("idStatus",idStatus);
             SavePhotos.putExtra("idType", idType);
             startActivity(SavePhotos);
             finish();
@@ -124,12 +125,13 @@ public class StartService extends AppCompatActivity
         btnEditAddress = (Button) findViewById(R.id.btnEditAddress);
 
         if(editAddress){
-            btnEditAddress.setVisibility(View.INVISIBLE);;
+            btnEditAddress.setVisibility(View.INVISIBLE);
         }
-        if(idStatus == 2)
+
+        /*if(idStatus == 2)
         {
             btnStatus.setActivated(true);
-        }
+        }*/
 
         final Context con  = this;
 
@@ -166,6 +168,8 @@ public class StartService extends AppCompatActivity
                 boolean FileExist = false;
                 String[] files = fileList();
 
+                btnStatus.setEnabled(false);
+
                 for (String file : files) {
 
                     if(file.equals("activeService.txt")){
@@ -183,31 +187,24 @@ public class StartService extends AppCompatActivity
                     }
                 }
 
-                switch (idStatus)
-                {
-                    case 1:
-                        idStatus = 2;
-                        writeFile(idService,idStatus);
-                        btnStatus.setText("Ya entré");
-                        btnStatus.setActivated(true);
-                        break;
-                    case 2:
-                        idStatus = 3;
-                        writeFile(idService,idStatus);
+                idStatus = 2;
+                writeFile(idService,idStatus);
 
+                if (mlocManager != null) {
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=  PackageManager.PERMISSION_GRANTED
+                            || ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) !=  PackageManager.PERMISSION_GRANTED) {
                         mlocManager.removeUpdates(Local);
-
-                        Intent Photos = new Intent(getApplicationContext(), SavePhotosService.class);
-                        Photos.putExtra("idTechnician",idTechnician);
-                        Photos.putExtra("idService",idService);
-                        Photos.putExtra("idStatus",3);
-                        Photos.putExtra("idType", idType);
-                        startActivity(Photos);
-                        finish();
-                        break;
-                    default:
-                        break;
+                    }
                 }
+
+
+                Intent Photos = new Intent(getApplicationContext(), SavePhotosService.class);
+                Photos.putExtra("idTechnician",idTechnician);
+                Photos.putExtra("idService",idService);
+                Photos.putExtra("idStatus",2);
+                Photos.putExtra("idType", idType);
+                startActivity(Photos);
+                finish();
 
                 String lat = latitude == -1 ? "null" : String.valueOf(latitude);
                 String lon = longitude == -1 ? "null" : String.valueOf(longitude);
@@ -266,13 +263,7 @@ public class StartService extends AppCompatActivity
 
                                 if(isOnline) {
                                     SaveStatus saveStatus = new SaveStatus(idService, 6, lat, lon);
-                                    try {
-                                        saveStatus.execute().get();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    } catch (ExecutionException e) {
-                                        e.printStackTrace();
-                                    }
+                                    saveStatus.execute();
                                 }
                                 else {
                                     ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
@@ -288,7 +279,12 @@ public class StartService extends AppCompatActivity
                                 File file = new File(dir,"activeService.txt");
                                 boolean deleted = file.delete();
 
-                                mlocManager.removeUpdates(Local);
+                                if (mlocManager != null) {
+                                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=  PackageManager.PERMISSION_GRANTED
+                                            || ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) !=  PackageManager.PERMISSION_GRANTED) {
+                                        mlocManager.removeUpdates(Local);
+                                    }
+                                }
 
                                 Toast.makeText(getApplicationContext(), "Visita Fallida", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), ToDoServices.class);

@@ -1,6 +1,7 @@
 package elaracomunicaciones.gpstracking.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -54,20 +57,18 @@ public class SavePhotosService extends AppCompatActivity {
     private int idTechnician = 0;
     private int idService = 0;
     private int idType = 0;
-    private int status = 0;
+    private int idStatus = 0;
     private int actualPhoto;
     private int qtyPhotos;
     private int alreadyPhoto = 0;
     private ArrayList<String> nameOfPhotos;
     private ArrayAdapter<String> adapter;
-    private Button btnEndService;
+    private Button btnEndService, btnImIn;
     int actualPhotos;
     boolean flag = true;
     List<PhotoCatalog> ListPhotos;
     Bitmap bmp;
     private String error;
-    private getListOfPhotos ListofPhotos = null;
-    PhotoDbHelper bdLocalPhotos;
     String PhotoActual;
 
 
@@ -124,8 +125,7 @@ public class SavePhotosService extends AppCompatActivity {
          /* Inicialización de controles de la vista */
 
         btnEndService = (Button)(findViewById(R.id.btnEndService));
-
-        btnEndService.setEnabled(false);
+        btnImIn = (Button)(findViewById(R.id.btnImIn));
 
         /* Se obtienen los parámetros del intent */
 
@@ -133,8 +133,28 @@ public class SavePhotosService extends AppCompatActivity {
 
         idTechnician = intent.getIntExtra("idTechnician", 0);
         idService = intent.getIntExtra("idService", 0);
-        status = intent.getIntExtra("idStatus", 0);
+        idStatus = intent.getIntExtra("idStatus", 0);
         idType = intent.getIntExtra("idType", 0);
+
+        switch (idStatus)
+        {
+            case 2:
+                btnImIn.setVisibility(View.VISIBLE);
+                btnEndService.setVisibility(View.GONE);
+                break;
+            case 3:
+                btnImIn.setVisibility(View.GONE);
+                btnEndService.setVisibility(View.VISIBLE);
+                btnEndService.setActivated(false);
+                btnEndService.setText("Iniciar pruebas y validación");
+                break;
+            case 4:
+                btnImIn.setVisibility(View.GONE);
+                btnEndService.setVisibility(View.VISIBLE);
+                btnEndService.setActivated(true);
+                btnEndService.setText("Finalizar servicio");
+                break;
+        }
 
         if (idType != 2 && idType != 5 && idType != 11)
         {
@@ -181,14 +201,19 @@ public class SavePhotosService extends AppCompatActivity {
             });
 
         }
-        else
-        {
-            btnEndService.setEnabled(true);
-        }
 
-        btnEndService.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
+        btnImIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view)
+            {
+                btnImIn.setEnabled(false);
 
+                idStatus = 3;
+                writeFile(idService, idStatus);
+
+                btnImIn.setVisibility(View.GONE);
+                btnEndService.setVisibility(View.VISIBLE);
+                btnEndService.setActivated(false);
+                btnEndService.setText("Iniciar pruebas y validación");
 
                 CheckConnection con = new CheckConnection();
 
@@ -196,14 +221,8 @@ public class SavePhotosService extends AppCompatActivity {
 
                 if(isOnline)
                 {
-                    SaveStatus saveStatus = new SaveStatus(idService, 5, null, null);
-                    try{
-                        saveStatus.execute().get();
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    SaveStatus saveStatus = new SaveStatus(idService, idStatus, null, null);
+                    saveStatus.execute();
                 }
                 else
                 {
@@ -212,18 +231,57 @@ public class SavePhotosService extends AppCompatActivity {
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String date = df.format(Calendar.getInstance().getTime());
 
-                    ServiceWorkflow sw = new ServiceWorkflow(idService, 5 ,date);
+                    ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus ,date);
+                    bdLocal.saveServiceWorkflow(sw);
+                }
+            }
+        });
+
+        btnEndService.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                if(idStatus == 3)
+                {
+                    idStatus = 4;
+                    btnEndService.setText("Finalizar servicio");
+                    btnEndService.setActivated(true);
+                    writeFile(idService, idStatus);
+                }
+                else
+                {
+                    idStatus = 5;
+                }
+
+                CheckConnection con = new CheckConnection();
+
+                boolean isOnline = con.isOnlineNet();
+
+                if(isOnline)
+                {
+                    SaveStatus saveStatus = new SaveStatus(idService, idStatus, null, null);
+                    saveStatus.execute();
+                }
+                else
+                {
+                    ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = df.format(Calendar.getInstance().getTime());
+
+                    ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus ,date);
                     bdLocal.saveServiceWorkflow(sw);
                 }
 
-                File dir = getFilesDir();
-                File file = new File(dir, "activeService.txt");
-                boolean deleted = file.delete();
+                if(idStatus == 5) {
+                    File dir = getFilesDir();
+                    File file = new File(dir, "activeService.txt");
+                    boolean deleted = file.delete();
 
-                Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
-                intent.putExtra("idTechnician", idTechnician);
-                startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
+                    intent.putExtra("idTechnician", idTechnician);
+                    startActivity(intent);
+                }
 
                 }
         });
@@ -260,61 +318,21 @@ public class SavePhotosService extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(existentPhotos != null)
-        {
-            for (int i = 0; i < existentPhotos.length; i++ )
-            {
-                if(existentPhotos[i] == null)
-                {
+        if(existentPhotos != null) {
+            for (int i = 0; i < existentPhotos.length; i++) {
+                if (existentPhotos[i] == null) {
                     break;
                 }
 
-                for (int j = 0; j < listViewPhotos.getCount(); j++)
-                {
+                for (int j = 0; j < listViewPhotos.getCount(); j++) {
 
-                    if(listViewPhotos.getItemAtPosition(j).toString().contentEquals(existentPhotos[i]))
-                    {
-                        listViewPhotos.setItemChecked(j,true);
+                    if (listViewPhotos.getItemAtPosition(j).toString().contentEquals(existentPhotos[i])) {
+                        listViewPhotos.setItemChecked(j, true);
                         break;
                     }
                 }
             }
         }
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run()
-            {
-                btnEndService.setEnabled(true);
-                for(int i= 0; i < listViewPhotos.getChildCount(); i++)
-                {
-                    if(!listViewPhotos.isItemChecked(i))
-                    {
-                        btnEndService.setEnabled(false);
-                        break;
-                    }
-                }
-
-                /*if (ListPhotos.size() != 0 && flag)
-                {
-                    int i = 0;
-                    while (i < ListPhotos.size())
-                    {
-                        String searchPhoto = ListPhotos.get(i).PhotoDescription;
-                        PhotoDbHelper helper = new PhotoDbHelper(getApplicationContext());
-
-                        Cursor ap = helper.getPhotoByDescription(String.valueOf(idService), searchPhoto);
-                        if (ap.getCount() > 0)
-                        {
-                           listViewPhotos.getChildAt(i).setActivated(true);
-                        }
-                        i++;
-                    }
-                    flag = false;
-                }*/
-            }
-        }, 1000);
     }
 
     @Override
@@ -381,6 +399,20 @@ public class SavePhotosService extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void writeFile(int idService, int i) {
+        try {
+            OutputStreamWriter fout =
+                    new OutputStreamWriter(
+                            openFileOutput("activeService.txt", Context.MODE_PRIVATE));
+
+            fout.write(String.valueOf(idService));
+            fout.write("\n" + i);
+            fout.close();
+        } catch (Exception ex) {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+        }
     }
 
 }
