@@ -2,11 +2,13 @@ package elaracomunicaciones.gpstracking.Activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -99,17 +101,6 @@ public class SavePhotosService extends AppCompatActivity {
 
             listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
             listViewPhotos.setItemChecked(actualPhoto,true);
-
-//            btnEndService.setEnabled(true);
-//
-//            for(int i= 0; i < listViewPhotos.getChildCount(); i++)
-//            {
-//                if(!listViewPhotos.isItemChecked(i))
-//                {
-//                    btnEndService.setEnabled(false);
-//                    break;
-//                }
-//            }
         }
     }
 
@@ -237,6 +228,8 @@ public class SavePhotosService extends AppCompatActivity {
             }
         });
 
+        final Context context = this;
+
         btnEndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
@@ -272,17 +265,35 @@ public class SavePhotosService extends AppCompatActivity {
                     bdLocal.saveServiceWorkflow(sw);
                 }
 
-                if(idStatus == 5) {
-                    File dir = getFilesDir();
-                    File file = new File(dir, "activeService.txt");
-                    boolean deleted = file.delete();
+                if(idStatus == 5)
+                {
+                    String msg = "¿Estás seguro de concluir con el servicio? El registro fotográfico está completo.";
 
-                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
-                    intent.putExtra("idTechnician", idTechnician);
-                    startActivity(intent);
+                    if(listViewPhotos.getCount() > listViewPhotos.getCheckedItemCount())
+                    {
+                        msg = "¿Estás seguro de concluir con el servicio? No se han registrado todas las fotos, " +
+                                "selecciona finalizar únicamente en caso de no contar con permisos de fotografía.";
+                    }
+
+                    new AlertDialog.Builder(context)
+                            .setMessage(msg)
+                            .setCancelable(false)
+                            .setPositiveButton("Finalizar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id)
+                                {
+                                    File dir = getFilesDir();
+                                    File file = new File(dir, "activeService.txt");
+                                    boolean deleted = file.delete();
+
+                                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
+                                    intent.putExtra("idTechnician", idTechnician);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
                 }
-
                 }
         });
 

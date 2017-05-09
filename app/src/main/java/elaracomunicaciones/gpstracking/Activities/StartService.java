@@ -216,13 +216,7 @@ public class StartService extends AppCompatActivity
                 if(isOnline)
                 {
                     SaveStatus saveStatus = new SaveStatus(idService, idStatus, lat, lon);
-                    try{
-                        saveStatus.execute().get();
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    saveStatus.execute();
                 }
                 else
                 {
