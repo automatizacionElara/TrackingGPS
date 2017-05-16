@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/lb_EditAddress"
         android:textStyle="bold"
-        android:textColor="@android:color/background_dark"
+        android:textColor="@drawable/elaraBlue"
         android:text="Editar Dirección"
         android:textSize="20dp"
 
@@ -168,7 +168,6 @@
         android:id="@+id/btn_cancel"
         android:textAllCaps="false"
         android:padding="5dp"
-
         android:background="@android:color/holo_red_dark"
         android:textColor="@android:color/background_light"
 

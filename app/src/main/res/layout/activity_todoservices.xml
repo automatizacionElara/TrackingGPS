@@ -6,36 +6,49 @@
     android:layout_height="match_parent">
 
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/banner"
-            android:id="@+id/banner"
-            android:layout_weight="1" />
+    <TextView
+        android:text="Servicios Programados"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingTop="15dp"
+        android:id="@+id/title"
+
+        android:textColor="@drawable/elaraBlue"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_below="@+id/btnLogOut"/>
 
     <Button
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:srcCompat="@android:drawable/ic_lock_power_off"
         android:id="@+id/btnLogOut"
-        android:textSize="@dimen/activity_vertical_margin"
-        android:alpha="@integer/google_play_services_version"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:alpha="10"
+        android:clickable="true"
         android:text="Salir"
         android:textAllCaps="false"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp" />
+        android:textSize="16dp"
+        app:srcCompat="@android:drawable/ic_lock_power_off" />
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="-5dp"
+        android:src="@drawable/icongps"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="5dp"
+        android:id="@+id/imageView" />
 
         <TextView
             android:text="Selecciona un servicio:"
-            android:layout_width="wrap_content"
-            android:layout_height="37dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/lbSelect"
-            android:layout_below="@+id/banner"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/title"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textColor="@android:color/background_dark"
@@ -46,27 +59,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/servicesSpinner"
-            android:layout_below="@+id/lbSelect"
             android:background="@drawable/spinner_services"
 
-            android:gravity="left|center_vertical"
-            android:paddingStart="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:spinnerMode="dialog"
-            />
+            android:layout_below="@+id/lbSelect" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
             android:layout_below="@+id/servicesSpinner"
-            android:layout_alignParentStart="true"
-            android:id="@+id/scrollInfo"
-            android:layout_marginBottom="70dp">
+            android:id="@+id/scrollInfo">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -221,7 +230,7 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
             android:id="@+id/btnRefresh"
@@ -238,7 +247,7 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_popup_sync"
             android:id="@+id/btnInit"

@@ -16,48 +16,62 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:id="@+id/photoTitle"
-        android:textColor="@android:color/black"
+        android:textColor="@drawable/elaraBlue"
         android:textSize="20dp"
-        android:layout_marginBottom="20dp"/>
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"/>
+
+    <Switch
+        android:id="@+id/switchSaveLocal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/photoTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+
+        android:checked="true"
+        android:text="Guardar Fotografías en el Equipo" />
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="fill_parent"
         android:listSelector="@drawable/item_list_indicator"
         android:id="@+id/listViewPhotos"
-        android:layout_below="@+id/photoTitle"
+        android:layout_below="@+id/switchSaveLocal"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_above="@+id/btnImIn"
         />
 
     <Button
         android:text="Ya Entré"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="35dp"
         android:layout_marginTop="20dp"
         android:id="@+id/btnImIn"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/btnEndService"
         android:layout_centerInParent="true"
-        android:background="@android:color/holo_green_dark"
+        android:background="@drawable/btn_imin_test"
         android:textAllCaps="false"
-        android:visibility="gone"
-        android:padding="10dp"
+        android:padding="5dp"
         android:textColor="@android:color/white"
+
         />
 
     <Button
-        android:text="Iniciar pruebas y validación"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:text="Finalizar Servicio"
+        android:layout_width="250dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/btnEndService"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:background="@drawable/button_end_service"
         android:textAllCaps="false"
-        android:padding="10dp"
+        android:padding="5dp"
         android:textColor="@android:color/background_light"
         />
+
 
 
 

@@ -103,18 +103,28 @@ public class SendingService extends Service
         if (p.moveToFirst())
         {
             do {
-                String IdPhoto = p.getString(0);
-                int IdService = p.getInt(1);
-                int idType = p.getInt(2);
-                String Photo = p.getString(3);
-                String date = p.getString(5);
+                try {
 
-                SendPhoto sp = new SendPhoto(IdService, Photo, idType, date);
-                sp.execute();
 
-                count++;
+                    String IdPhoto = p.getString(0);
+                    int IdService = p.getInt(1);
+                    int idType = p.getInt(2);
+                    String Photo = p.getString(3);
+                    String date = p.getString(5);
 
-                bdPhotos.deletePhoto(IdPhoto);
+                    SendPhoto sp = new SendPhoto(IdService, Photo, idType, date);
+
+                    sp.execute();
+
+                    count++;
+
+                    bdPhotos.deletePhoto(IdPhoto);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+
             } while (p.moveToNext());
 
             Log.d("X", String.valueOf(count));

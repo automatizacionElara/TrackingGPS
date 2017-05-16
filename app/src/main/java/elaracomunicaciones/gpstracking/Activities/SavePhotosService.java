@@ -1,13 +1,18 @@
 package elaracomunicaciones.gpstracking.Activities;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,9 +23,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -31,11 +41,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.database.Cursor;
-
 import elaracomunicaciones.gpstracking.Models.Photo;
 import elaracomunicaciones.gpstracking.Models.PhotoCatalog;
 import elaracomunicaciones.gpstracking.Models.PhotoDbHelper;
@@ -50,12 +60,13 @@ import elaracomunicaciones.gpstracking.Utils.SaveStatus;
 public class SavePhotosService extends AppCompatActivity {
 
     private static final String EMPTY_STRING = "";
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private static int TAKE_PICTURE = 1;
     private ListView listViewPhotos;
     private String name = "";
     int code = TAKE_PICTURE;
-    final static int cons = 0;
+    static final int REQUEST_TAKE_PHOTO = 1;
     private int idTechnician = 0;
     private int idService = 0;
     private int idType = 0;
@@ -72,27 +83,35 @@ public class SavePhotosService extends AppCompatActivity {
     Bitmap bmp;
     private String error;
     String PhotoActual;
-
+    ImageView camera_preview;
+    String mCurrentPhotoPath;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            galleryAddPic(getApplicationContext());
+        }
+        /*
         if (resultCode == Activity.RESULT_OK) {
             byte[] b = null;
             Bundle extras = data.getExtras();
             bmp = (Bitmap) extras.get("data");
+
+
+            storeImage(bmp);
+
+            camera_preview.setImageBitmap(bmp);
+
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
             b = baos.toByteArray();
             String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
-            if(alreadyPhoto == 0)
-            {
+            if (alreadyPhoto == 0) {
                 Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage, 1);
                 bdLocalPhotos.savePhoto(photo);
-            }
-            else
-            {
+            } else {
                 bdLocalPhotos.updateAlreadyPhoto(String.valueOf(idService), PhotoActual, encodedImage);
             }
             alreadyPhoto = 0;
@@ -100,13 +119,12 @@ public class SavePhotosService extends AppCompatActivity {
             actualPhotos = pt.getCount();
 
             listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
-            listViewPhotos.setItemChecked(actualPhoto,true);
-        }
+            listViewPhotos.setItemChecked(actualPhoto, true);
+        }*/
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
          /* Se liga la activity con su vista */
@@ -115,9 +133,8 @@ public class SavePhotosService extends AppCompatActivity {
 
          /* Inicialización de controles de la vista */
 
-        btnEndService = (Button)(findViewById(R.id.btnEndService));
-        btnImIn = (Button)(findViewById(R.id.btnImIn));
-
+        btnEndService = (Button) (findViewById(R.id.btnEndService));
+        btnImIn = (Button) (findViewById(R.id.btnImIn));
         /* Se obtienen los parámetros del intent */
 
         Intent intent = getIntent();
@@ -127,28 +144,26 @@ public class SavePhotosService extends AppCompatActivity {
         idStatus = intent.getIntExtra("idStatus", 0);
         idType = intent.getIntExtra("idType", 0);
 
-        switch (idStatus)
-        {
-            case 2:
+        switch (idStatus) {
+            case 2: //Esperando Accesos
                 btnImIn.setVisibility(View.VISIBLE);
-                btnEndService.setVisibility(View.GONE);
+                btnImIn.setActivated(false);
+                btnEndService.setText("Visita Fallida");
                 break;
-            case 3:
-                btnImIn.setVisibility(View.GONE);
-                btnEndService.setVisibility(View.VISIBLE);
-                btnEndService.setActivated(false);
-                btnEndService.setText("Iniciar pruebas y validación");
+            case 3: //Ya entré / En proceso
+                btnImIn.setVisibility(View.VISIBLE);
+                btnImIn.setActivated(true);
+                btnImIn.setText("Iniciar pruebas y validación");
                 break;
-            case 4:
+            case 4: // Pruebas y Validación
                 btnImIn.setVisibility(View.GONE);
-                btnEndService.setVisibility(View.VISIBLE);
-                btnEndService.setActivated(true);
                 btnEndService.setText("Finalizar servicio");
                 break;
         }
 
-        if (idType != 2 && idType != 5 && idType != 11)
-        {
+        final Context context = this;
+
+        if (idType != 2 && idType != 5 && idType != 11) {
             PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
             ListView listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
             listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -168,16 +183,14 @@ public class SavePhotosService extends AppCompatActivity {
                     i++;
                 }
             }
+
             adapter = new ArrayAdapter<String>(this, R.layout.list_item, nameOfPhotos);
 
             listViewPhotos.setAdapter(adapter);
 
-
-            listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener()
-            {
+            listViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     ListView list = (ListView) findViewById(R.id.listViewPhotos);
 
                     list.setItemChecked(position, false);
@@ -186,8 +199,27 @@ public class SavePhotosService extends AppCompatActivity {
                     PhotoActual = ListPhotos.get(position).PhotoDescription;
 
                     alreadyPhoto = 0;
+
                     Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intentCamera, cons);
+                    //startActivityForResult(intentCamera, TAKE_PICTURE);
+
+                    if (intentCamera.resolveActivity(getPackageManager()) != null) {
+                        // Create the File where the photo should go
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile();
+                        } catch (IOException ex) {
+                            // Error occurred while creating the File
+                        }
+                        // Continue only if the File was successfully created
+                        if (photoFile != null) {
+                            Uri photoURI = FileProvider.getUriForFile(context,
+                                    "elaracomunicaciones.gpstracking.provider",
+                                    photoFile);
+                            intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            startActivityForResult(intentCamera, REQUEST_TAKE_PHOTO);
+                        }
+                    }
                 }
             });
 
@@ -196,91 +228,70 @@ public class SavePhotosService extends AppCompatActivity {
         btnImIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view)
             {
-                btnImIn.setEnabled(false);
 
-                idStatus = 3;
+
+                if(idStatus == 2)
+                {
+                    idStatus = 3;
+                    btnImIn.setActivated(true);
+                    btnImIn.setText("Iniciar pruebas y validación");
+                }
+                else
+                {
+                    idStatus = 4;
+                    btnImIn.setVisibility(View.GONE);
+                    btnEndService.setText("Finalizar servicio");
+                }
+
                 writeFile(idService, idStatus);
-
-                btnImIn.setVisibility(View.GONE);
-                btnEndService.setVisibility(View.VISIBLE);
-                btnEndService.setActivated(false);
-                btnEndService.setText("Iniciar pruebas y validación");
 
                 CheckConnection con = new CheckConnection();
 
                 boolean isOnline = con.isOnlineNet();
 
-                if(isOnline)
-                {
+                if (isOnline) {
                     SaveStatus saveStatus = new SaveStatus(idService, idStatus, null, null);
                     saveStatus.execute();
-                }
-                else
-                {
+                } else {
                     ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
 
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String date = df.format(Calendar.getInstance().getTime());
 
-                    ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus ,date);
+                    ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus, date);
                     bdLocal.saveServiceWorkflow(sw);
                 }
             }
         });
 
-        final Context context = this;
-
         btnEndService.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-                if(idStatus == 3)
+                final CheckConnection con = new CheckConnection();
+
+                if (idStatus != 4)
                 {
-                    idStatus = 4;
-                    btnEndService.setText("Finalizar servicio");
-                    btnEndService.setActivated(true);
-                    writeFile(idService, idStatus);
-                }
-                else
-                {
-                    idStatus = 5;
-                }
-
-                CheckConnection con = new CheckConnection();
-
-                boolean isOnline = con.isOnlineNet();
-
-                if(isOnline)
-                {
-                    SaveStatus saveStatus = new SaveStatus(idService, idStatus, null, null);
-                    saveStatus.execute();
-                }
-                else
-                {
-                    ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
-
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String date = df.format(Calendar.getInstance().getTime());
-
-                    ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus ,date);
-                    bdLocal.saveServiceWorkflow(sw);
-                }
-
-                if(idStatus == 5)
-                {
-                    String msg = "¿Estás seguro de concluir con el servicio? El registro fotográfico está completo.";
-
-                    if(listViewPhotos.getCount() > listViewPhotos.getCheckedItemCount())
-                    {
-                        msg = "¿Estás seguro de concluir con el servicio? No se han registrado todas las fotos, " +
-                                "selecciona finalizar únicamente en caso de no contar con permisos de fotografía.";
-                    }
-
                     new AlertDialog.Builder(context)
-                            .setMessage(msg)
+                            .setMessage("¿Estás seguro de concluir el servicio como visita fallida?")
                             .setCancelable(false)
-                            .setPositiveButton("Finalizar", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
+                                    boolean isOnline = con.isOnlineNet();
+
+                                    if (isOnline) {
+                                        SaveStatus saveStatus = new SaveStatus(idService, 6, null, null);
+                                        saveStatus.execute();
+                                    } else {
+                                        ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+                                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        String date = df.format(Calendar.getInstance().getTime());
+
+                                        ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus, date);
+                                        bdLocal.saveServiceWorkflow(sw);
+                                    }
+
                                     File dir = getFilesDir();
                                     File file = new File(dir, "activeService.txt");
                                     boolean deleted = file.delete();
@@ -294,9 +305,50 @@ public class SavePhotosService extends AppCompatActivity {
                             .setNegativeButton("No", null)
                             .show();
                 }
-                }
-        });
+                else {
+                    String msg = "¿Estás seguro de concluir con el servicio? El registro fotográfico está completo.";
 
+                    if (listViewPhotos.getCount() > listViewPhotos.getCheckedItemCount()) {
+                        msg = "¿Estás seguro de concluir con el servicio? No se han registrado todas las fotos, " +
+                                "selecciona finalizar únicamente en caso de no contar con permisos de fotografía.";
+                    }
+
+                    new AlertDialog.Builder(context)
+                            .setMessage(msg)
+                            .setCancelable(false)
+                            .setPositiveButton("Finalizar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                    boolean isOnline = con.isOnlineNet();
+
+                                    if (isOnline) {
+                                        SaveStatus saveStatus = new SaveStatus(idService, 5, null, null);
+                                        saveStatus.execute();
+                                    } else {
+                                        ServiceWorkflowDbHelper bdLocal = new ServiceWorkflowDbHelper(getApplicationContext());
+
+                                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        String date = df.format(Calendar.getInstance().getTime());
+
+                                        ServiceWorkflow sw = new ServiceWorkflow(idService, idStatus, date);
+                                        bdLocal.saveServiceWorkflow(sw);
+                                    }
+
+                                    File dir = getFilesDir();
+                                    File file = new File(dir, "activeService.txt");
+                                    boolean deleted = file.delete();
+
+                                    Toast.makeText(getApplicationContext(), "Servicio Finalizado", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(), ToDoServices.class);
+                                    intent.putExtra("idTechnician", idTechnician);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+                }
+            }
+        });
 
 
     }
@@ -329,7 +381,7 @@ public class SavePhotosService extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(existentPhotos != null) {
+        if (existentPhotos != null) {
             for (int i = 0; i < existentPhotos.length; i++) {
                 if (existentPhotos[i] == null) {
                     break;
@@ -426,4 +478,53 @@ public class SavePhotosService extends AppCompatActivity {
         }
     }
 
+    /**
+     * Create a File for saving an image or video
+     */
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void galleryAddPic(Context context)
+    {
+        Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
+
+        Switch switchSaveLocal = (Switch)(findViewById(R.id.switchSaveLocal));
+        if(switchSaveLocal.isChecked())
+        {
+            String timeStamp = new SimpleDateFormat("dd_MM_yy").format(new Date());
+            MediaStore.Images.Media.insertImage(getContentResolver(), bm, ListPhotos.get(actualPhoto).PhotoDescription + "_" + timeStamp, "");
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 50, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+
+        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+        PhotoDbHelper bdLocalPhotos = new PhotoDbHelper(getApplicationContext());
+        if (alreadyPhoto == 0) {
+            Photo photo = new Photo(idService, ListPhotos.get(actualPhoto).IdPhotoCatalog, PhotoActual, encodedImage, 1);
+            bdLocalPhotos.savePhoto(photo);
+        } else {
+            bdLocalPhotos.updateAlreadyPhoto(String.valueOf(idService), PhotoActual, encodedImage);
+        }
+        alreadyPhoto = 0;
+        Cursor pt = bdLocalPhotos.getPhotoService(String.valueOf(idService));
+        actualPhotos = pt.getCount();
+
+        listViewPhotos.setItemChecked(actualPhoto, true);
+    }
 }

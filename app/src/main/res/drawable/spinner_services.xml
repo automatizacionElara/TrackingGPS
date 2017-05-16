@@ -3,8 +3,8 @@
     android:shape="rectangle">
     <solid android:color="@drawable/transparent"></solid>
     <stroke
-        android:color="@drawable/took"
+        android:color="@drawable/elaraBlue"
         android:dashWidth="5px"
         android:dashGap="2px"
-        android:width="0.2dp"/>
+        android:width="0.5dp"/>
 </shape>
